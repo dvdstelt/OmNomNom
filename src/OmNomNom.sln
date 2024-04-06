@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmNomNom.Website", "OmNomNom.Website\OmNomNom.Website.csproj", "{D72064B6-52D0-4492-8290-8F5B40F4FE85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompositionGateway", "CompositionGateway\CompositionGateway.csproj", "{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temporary", "Temporary\Temporary.csproj", "{03B1FD8A-03E7-4FBA-AD55-C7571937AE26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{D72064B6-52D0-4492-8290-8F5B40F4FE85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D72064B6-52D0-4492-8290-8F5B40F4FE85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D72064B6-52D0-4492-8290-8F5B40F4FE85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03B1FD8A-03E7-4FBA-AD55-C7571937AE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B1FD8A-03E7-4FBA-AD55-C7571937AE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03B1FD8A-03E7-4FBA-AD55-C7571937AE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03B1FD8A-03E7-4FBA-AD55-C7571937AE26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
