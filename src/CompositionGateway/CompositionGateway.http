@@ -1,6 +1,16 @@
 @CompositionGateway_HostAddress = http://localhost:5033
 
-GET {{CompositionGateway_HostAddress}}/weatherforecast/
+GET {{CompositionGateway_HostAddress}}/
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/cart/123
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/buy/address/123
 Accept: application/json
 
 ###
