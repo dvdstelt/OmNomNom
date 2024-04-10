@@ -5,12 +5,42 @@ Accept: application/json
 
 ###
 
+GET {{CompositionGateway_HostAddress}}/products
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/products/beer
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/product/ff899e9d
+Accept: application/json
+
+###
+
 GET {{CompositionGateway_HostAddress}}/cart/123
 Accept: application/json
 
 ###
 
 GET {{CompositionGateway_HostAddress}}/buy/address/123
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/buy/shipping/123
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/buy/payment/123
+Accept: application/json
+
+###
+
+GET {{CompositionGateway_HostAddress}}/buy/summary/123
 Accept: application/json
 
 ###
