@@ -1,13 +1,16 @@
 import { useParams } from "react-router-dom";
 import Items from "./Cart/Items";
 import CartAccept from "./Cart/CartAccept";
+import { useEffect } from "react";
 
 import styles from "./Cart.module.css";
 
 export default function Cart() {
   const { orderId } = useParams();
 
-  document.title = `Shopping Cart - omnomnom.com`;
+  useEffect(() => {
+    document.title = `Shopping Cart - omnomnom.com`;
+  }, []);
 
   return (
     <div className={styles.cart}>

@@ -3,7 +3,7 @@ import { getProducts } from "./productService";
 import { useLoadData } from "./misc";
 import CarouselItem from "./Product/CarouselItem";
 import Filter from "./misc/Filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import styles from "./Index.module.css";
 
@@ -14,6 +14,10 @@ export default function Index() {
   const categories = [
     ...new Set((products ?? []).map((product) => product.category)),
   ];
+
+  useEffect(() => {
+    document.title = `omnomnom.com`;
+  }, []);
 
   return (
     <div className={styles.index}>

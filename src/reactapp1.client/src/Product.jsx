@@ -6,6 +6,7 @@ import StockDetails from "./Product/StockDetails";
 import { getProductName } from "./productService";
 import { useLoadData } from "./misc";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 import styles from "./Product.module.css";
 
@@ -13,7 +14,9 @@ export default function Product() {
   const { productId } = useParams();
 
   const { data: productName } = useLoadData(getProductName, productId);
-  document.title = `${productName} - omnomnom.com`;
+  useEffect(() => {
+    document.title = `${productName} - omnomnom.com`;
+  }, [productName]);
 
   return (
     <div className={styles.product}>
