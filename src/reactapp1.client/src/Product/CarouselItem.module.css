@@ -1,0 +1,24 @@
+.carouselItem {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f5f5f5;
+  width: 15em;
+  padding: 0.25em;
+}
+
+.carouselItem .imageContainer {
+  width: 100%;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+}
+
+.carouselItem .productImage {
+  height: 10em;
+  width: fit-content;
+  align-self: center;
+}
+
+.carouselItem .price {
+  font-size: 1.3em;
+}

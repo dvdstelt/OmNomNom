@@ -1,0 +1,77 @@
+import axios from "axios";
+import memoizeOne from "memoize-one";
+import { useEffect, useState } from "react";
+
+// const model = {
+//   id: 42,
+//   title: "Corpulet Cabbage of Confusion",
+//   stars: 4,
+//   reviewCount: 42,
+//   productImage:
+//     "https://www.freshpoint.com/wp-content/uploads/2020/02/Freshpoint-green-cabbage.jpg",
+//   stockCount: 7,
+//   price: 42,
+//   savings: 13.37,
+//   shippingLocation: "Haifa, Israel",
+//   shipsToLocation: true,
+// };
+
+async function getProduct(id) {
+  const { data } = await axios.get(`https://localhost:7126/product/${id}`);
+  return data.product;
+}
+const memoisedProduct = memoizeOne(getProduct);
+
+export function useGetProduceDetails(fn, id) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setData(await fn(id));
+      setLoading(false);
+    }
+
+    load();
+  }, [id]);
+
+  return { data, loading };
+}
+
+export async function getProducts() {
+  const { data } = await axios.get("https://localhost:7126/products");
+  return data.products;
+}
+
+export async function getProductName(id) {
+  const model = await memoisedProduct(id);
+  return model.name;
+}
+
+export async function getProductImage(id) {
+  const model = await memoisedProduct(id);
+  return model.image;
+}
+
+export async function getProductRating(id) {
+  const model = await memoisedProduct(id);
+  return { stars: model.stars, reviewCount: model.reviewCount };
+}
+
+export async function getProductStockDetails(id) {
+  const model = await memoisedProduct(id);
+  return { stockCount: model.inStock };
+}
+
+export async function getProductPriceDetails(id) {
+  const model = await memoisedProduct(id);
+  return { price: model.price, savings: model.savings };
+}
+
+export function getProductShippingDetails(id) {
+  return {
+    shippingLocation: "Haifa, Israel", //model.shippingLocation,
+    shipsToLocation: true, //model.shipsToLocation,
+  };
+}

@@ -1,0 +1,15 @@
+.index {
+  width: 90%;
+  max-width: 80em;
+}
+
+.carousel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+}
+
+.carousel a {
+  text-decoration: none;
+  color: inherit;
+}

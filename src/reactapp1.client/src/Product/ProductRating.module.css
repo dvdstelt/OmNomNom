@@ -1,0 +1,13 @@
+.rating {
+  display: flex;
+  align-items: baseline;
+  margin: 0.5em 0;
+}
+
+.rating > div:not(:last-child) {
+  margin-right: 0.5em;
+}
+
+.rating .star {
+  height: 1em;
+}

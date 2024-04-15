@@ -1,0 +1,10 @@
+.priceDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.priceDetails .price {
+  color: red;
+  font-size: 1.5em;
+}
