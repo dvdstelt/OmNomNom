@@ -1,4 +1,4 @@
-import { getProductImage, useGetProduceDetails } from "../modelService";
+import { getProductImage, useGetProduceDetails } from "../productService";
 
 export default function ProductImage({ id, className }) {
   const { data: imageSrc, loading } = useGetProduceDetails(getProductImage, id);

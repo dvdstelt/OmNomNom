@@ -3,7 +3,7 @@ import ProductImage from "./Product/ProductImage";
 import ProductRating from "./Product/ProductRating";
 import ShippingDetails from "./Product/ShippingDetails";
 import StockDetails from "./Product/StockDetails";
-import { getProductName, useGetProduceDetails } from "./modelService";
+import { getProductName, useGetProduceDetails } from "./productService";
 import { useParams } from "react-router-dom";
 
 import styles from "./Product.module.css";
@@ -16,7 +16,7 @@ export default function Product() {
 
   return (
     <div className={styles.product}>
-      <h2>{name}</h2>
+      <h1>{productName}</h1>
       <ProductRating id={productId} long={true} />
       <div className={styles.imageAndDetails}>
         <ProductImage id={productId} className={styles.productImage} />

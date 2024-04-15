@@ -1,7 +1,7 @@
 import fullStar from "@/assets/fullstar.png";
 import halfStar from "@/assets/halfstar.png";
 import emptyStar from "@/assets/emptystar.png";
-import { getProductRating, useGetProduceDetails } from "../modelService";
+import { getProductRating, useGetProduceDetails } from "../productService";
 
 import styles from "./ProductRating.module.css";
 

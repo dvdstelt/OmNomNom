@@ -1,4 +1,7 @@
-import { getProductStockDetails, useGetProduceDetails } from "../modelService";
+import {
+  getProductStockDetails,
+  useGetProduceDetails,
+} from "../productService";
 
 import styles from "./StockDetails.module.css";
 

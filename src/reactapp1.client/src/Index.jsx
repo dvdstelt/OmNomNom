@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getProducts, useGetProduceDetails } from "./modelService";
+import { getProducts, useGetProduceDetails } from "./productService";
 import CarouselItem from "./Product/CarouselItem";
 import Filter from "./misc/Filter";
 import { useState } from "react";

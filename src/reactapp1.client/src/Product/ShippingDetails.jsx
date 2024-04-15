@@ -1,7 +1,7 @@
 import {
   getProductShippingDetails,
   useGetProduceDetails,
-} from "../modelService";
+} from "../productService";
 
 export default function ShippingDetails({ id, className }) {
   const { data: model } = useGetProduceDetails(getProductShippingDetails, id);
