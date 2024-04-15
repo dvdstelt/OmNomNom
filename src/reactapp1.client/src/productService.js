@@ -1,6 +1,5 @@
 import axios from "axios";
 import memoizeOne from "memoize-one";
-import { useEffect, useState } from "react";
 
 // const model = {
 //   id: 42,
@@ -21,23 +20,6 @@ async function getProduct(id) {
   return data.product;
 }
 const memoisedProduct = memoizeOne(getProduct);
-
-export function useGetProduceDetails(fn, id) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      setData(await fn(id));
-      setLoading(false);
-    }
-
-    load();
-  }, [id]);
-
-  return { data, loading };
-}
 
 export async function getProducts() {
   const { data } = await axios.get("https://localhost:7126/products");

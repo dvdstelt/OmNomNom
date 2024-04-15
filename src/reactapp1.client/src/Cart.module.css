@@ -1,0 +1,18 @@
+.cart {
+  width: 90%;
+  max-width: 80em;
+}
+
+.cart .contents {
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+}
+
+.cart .contents .items {
+  flex: 1;
+}
+
+.cart .contents .cartAccept {
+  flex: 0;
+}

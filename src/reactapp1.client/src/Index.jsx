@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { getProducts, useGetProduceDetails } from "./productService";
+import { getProducts } from "./productService";
+import { useLoadData } from "./misc";
 import CarouselItem from "./Product/CarouselItem";
 import Filter from "./misc/Filter";
 import { useState } from "react";
@@ -7,7 +8,7 @@ import { useState } from "react";
 import styles from "./Index.module.css";
 
 export default function Index() {
-  const { data: products } = useGetProduceDetails(getProducts);
+  const { data: products } = useLoadData(getProducts);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const categories = [

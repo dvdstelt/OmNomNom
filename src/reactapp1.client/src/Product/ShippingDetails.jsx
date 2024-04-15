@@ -1,10 +1,8 @@
-import {
-  getProductShippingDetails,
-  useGetProduceDetails,
-} from "../productService";
+import { getProductShippingDetails } from "../productService";
+import { useLoadData } from "@/misc";
 
 export default function ShippingDetails({ id, className }) {
-  const { data: model } = useGetProduceDetails(getProductShippingDetails, id);
+  const { data: model } = useLoadData(getProductShippingDetails, id);
 
   return (
     model && (

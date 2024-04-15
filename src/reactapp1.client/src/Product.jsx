@@ -3,7 +3,8 @@ import ProductImage from "./Product/ProductImage";
 import ProductRating from "./Product/ProductRating";
 import ShippingDetails from "./Product/ShippingDetails";
 import StockDetails from "./Product/StockDetails";
-import { getProductName, useGetProduceDetails } from "./productService";
+import { getProductName } from "./productService";
+import { useLoadData } from "./misc";
 import { useParams } from "react-router-dom";
 
 import styles from "./Product.module.css";
@@ -11,7 +12,7 @@ import styles from "./Product.module.css";
 export default function Product() {
   const { productId } = useParams();
 
-  const { data: productName } = useGetProduceDetails(getProductName, productId);
+  const { data: productName } = useLoadData(getProductName, productId);
   document.title = `${productName} - omnomnom.com`;
 
   return (

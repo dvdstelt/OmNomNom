@@ -15,9 +15,8 @@ export default function Filter({ label, items, onChange }) {
     <div className={styles.filter}>
       <div className={styles.label}>{label}</div>
       {items.map((item, i) => (
-        <div>
+        <div key={item}>
           <input
-            key={item}
             ref={(cb) => (itemsRef.current[i] = cb)}
             id={item}
             type="checkbox"

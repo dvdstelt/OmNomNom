@@ -1,12 +1,13 @@
 import fullStar from "@/assets/fullstar.png";
 import halfStar from "@/assets/halfstar.png";
 import emptyStar from "@/assets/emptystar.png";
-import { getProductRating, useGetProduceDetails } from "../productService";
+import { getProductRating } from "../productService";
+import { useLoadData } from "@/misc";
 
 import styles from "./ProductRating.module.css";
 
 export default function ProductRating({ id, className, long = false }) {
-  const { data: ratingData } = useGetProduceDetails(getProductRating, id);
+  const { data: ratingData } = useLoadData(getProductRating, id);
   const starItems =
     ratingData &&
     Array.from({ length: 5 }).map((_, i) => {

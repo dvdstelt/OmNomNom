@@ -1,12 +1,10 @@
-import {
-  getProductStockDetails,
-  useGetProduceDetails,
-} from "../productService";
+import { getProductStockDetails } from "../productService";
+import { useLoadData } from "@/misc";
 
 import styles from "./StockDetails.module.css";
 
 export default function StockDetails({ id }) {
-  const { data: model } = useGetProduceDetails(getProductStockDetails, id);
+  const { data: model } = useLoadData(getProductStockDetails, id);
   const lowStock = (model?.stockCount ?? 0) < 100;
 
   return (

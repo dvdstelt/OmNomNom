@@ -1,13 +1,11 @@
-import {
-  getProductPriceDetails,
-  useGetProduceDetails,
-} from "../productService";
-
-import styles from "./PriceDetails.module.css";
+import { getProductPriceDetails } from "../productService";
+import { useLoadData } from "@/misc";
 import Price from "./Price";
 
+import styles from "./PriceDetails.module.css";
+
 export default function PriceDetails({ id }) {
-  const { data: model } = useGetProduceDetails(getProductPriceDetails, id);
+  const { data: model } = useLoadData(getProductPriceDetails, id);
 
   return (
     model && (

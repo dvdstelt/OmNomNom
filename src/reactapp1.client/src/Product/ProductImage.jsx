@@ -1,7 +1,8 @@
-import { getProductImage, useGetProduceDetails } from "../productService";
+import { getProductImage } from "../productService";
+import { useLoadData } from "@/misc";
 
 export default function ProductImage({ id, className }) {
-  const { data: imageSrc, loading } = useGetProduceDetails(getProductImage, id);
+  const { data: imageSrc, loading } = useLoadData(getProductImage, id);
 
   return loading ? (
     <div>Loading...</div>
