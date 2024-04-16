@@ -1,4 +1,4 @@
-import Price from "../Product/Price";
+import Price from "../misc/Price";
 import ProductImage from "../Product/ProductImage";
 import { useLoadData } from "../misc";
 import { getProductName, getProductPriceDetails } from "../productService";

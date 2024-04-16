@@ -1,6 +1,6 @@
 import { getProductPriceDetails } from "../productService";
 import { useLoadData } from "@/misc";
-import Price from "./Price";
+import Price from "../misc/Price";
 
 import styles from "./PriceDetails.module.css";
 

@@ -21,42 +21,12 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
       <Route>
         <Route index element={<Index />} />
-        <Route
-          path="product/:productId"
-          element={<Product />}
-          // loader={contactLoader}
-          // action={contactAction}
-        />
-        <Route
-          path="cart/:orderId"
-          element={<Cart />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="address/:orderId"
-          element={<Address />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="shipping/:orderId"
-          element={<Shipping />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="payment/:orderId"
-          element={<Payment />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="summary/:orderId"
-          element={<Summary />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
+        <Route path="product/:productId" element={<Product />} />
+        <Route path="cart/:orderId" element={<Cart />} />
+        <Route path="/buy/address/:orderId" element={<Address />} />
+        <Route path="/buy/shipping/:orderId" element={<Shipping />} />
+        <Route path="/buy/payment/:orderId" element={<Payment />} />
+        <Route path="/buy/summary/:orderId" element={<Summary />} />
       </Route>
     </Route>
   )

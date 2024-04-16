@@ -1,11 +1,17 @@
-import Price from "../Product/Price";
+import Price from "../misc/Price";
 import { useLoadData } from "../misc";
 import { getCartTotal } from "../orderService";
+import { useNavigate } from "react-router-dom";
 
 import styles from "./CartAccept.module.css";
 
 export default function CartAccept({ id, className }) {
   const { data: total } = useLoadData(getCartTotal, id);
+  const navigate = useNavigate();
+
+  function proceed() {
+    navigate(`/buy/address/${id}`);
+  }
 
   return (
     <div className={`${styles.cartAccept} ${className ?? ""}`}>
@@ -19,7 +25,7 @@ export default function CartAccept({ id, className }) {
         <input id="gift" type="checkbox" />
         <label htmlFor="gift">This list contains a gift</label>
       </div>
-      <button>Proceed to Checkout</button>
+      <button onClick={proceed}>Proceed to Checkout</button>
     </div>
   );
 }

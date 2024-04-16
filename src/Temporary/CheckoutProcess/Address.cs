@@ -18,8 +18,10 @@ public class Address : ICompositionRequestsHandler
         var orderId = Guid.Parse("526f0a1d-2900-49ba-9d70-987e9f590b04");
         
         vm.OrderId = orderId;
+        vm.FullName = "Dennis van der Stelt";
         vm.ShippingAddress =
             CreateAddress(Guid.NewGuid(), "Stenen Kamer 16", "2952ED", "Alblasserdam", "The Netherlands");
+        vm.IsBillingAddressSame = true;
         // Since BillingAddress == ShippingAddress, the UI should show a checkbox.
         // When checkbox is turned off, it should show the same fields as ShippingAddress, except empty
         vm.BillingAddress = vm.ShippingAddress;

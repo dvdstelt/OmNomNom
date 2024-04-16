@@ -1,5 +1,5 @@
 import styles from "./CarouselItem.module.css";
-import Price from "./Price";
+import Price from "../misc/Price";
 import ProductImage from "./ProductImage";
 import ProductRating from "./ProductRating";
 
