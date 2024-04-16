@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,20 @@ builder.Services.AddCors(options =>
                 policy.WithOrigins("https://127.0.0.1:5173", "https://localhost:5173")
                        .AllowAnyHeader();
             }));
-builder.Services.AddViewModelComposition();
+builder.Services.AddControllers();
+builder.Services.AddViewModelComposition(o =>
+{
+    o.EnableWriteSupport();
+});
+
+// Add cache which is used for storing the cart for now.
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(5);
+    options.Cookie.IsEssential = true;
+    options.Cookie.HttpOnly = true;
+});
 
 var app = builder.Build();
 
@@ -26,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.MapCompositionHandlers();
