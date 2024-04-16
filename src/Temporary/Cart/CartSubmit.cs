@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using System.Text.Json;
 using ServiceComposer.AspNetCore;
 
 namespace OmNomNom.Website.ViewModelComposition;
@@ -16,14 +15,8 @@ public class CartSubmit : ICompositionRequestsHandler
         var routeData = request.HttpContext.GetRouteData();
         var orderId = Guid.Parse(routeData.Values["orderId"] as string ?? throw new InvalidOperationException("OrderId can't be empty"));
 
-        var res = await request.Bind<RequestModel>();
+        var res = await request.Bind<AddressModel>();
 
         //use the content object instance as needed
     }
 }
-
-// id: "",
-// street: "",
-// zipCode: "",
-// town: "",
-// country: "",

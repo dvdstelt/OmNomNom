@@ -2,15 +2,18 @@
 
 namespace OmNomNom.Website.ViewModelComposition;
 
-class RequestModel
+class AddressModel
 {
     [FromRoute] public Guid orderId { get; set; }
-    [FromBody] public Dictionary<string, Dto> Body { get; set; }
+    [FromBody] public Dictionary<string, Address> Body { get; set; }
 }
 
-class Dto
+class Address
 {
     public string Street { get; set; }
+    public string ZipCode { get; set; }
+    public string Town { get; set; }
+    public string Country { get; set; }
 }
 
 public class UserCart
