@@ -1,30 +1,4 @@
-﻿/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-tr:nth-child(even) {
-  background: #f2f2f2;
-}
-
-tr:nth-child(odd) {
-  background: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  tr {
-    color: #213547;
-  }
-}
-
-th,
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-} */
-body {
+﻿body {
   margin: 0;
 }
 
@@ -41,6 +15,7 @@ body {
   background-color: #131921;
   flex: 0;
   display: flex;
+  justify-content: space-between;
 }
 
 #header > * {

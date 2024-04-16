@@ -1,14 +1,14 @@
 .carouselItem {
   display: flex;
   flex-direction: column;
-  border: 1px solid #f5f5f5;
+  border: 1px solid var(--neutral-light);
   width: 15em;
   padding: 0.25em;
 }
 
 .carouselItem .imageContainer {
   width: 100%;
-  background-color: #f5f5f5;
+  background-color: var(--neutral-light);
   display: flex;
   justify-content: center;
 }
