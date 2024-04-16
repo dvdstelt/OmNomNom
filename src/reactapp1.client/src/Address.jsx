@@ -7,6 +7,7 @@ import TextField from "./misc/TextField";
 import AddressEdit from "./Address/AddressEdit";
 
 import styles from "./Address.module.css";
+import axios from "axios";
 
 const blankAddress = {
   id: "",
@@ -42,7 +43,18 @@ export default function Address() {
     document.title = "Purchase Address - omnomnom.com";
   }, []);
 
-  function saveAndContinue() {
+  async function saveAndContinue() {
+    const [shippingAddress] = shippingAddressState;
+    const [billingAddress] = billingAddressState;
+
+    // if (billingSameAsShipping) {
+    //   billingAddress = { ...shippingAddress };
+    // }
+
+    await axios.post(`https://localhost:7126/cart/${orderId}`, {
+      shippingAddress,
+      billingAddress,
+    });
     navigate(`/buy/shipping/${orderId}`);
   }
 
