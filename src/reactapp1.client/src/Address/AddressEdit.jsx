@@ -22,8 +22,8 @@ export default function AddressEdit({ state }) {
       />
       <TextField
         label="Zip Code"
-        value={address.zipcode}
-        onChange={updateAddress((x, value) => (x.zipcode = value))}
+        value={address.zipCode}
+        onChange={updateAddress((x, value) => (x.zipCode = value))}
       />
       <TextField
         label="Town/City"

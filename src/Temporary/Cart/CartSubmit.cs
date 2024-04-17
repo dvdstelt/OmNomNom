@@ -24,8 +24,9 @@ public class CartSubmit : ICompositionRequestsHandler
 
         var res = await request.Bind<AddressModel>();
         var order = storage.GetOrder(orderId);
-        order.ShippingAddress = res.Body["shippingAddress"];
-        order.BillingAddress = res.Body["billingAddress"];
+        order.FullName = res.Body.FullName;
+        order.ShippingAddress = res.Body.ShippingAddress;
+        order.BillingAddress = res.Body.BillingAddress;
 
         //use the content object instance as needed
     }

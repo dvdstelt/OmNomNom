@@ -12,7 +12,7 @@ import axios from "axios";
 const blankAddress = {
   id: "",
   street: "",
-  zipcode: "",
+  zipCode: "",
   town: "",
   country: "",
 };
@@ -48,6 +48,7 @@ export default function Address() {
     const [billingAddress] = billingAddressState;
 
     await axios.post(`https://localhost:7126/cart/${orderId}`, {
+      fullName,
       shippingAddress,
       billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
     });

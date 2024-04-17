@@ -5,7 +5,14 @@ namespace OmNomNom.Website.ViewModelComposition;
 class AddressModel
 {
     [FromRoute] public Guid orderId { get; set; }
-    [FromBody] public Dictionary<string, Address> Body { get; set; }
+    [FromBody] public AddressModelBody Body { get; set; }
+}
+
+class AddressModelBody
+{
+    public string FullName { get; set; }
+    public Address ShippingAddress { get; set; }
+    public Address BillingAddress { get; set; }
 }
 
 public class Address
@@ -14,15 +21,29 @@ public class Address
     public string ZipCode { get; set; }
     public string Town { get; set; }
     public string Country { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Address address &&
+               Street == address.Street &&
+               ZipCode == address.ZipCode &&
+               Town == address.Town &&
+               Country == address.Country;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Street, ZipCode, Town, Country);
+    }
 }
 
 public class ProductModel
 {
     [FromRoute] public Guid orderId { get; set; }
-    [FromBody] public ProductDetail Detail { get; set; }
+    [FromBody] public ProductModelBody Detail { get; set; }
 }
 
-public class ProductDetail
+public class ProductModelBody
 {
     public Guid Id { get; set; }
     public int Quantity { get; set; }

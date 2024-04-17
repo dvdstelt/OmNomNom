@@ -1,4 +1,5 @@
 ﻿using OmNomNom.Website.ViewModelComposition;
+using System.Collections.Concurrent;
 
 namespace Temporary
 {
@@ -12,10 +13,11 @@ namespace Temporary
 
         public Guid Id { get; set; }
         public UserCart Cart { get; set; }
+        public string FullName { get; set; }
         public Address? ShippingAddress { get; set; }
         public Address? BillingAddress { get; set; }
 
-        public decimal TotalPrice => Cart.Items.Sum(item => item.Price);
+        public decimal TotalPrice => Cart.Items.Sum(item => item.Price * item.Quantity);
     }
 
     public static class Products
@@ -53,7 +55,7 @@ namespace Temporary
 
     public class OrderStorage
     {
-        private Dictionary<Guid, Order> _orders = new();
+        private ConcurrentDictionary<Guid, Order> _orders = new();
 
         public Guid AddItem(Guid? id, CartItem item)
         {
@@ -80,13 +82,7 @@ namespace Temporary
 
         public Order GetOrder(Guid id)
         {
-            _orders.TryGetValue(id, out var order);
-            if (order == null)
-            {
-                order = new Order();
-                _orders.Add(id, order);
-            }
-            return order;
+            return _orders.GetOrAdd(id, new Order());
         }
 
         private Order GetOrder(ref Guid? id)
