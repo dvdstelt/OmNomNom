@@ -19,12 +19,25 @@ export async function getCartItems(orderId) {
 
 export async function getCartTotal(orderId) {
   const data = await memoisedCart(orderId);
-  return data.totalPrice;
+  return data.totalCartPrice;
 }
 
 export async function getAddress(orderId) {
   const { data } = await axios.get(
     `https://localhost:7126/buy/address/${orderId}`
   );
+  return data;
+}
+
+async function getShipping(orderId) {
+  const { data } = await axios.get(
+    `https://localhost:7126/buy/shipping/${orderId}`
+  );
+  return data;
+}
+const memoisedShipping = memoizeOne(getShipping);
+
+export async function getDeliveryOptions(orderId) {
+  const data = await memoisedShipping(orderId);
   return data;
 }

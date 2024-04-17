@@ -13,11 +13,18 @@ namespace Temporary
 
         public Guid Id { get; set; }
         public UserCart Cart { get; set; }
-        public string FullName { get; set; }
+
+        public string FullName { get; set; } = string.Empty;
         public Address? ShippingAddress { get; set; }
         public Address? BillingAddress { get; set; }
 
-        public decimal TotalPrice => Cart.Items.Sum(item => item.Price * item.Quantity);
+        public Guid? DeliveryOptionId { get; set; }
+
+        public decimal TotalCartPrice => Cart.Items.Sum(item => item.Price * item.Quantity);
+        public decimal TotalBeforeTaxPrice => TotalCartPrice + (DeliveryOptionId.HasValue ? DeliveryOptions.GetDeliveryOptionById(DeliveryOptionId.Value).Price : 0m);
+        public decimal TaxPercent { get; set; } = 0;
+        public decimal TaxPrice => TotalBeforeTaxPrice * TaxPercent;
+        public decimal TotalPrice => TotalBeforeTaxPrice + TaxPrice;
     }
 
     public static class Products
@@ -33,7 +40,7 @@ namespace Temporary
             return products.Single(p => p.Id == id);
         }
 
-        public static Product[] GetAllProducts() { return [.. products]; }
+        public static Product[] GetAllProducts() => [.. products];
 
         private static Product CreateProduct(Guid id, string name, string image, decimal price, int stockCount, double stars, int reviewCount, string category)
         {
@@ -50,6 +57,33 @@ namespace Temporary
                 InStock = stockCount
             };
             return product;
+        }
+    }
+
+    public static class DeliveryOptions
+    {
+        private static readonly DeliveryOption[] deliveryOptions = [
+            CreateDeliveryOption(Guid.Parse("071f3894-762e-4fb2-b55c-8c65f2641f5b"), "Standard shipping", "7-10 business days", 7.98m),
+            CreateDeliveryOption(Guid.Parse("155e3818-ff4d-43f1-9000-6d6bb2d2f736"), "Expedited shipping", "2-5 business days", 20.98m),
+            CreateDeliveryOption(Guid.Parse("3835fb8d-be88-4d39-9eb8-043cac3c9695"), "Priority shipping", "Next business day", 49.98m)
+        ];
+
+        public static DeliveryOption GetDeliveryOptionById(Guid id)
+        {
+            return deliveryOptions.Single(p => p.Id == id);
+        }
+
+        public static DeliveryOption[] GetAllDeliveryOptions() => [.. deliveryOptions];
+
+        private static DeliveryOption CreateDeliveryOption(Guid id, string name, string description, decimal price)
+        {
+            return new DeliveryOption
+            {
+                Id = id,
+                Name = name,
+                Description = description,
+                Price = price
+            };
         }
     }
 

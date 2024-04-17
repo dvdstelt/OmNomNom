@@ -17,10 +17,10 @@ class AddressModelBody
 
 public class Address
 {
-    public string Street { get; set; }
-    public string ZipCode { get; set; }
-    public string Town { get; set; }
-    public string Country { get; set; }
+    public string Street { get; set; } = string.Empty;
+    public string ZipCode { get; set; } = string.Empty;
+    public string Town { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
 
     public override bool Equals(object? obj)
     {
@@ -76,4 +76,23 @@ public class CartItem
     public Guid ProductId { get; set; }
     public decimal Price { get; set; }
     public string Name { get; set; }
+}
+
+public class DeliveryOption
+{
+    public Guid Id { get; internal set; }
+    public string Name { get; internal set; }
+    public string Description { get; internal set; }
+    public decimal Price { get; internal set; }
+}
+
+public class ShippingModel
+{
+    [FromRoute] public Guid orderId { get; set; }
+    [FromBody] public ShippingModelBody Detail { get; set; }
+}
+
+public class ShippingModelBody
+{
+    public Guid DeliveryOptionId { get; set; }
 }

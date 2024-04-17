@@ -79,7 +79,7 @@ export default function Address() {
           <AddressEdit state={billingAddressState} />
         </>
       )}
-      <div class={styles.buttonGroup}>
+      <div className={styles.buttonGroup}>
         <button onClick={saveAndContinue}>Ship to this Address</button>
       </div>
     </div>

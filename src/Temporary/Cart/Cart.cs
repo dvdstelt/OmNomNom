@@ -33,18 +33,8 @@ public class Cart : ICompositionRequestsHandler
         //cartItems[1] = CreateCartItem(Guid.Parse("0b3dcc85-110b-4491-9946-d20c0a51917b"), "Heineken", 0.5m, 24);;
         var order = storage.GetOrder(orderId);
         vm.CartItems = order.Cart.Items;//cartItems.Values.ToList();
-        vm.TotalPrice = order.TotalPrice;
+        vm.TotalCartPrice = order.TotalCartPrice;
 
         return Task.CompletedTask;
-    }
-    
-    dynamic CreateCartItem(Guid id, string name, decimal price, int quantity)
-    {
-        dynamic product = new ExpandoObject();
-        product.Id = id;
-        product.Name = name;
-        product.Price = price;
-        product.Quantity = quantity;
-        return product;
     }
 }

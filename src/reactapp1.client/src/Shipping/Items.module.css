@@ -1,0 +1,23 @@
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.item label {
+  font-weight: bold;
+}
+
+.item .itemDetails {
+  display: flex;
+  gap: 0.3em;
+}
+
+.item .price {
+  color: red;
+}
