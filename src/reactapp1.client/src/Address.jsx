@@ -12,7 +12,7 @@ import axios from "axios";
 const blankAddress = {
   id: "",
   street: "",
-  zipCode: "",
+  zipcode: "",
   town: "",
   country: "",
 };
@@ -25,7 +25,7 @@ export default function Address() {
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const navigate = useNavigate();
 
-  useLoadData(getAddress, orderId, addressLoaded);
+  useLoadData(getAddress, orderId, { callback: addressLoaded });
   function addressLoaded(addressModel) {
     if (addressModel?.shippingAddress) {
       const [_, setShippingAddress] = shippingAddressState;
@@ -47,13 +47,9 @@ export default function Address() {
     const [shippingAddress] = shippingAddressState;
     const [billingAddress] = billingAddressState;
 
-    // if (billingSameAsShipping) {
-    //   billingAddress = { ...shippingAddress };
-    // }
-
     await axios.post(`https://localhost:7126/cart/${orderId}`, {
       shippingAddress,
-      billingAddress,
+      billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
     });
     navigate(`/buy/shipping/${orderId}`);
   }

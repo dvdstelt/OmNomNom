@@ -14,5 +14,5 @@
 .cartIndicator .itemCount {
   right: 1.5em;
   font-weight: bold;
-  color: var(--amazon-orange);
+  color: var(--amazon-orange-dark);
 }

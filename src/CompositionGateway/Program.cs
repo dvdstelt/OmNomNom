@@ -1,4 +1,5 @@
 using ServiceComposer.AspNetCore;
+using Temporary;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.HttpOnly = true;
 });
+builder.Services.AddSingleton<OrderStorage>();
 
 var app = builder.Build();
 

@@ -7,6 +7,10 @@ async function getCart(orderId) {
 }
 const memoisedCart = memoizeOne(getCart);
 
+export function clearCartCache() {
+  memoisedCart.clear();
+}
+
 export async function getCartItems(orderId) {
   if (!orderId) return [];
   const data = await memoisedCart(orderId);

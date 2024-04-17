@@ -14,7 +14,7 @@ export default function ItemRow({ item }) {
     <tr>
       <td className={styles.item}>
         <div className={styles.imageContainer}>
-          <ProductImage id={item.id} className={styles.image} />
+          <ProductImage id={item.productId} className={styles.image} />
         </div>
         <span>{item.name}</span>
       </td>

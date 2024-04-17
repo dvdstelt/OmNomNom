@@ -57,3 +57,21 @@ export function getProductShippingDetails(id) {
     shipsToLocation: true, //model.shipsToLocation,
   };
 }
+
+export async function addProductToCart(orderId, productDetails) {
+  const { data } = await axios.post(
+    `https://localhost:7126/cart/addproduct/${orderId}`,
+    productDetails
+  );
+  notififyCartSubscribers();
+  return data.orderId;
+}
+
+const cartSubscriptions = [];
+export function subscribeToCart(callback) {
+  cartSubscriptions.push(callback);
+}
+
+function notififyCartSubscribers() {
+  cartSubscriptions.forEach((callback) => callback());
+}

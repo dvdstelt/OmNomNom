@@ -18,7 +18,7 @@ export default function Items({ id }) {
       </thead>
       <tbody>
         {(items ?? []).map((item) => (
-          <ItemRow key={item.id} item={item} />
+          <ItemRow key={item.productId} item={item} />
         ))}
       </tbody>
     </table>

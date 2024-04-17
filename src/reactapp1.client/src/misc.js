@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useLoadData(fn, id, callback) {
+export function useLoadData(fn, id, { callback, refreshTrigger } = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +14,7 @@ export function useLoadData(fn, id, callback) {
     }
 
     load();
-  }, [id]);
+  }, [id, refreshTrigger]);
 
   return { data, loading };
 }
