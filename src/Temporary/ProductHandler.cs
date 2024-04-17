@@ -17,7 +17,7 @@ public class ProductHandler : ICompositionRequestsHandler
 
         vm.UrlId = productId;
         vm.Product = Products.GetProductById(Guid.Parse(productId));
-        
+
         return Task.CompletedTask;
     }
 }
