@@ -4,16 +4,17 @@ import ProductRating from "./Product/ProductRating";
 import ShippingDetails from "./Product/ShippingDetails";
 import StockDetails from "./Product/StockDetails";
 import { addProductToCart, getProductName } from "./productService";
-import { useLoadData, useLocalStorage } from "./misc";
+import { useLoadData } from "./misc";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
 import styles from "./Product.module.css";
+import { OrderIdContext } from "./App";
 
 export default function Product() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const [currentOrderId, setCurrentOrderId] = useLocalStorage("orderId");
+  const { currentOrderId, setCurrentOrderId } = useContext(OrderIdContext);
 
   const { data: productName } = useLoadData(getProductName, productId);
   useEffect(() => {
