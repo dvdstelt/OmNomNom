@@ -14,6 +14,7 @@
       <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
       <ProjectReference Include="..\Finance.Data\Finance.Data.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+      <ProjectReference Include="..\Shipping.ServiceComposition.Events\Shipping.ServiceComposition.Events.csproj" />
     </ItemGroup>
 
 </Project>

@@ -20,13 +20,15 @@ public class ProductLoadedSubscriber : ICompositionEventsSubscriber
     [HttpGet("/product/{productId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductLoaded>(async (@event, request) =>
+        publisher.Subscribe<ProductLoaded>((@event, request) =>
         {
             var productCollection = dbContext.Database.GetCollection<Product>();
             var product = productCollection.Query().Where(s => s.ProductId == @event.ProductId).Single();
 
             @event.Product.Price = product.Price;
             @event.Product.Discount = product.Discount;
+
+            return Task.CompletedTask;
         });
     }
 }

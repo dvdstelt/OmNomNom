@@ -20,7 +20,7 @@ class ProductsLoadedSubscriber : ICompositionEventsSubscriber
     [HttpGet("/products")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductsLoaded>(async (@event, request) =>
+        publisher.Subscribe<ProductsLoaded>((@event, request) =>
         {
             var col = dbContext.Database.GetCollection<Product>();
             // Can't find a way to query LiteDb with Contains, so we'll do it like this for now
@@ -32,6 +32,8 @@ class ProductsLoadedSubscriber : ICompositionEventsSubscriber
                 product.Value.Price = matchingProduct.Price;
                 product.Value.Discount = matchingProduct.Discount;
             }
+
+            return Task.CompletedTask;
         });
     }
 }

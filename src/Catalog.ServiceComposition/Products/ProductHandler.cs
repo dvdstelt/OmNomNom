@@ -31,7 +31,7 @@ public class ProductHandler : ICompositionRequestsHandler
         var inventoryCollection = dbContext.Database.GetCollection<InventorySnapshot>();
         var inventoryItem = inventoryCollection.Query().Where(s => s.ProductId == productId).Single();
 
-        var productModel = ModelMapper.MapToViewModel(product, inventoryItem);
+        var productModel = Mapper.MapToViewModel(product, inventoryItem);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductLoaded()
