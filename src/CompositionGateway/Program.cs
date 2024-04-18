@@ -1,5 +1,6 @@
 using ServiceComposer.AspNetCore;
 using Temporary;
+using Temporary.Caching;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +23,7 @@ builder.Services.AddViewModelComposition(o =>
 
 // Add cache which is used for storing the cart for now.
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(5);
-    options.Cookie.IsEssential = true;
-    options.Cookie.HttpOnly = true;
-});
-builder.Services.AddSingleton<OrderStorage>();
+builder.Services.AddSingleton<CacheHelper>();
 
 var app = builder.Build();
 
@@ -40,7 +35,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
-app.UseSession();
 
 app.UseHttpsRedirection();
 app.MapCompositionHandlers();

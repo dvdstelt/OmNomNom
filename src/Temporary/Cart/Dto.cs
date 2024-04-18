@@ -64,10 +64,13 @@ public class Product
 
 public class UserCart
 {
-    public const string SessionKeyName = "UserCart";
-
     public Guid OrderId { get; set; }
     public List<CartItem> Items { get; set; } = new();
+
+    public string FullName { get; set; }
+    public Address ShippingAddress { get; set; }
+    public Address BillingAddress { get; set; }
+
 }
 
 public class CartItem

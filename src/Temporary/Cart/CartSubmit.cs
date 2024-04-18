@@ -2,18 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
-using Temporary;
+using Temporary.Caching;
 
 namespace OmNomNom.Website.ViewModelComposition;
 
 public class CartSubmit : ICompositionRequestsHandler
 {
-    readonly IHttpContextAccessor httpContextAccessor;
-    private readonly OrderStorage storage;
+    readonly CacheHelper cacheHelper;
 
-    public CartSubmit(OrderStorage storage)
+    public CartSubmit(CacheHelper cacheHelper)
     {
-        this.storage = storage;
+        this.cacheHelper = cacheHelper;
     }
 
     [HttpPost("/cart/{orderId}")]
@@ -23,7 +22,7 @@ public class CartSubmit : ICompositionRequestsHandler
         var orderId = Guid.Parse(routeData.Values["orderId"] as string ?? throw new InvalidOperationException("OrderId can't be empty"));
 
         var res = await request.Bind<AddressModel>();
-        var order = storage.GetOrder(orderId);
+        var order = await cacheHelper.GetCart(orderId);
         order.FullName = res.Body.FullName;
         order.ShippingAddress = res.Body.ShippingAddress;
         order.BillingAddress = res.Body.BillingAddress;

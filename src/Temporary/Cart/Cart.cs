@@ -1,40 +1,39 @@
 ﻿using System.Dynamic;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Caching.Distributed;
 using ServiceComposer.AspNetCore;
 using Temporary;
+using Temporary.Caching;
 
 namespace OmNomNom.Website.ViewModelComposition;
 
 public class Cart : ICompositionRequestsHandler
 {
-    private readonly OrderStorage storage;
+    readonly CacheHelper cacheHelper;
 
-    public Cart(OrderStorage storage)
+    public Cart(CacheHelper cacheHelper)
     {
-        this.storage = storage;
+        this.cacheHelper = cacheHelper;
     }
 
     [HttpGet("/cart/{orderId}")]
-    public Task Handle(HttpRequest request)
+    public async Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
 
-        // Using the orderIdString we'll create a proper Guid and try to retrieve a potentially used address 
+        // Using the orderIdString we'll create a proper Guid and try to retrieve a potentially used address
         if (!Guid.TryParse(orderIdString, out var orderId))
             orderId = Guid.NewGuid();
 
         vm.OrderId = orderId;
-        
-        //var cartItems = new Dictionary<int, dynamic>();
-        //cartItems[0] = CreateCartItem(Guid.Parse("ff899e9d-4033-48d4-b189-e6ef4a3dc25b"), "Fremont Stout", 10, 3);;
-        //cartItems[1] = CreateCartItem(Guid.Parse("0b3dcc85-110b-4491-9946-d20c0a51917b"), "Heineken", 0.5m, 24);;
-        var order = storage.GetOrder(orderId);
-        vm.CartItems = order.Cart.Items;//cartItems.Values.ToList();
-        vm.TotalCartPrice = order.TotalCartPrice;
 
-        return Task.CompletedTask;
+        var cart = await cacheHelper.GetCart(orderId);
+
+        vm.CartItems = cart.Items;
+        vm.TotalCartPrice = 110; // TODO: Calculate this while retrieving
     }
 }
