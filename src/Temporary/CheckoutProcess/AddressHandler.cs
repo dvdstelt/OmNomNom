@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -10,11 +10,11 @@ namespace OmNomNom.Website.ViewModelComposition;
 
 public class AddressHandler : ICompositionRequestsHandler
 {
-    private readonly CacheHelper storage;
+    readonly CacheHelper cacheHelper;
 
-    public AddressHandler(CacheHelper storage)
+    public AddressHandler(CacheHelper cacheHelper)
     {
-        this.storage = storage;
+        this.cacheHelper = cacheHelper;
     }
 
     [HttpGet("/buy/address/{orderId}")]
@@ -23,7 +23,7 @@ public class AddressHandler : ICompositionRequestsHandler
         var vm = request.GetComposedResponseModel();
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
 
-        // Using the orderIdString we'll create a proper Guid and try to retrieve a potentially used address 
+        // Using the orderIdString we'll create a proper Guid and try to retrieve a potentially used address
         if (!Guid.TryParse(orderIdString, out var orderId))
             orderId = Guid.NewGuid();
 
