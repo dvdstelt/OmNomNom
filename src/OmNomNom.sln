@@ -11,6 +11,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Temporary", "Temporary\Temp
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactapp1.client", "reactapp1.client\reactapp1.client.esproj", "{82717886-C1F5-4974-826E-38D8DCD41080}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Catalog", "Catalog", "{7B824A1F-DEE4-43A6-BF71-6DBD462160DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{8AB38D16-F8C0-4785-A1F4-1C39701393B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shipping", "Shipping", "{98A50462-09B9-4B62-A18F-09C4D6A80C7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PaymentInfo", "PaymentInfo", "{E8520AE7-1EDF-4921-972F-C38513ADCD39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.ServiceComposition", "Catalog.ServiceComposition\Catalog.ServiceComposition.csproj", "{C27042B1-5B90-4866-AE7E-03F1B10D038E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.ServiceComposition", "Finance.ServiceComposition\Finance.ServiceComposition.csproj", "{9B6157E2-F922-4BF9-858C-3A1AC2B0B594}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentInfo.ServiceComposition", "PaymentInfo.ServiceComposition\PaymentInfo.ServiceComposition.csproj", "{3D55E902-9D9C-4DAC-A409-4283D65701B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipping.ServiceComposition", "Shipping.ServiceComposition\Shipping.ServiceComposition.csproj", "{15BAC01B-7EAC-4D8E-9201-E995D6085BA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,8 +51,30 @@ Global
 		{82717886-C1F5-4974-826E-38D8DCD41080}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82717886-C1F5-4974-826E-38D8DCD41080}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82717886-C1F5-4974-826E-38D8DCD41080}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C27042B1-5B90-4866-AE7E-03F1B10D038E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C27042B1-5B90-4866-AE7E-03F1B10D038E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C27042B1-5B90-4866-AE7E-03F1B10D038E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C27042B1-5B90-4866-AE7E-03F1B10D038E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B6157E2-F922-4BF9-858C-3A1AC2B0B594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B6157E2-F922-4BF9-858C-3A1AC2B0B594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B6157E2-F922-4BF9-858C-3A1AC2B0B594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B6157E2-F922-4BF9-858C-3A1AC2B0B594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D55E902-9D9C-4DAC-A409-4283D65701B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D55E902-9D9C-4DAC-A409-4283D65701B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D55E902-9D9C-4DAC-A409-4283D65701B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D55E902-9D9C-4DAC-A409-4283D65701B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BAC01B-7EAC-4D8E-9201-E995D6085BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BAC01B-7EAC-4D8E-9201-E995D6085BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BAC01B-7EAC-4D8E-9201-E995D6085BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BAC01B-7EAC-4D8E-9201-E995D6085BA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C27042B1-5B90-4866-AE7E-03F1B10D038E} = {7B824A1F-DEE4-43A6-BF71-6DBD462160DF}
+		{9B6157E2-F922-4BF9-858C-3A1AC2B0B594} = {8AB38D16-F8C0-4785-A1F4-1C39701393B3}
+		{3D55E902-9D9C-4DAC-A409-4283D65701B6} = {E8520AE7-1EDF-4921-972F-C38513ADCD39}
+		{15BAC01B-7EAC-4D8E-9201-E995D6085BA3} = {98A50462-09B9-4B62-A18F-09C4D6A80C7B}
 	EndGlobalSection
 EndGlobal
