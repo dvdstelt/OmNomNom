@@ -32,6 +32,6 @@ public class DeliveryOptionsHandler : ICompositionRequestsHandler
             DeliveryOptions = optionsModel
         });
 
-        vm.Products = optionsModel;
+        vm.DeliveryOptions = optionsModel;
     }
 }
