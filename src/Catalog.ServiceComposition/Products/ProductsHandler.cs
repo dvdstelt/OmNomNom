@@ -1,30 +1,42 @@
 ﻿using System.Dynamic;
+using Catalog.Data;
+using Catalog.Data.Models;
+using Catalog.ServiceComposition.Events;
+using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Products;
 
 public class ProductsHandler : ICompositionRequestsHandler
 {
-    public Task Handle(HttpRequest request)
+    readonly ILiteDbContext dbContext;
+
+    public ProductsHandler(CatalogDbContext dbContext) // with this name
+    {
+        this.dbContext = dbContext;
+    }
+
+    [HttpGet("/products")]
+    public async Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
 
+        var productCollection = dbContext.Database.GetCollection<Product>();
+        var products = productCollection.Query().ToList();
 
-    }
+        var inventoryCollection = dbContext.Database.GetCollection<InventorySnapshot>();
+        var inventory = inventoryCollection.Query().ToList();
 
-    IDictionary<int, dynamic> MapToDictionary(IEnumerable<Guid> availableProducts)
-    {
-        var availableProductsModel = new Dictionary<Guid, dynamic>();
+        var productsModel = ModelMapper.MapToDictionary(products, inventory);
 
-        foreach (var id in availableProducts)
+        var context = request.GetCompositionContext();
+        await context.RaiseEvent(new ProductsLoaded()
         {
-            dynamic vm = new ExpandoObject();
-            vm.ProductId = productId;
+            Products = productsModel
+        });
 
-            availableProductsModel[id] = vm;
-        }
-
-        return availableProductsModel;
+        vm.Products = productsModel;
     }
 }

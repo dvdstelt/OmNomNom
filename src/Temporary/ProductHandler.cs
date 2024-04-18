@@ -9,7 +9,7 @@ namespace OmNomNom.Website.ViewModelComposition;
 
 public class ProductHandler : ICompositionRequestsHandler
 {
-    [HttpGet("/product/{productId}")]
+    // [HttpGet("/product/{productId}")]
     public Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();

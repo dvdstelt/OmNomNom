@@ -67,8 +67,8 @@ public class UserCart
     public Guid OrderId { get; set; }
     public List<CartItem> Items { get; set; } = new();
 
-    public string FullName { get; set; }
-    public Address ShippingAddress { get; set; }
+    public string FullName { get; set; } = null!;
+    public Address ShippingAddress { get; set; } = null!;
     public Address BillingAddress { get; set; }
 
     public Guid? DeliveryOptionId { get; set; }
