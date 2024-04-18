@@ -13,7 +13,7 @@ public class ProductsHandler : ICompositionRequestsHandler
 {
     readonly ILiteDbContext dbContext;
 
-    public ProductsHandler(CatalogDbContext dbContext) // with this name
+    public ProductsHandler(CatalogDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
@@ -29,7 +29,7 @@ public class ProductsHandler : ICompositionRequestsHandler
         var inventoryCollection = dbContext.Database.GetCollection<InventorySnapshot>();
         var inventory = inventoryCollection.Query().ToList();
 
-        var productsModel = ModelMapper.MapToDictionary(products, inventory);
+        var productsModel = Mapper.MapToDictionary(products, inventory);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductsLoaded()

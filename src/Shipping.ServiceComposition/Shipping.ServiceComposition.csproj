@@ -10,4 +10,9 @@
       <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shipping.Data\Shipping.Data.csproj" />
+      <ProjectReference Include="..\Shipping.ServiceComposition.Events\Shipping.ServiceComposition.Events.csproj" />
+    </ItemGroup>
+
 </Project>

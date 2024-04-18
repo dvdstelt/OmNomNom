@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.Data", "Finance.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.ServiceComposition.Events", "Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj", "{65A49A81-46A8-4C6E-B076-15C4499497A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipping.Data", "Shipping.Data\Shipping.Data.csproj", "{F150148F-799D-4DAF-9512-BE9B350582FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipping.ServiceComposition.Events", "Shipping.ServiceComposition.Events\Shipping.ServiceComposition.Events.csproj", "{AA0A0C4F-568D-4766-AABE-486308AA83E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +97,14 @@ Global
 		{65A49A81-46A8-4C6E-B076-15C4499497A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65A49A81-46A8-4C6E-B076-15C4499497A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65A49A81-46A8-4C6E-B076-15C4499497A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F150148F-799D-4DAF-9512-BE9B350582FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F150148F-799D-4DAF-9512-BE9B350582FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F150148F-799D-4DAF-9512-BE9B350582FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F150148F-799D-4DAF-9512-BE9B350582FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA0A0C4F-568D-4766-AABE-486308AA83E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA0A0C4F-568D-4766-AABE-486308AA83E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA0A0C4F-568D-4766-AABE-486308AA83E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA0A0C4F-568D-4766-AABE-486308AA83E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,5 +118,7 @@ Global
 		{39DBCF47-A22D-42C2-94DD-65AACFCDCDD1} = {81B62C6B-1A13-45C6-8493-587F0E215A75}
 		{C2D44E05-5622-4C7E-9BD1-AFD0A839EDF0} = {8AB38D16-F8C0-4785-A1F4-1C39701393B3}
 		{65A49A81-46A8-4C6E-B076-15C4499497A9} = {7B824A1F-DEE4-43A6-BF71-6DBD462160DF}
+		{F150148F-799D-4DAF-9512-BE9B350582FC} = {98A50462-09B9-4B62-A18F-09C4D6A80C7B}
+		{AA0A0C4F-568D-4766-AABE-486308AA83E1} = {98A50462-09B9-4B62-A18F-09C4D6A80C7B}
 	EndGlobalSection
 EndGlobal

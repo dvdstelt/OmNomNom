@@ -11,9 +11,9 @@ public static class SeedData
     static readonly Guid RedBullId = Guid.Parse("9d081a68-2cd0-481a-8ee5-6e99dfa927f1");
     static readonly Guid MountainDewId = Guid.Parse("6bd65199-e702-4411-b71d-65c856d879f4");
 
-    static readonly Guid DeliveryOption1 = Guid.Parse("17779198-9ae4-419c-8373-65aa4c050cf7");
-    static readonly Guid DeliveryOption2 = Guid.Parse("6e114fc9-aecf-4815-970f-fedbd6709847");
-    static readonly Guid DeliveryOption3 = Guid.Parse("8008abc4-a60f-4217-9e2c-745aa9af7f2c");
+    static readonly Guid StandardId = Guid.Parse("17779198-9ae4-419c-8373-65aa4c050cf7");
+    static readonly Guid ExpeditedId = Guid.Parse("6e114fc9-aecf-4815-970f-fedbd6709847");
+    static readonly Guid PriorityId = Guid.Parse("8008abc4-a60f-4217-9e2c-745aa9af7f2c");
 
     public static IEnumerable<Product> Products()
     {
@@ -32,9 +32,9 @@ public static class SeedData
     {
         return new List<DeliveryOption>
         {
-            new() { DeliveryOptionId = DeliveryOption1, Price = 2 },
-            new() { DeliveryOptionId = DeliveryOption2, Price = 6 },
-            new() { DeliveryOptionId = DeliveryOption3, Price = 14 },
+            new() { DeliveryOptionId = StandardId, Price = 2 },
+            new() { DeliveryOptionId = ExpeditedId, Price = 6 },
+            new() { DeliveryOptionId = PriorityId, Price = 14 },
         };
     }
 }
