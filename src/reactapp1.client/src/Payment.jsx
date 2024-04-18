@@ -1,9 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoadData } from "./misc";
-import { getDeliveryOptions } from "./orderService";
 import ProgressBar, { Stages } from "./misc/ProgressBar";
-import DeliveryOptions from "./Shipping/DeliveryOptions";
-import Items from "./Shipping/Items";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Card, { CardType, CurrencyType } from "./Payment/Card";

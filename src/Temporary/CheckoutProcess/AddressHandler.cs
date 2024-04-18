@@ -4,20 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using Temporary;
+using Temporary.Caching;
 
 namespace OmNomNom.Website.ViewModelComposition;
 
 public class AddressHandler : ICompositionRequestsHandler
 {
-    private readonly OrderStorage storage;
+    private readonly CacheHelper storage;
 
-    public AddressHandler(OrderStorage storage)
+    public AddressHandler(CacheHelper storage)
     {
         this.storage = storage;
     }
 
     [HttpGet("/buy/address/{orderId}")]
-    public Task Handle(HttpRequest request)
+    public async Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
@@ -27,12 +28,10 @@ public class AddressHandler : ICompositionRequestsHandler
             orderId = Guid.NewGuid();
 
         vm.OrderId = orderId;
-        var order = storage.GetOrder(orderId);
+        var order = await storage.GetCart(orderId);
         vm.FullName = order.FullName;
         vm.ShippingAddress = order.ShippingAddress ?? new Address();
         vm.BillingAddress = order.BillingAddress ?? new Address();
         vm.IsBillingAddressSame = order.ShippingAddress == null || order.ShippingAddress.Equals(order.BillingAddress);
-
-        return Task.CompletedTask;
     }
 }

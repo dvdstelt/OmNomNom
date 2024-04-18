@@ -71,6 +71,7 @@ public class UserCart
     public Address ShippingAddress { get; set; }
     public Address BillingAddress { get; set; }
 
+    public Guid? DeliveryOptionId { get; set; }
 }
 
 public class CartItem

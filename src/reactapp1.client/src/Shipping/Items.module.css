@@ -4,6 +4,23 @@
   gap: 0.5em;
 }
 
+.itemContainer {
+  display: flex;
+  gap: 0.75em;
+}
+
+.imageContainer {
+  width: 7.5em;
+  height: 5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  height: 5em;
+}
+
 .item {
   display: flex;
   flex-direction: column;

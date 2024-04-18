@@ -2,14 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using Temporary;
+using Temporary.Caching;
 
 namespace OmNomNom.Website.ViewModelComposition;
 
 public class ShippingSubmit : ICompositionRequestsHandler
 {
-    private readonly OrderStorage storage;
+    private readonly CacheHelper storage;
 
-    public ShippingSubmit(OrderStorage storage)
+    public ShippingSubmit(CacheHelper storage)
     {
         this.storage = storage;
     }
@@ -18,7 +19,7 @@ public class ShippingSubmit : ICompositionRequestsHandler
     public async Task Handle(HttpRequest request)
     {
         var res = await request.Bind<ShippingModel>();
-        var order = storage.GetOrder(res.orderId);
+        var order = await storage.GetCart(res.orderId);
         order.DeliveryOptionId = res.Detail.DeliveryOptionId;
     }
 }

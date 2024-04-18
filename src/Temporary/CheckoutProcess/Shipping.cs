@@ -4,20 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using Temporary;
+using Temporary.Caching;
 
 namespace OmNomNom.Website.ViewModelComposition;
 
 public class Shipping : ICompositionRequestsHandler
 {
-    private readonly OrderStorage storage;
+    private readonly CacheHelper storage;
 
-    public Shipping(OrderStorage storage)
+    public Shipping(CacheHelper storage)
     {
         this.storage = storage;
     }
 
     [HttpGet("/buy/shipping/{orderId}")]
-    public Task Handle(HttpRequest request)
+    public async Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
@@ -27,11 +28,9 @@ public class Shipping : ICompositionRequestsHandler
             orderId = Guid.NewGuid();
 
         vm.OrderId = orderId;
-        var order = storage.GetOrder(orderId);
+        var order = await storage.GetCart(orderId);
         var deliveryOptions = DeliveryOptions.GetAllDeliveryOptions();
         vm.DeliveryOptions = deliveryOptions;
         vm.SelectedId = order.DeliveryOptionId ?? deliveryOptions[0].Id;
-
-        return Task.CompletedTask;
     }
 }
