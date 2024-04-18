@@ -1,4 +1,4 @@
-using System.Dynamic;
+﻿using System.Dynamic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -27,8 +27,8 @@ public class AddressHandler : ICompositionRequestsHandler
         if (!Guid.TryParse(orderIdString, out var orderId))
             orderId = Guid.NewGuid();
 
+        var order = await cacheHelper.GetCart(orderId);
         vm.OrderId = orderId;
-        var order = await storage.GetCart(orderId);
         vm.FullName = order.FullName;
         vm.ShippingAddress = order.ShippingAddress ?? new Address();
         vm.BillingAddress = order.BillingAddress ?? new Address();

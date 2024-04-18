@@ -10,4 +10,10 @@
       <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
+      <ProjectReference Include="..\Finance.Data\Finance.Data.csproj" />
+      <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
