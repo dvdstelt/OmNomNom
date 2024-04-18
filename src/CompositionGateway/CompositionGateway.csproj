@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Catalog.ServiceComposition\Catalog.ServiceComposition.csproj" />
       <ProjectReference Include="..\Finance.ServiceComposition\Finance.ServiceComposition.csproj" />
+      <ProjectReference Include="..\Shipping.ServiceComposition\Shipping.ServiceComposition.csproj" />
       <ProjectReference Include="..\Temporary\Temporary.csproj" />
     </ItemGroup>
 
