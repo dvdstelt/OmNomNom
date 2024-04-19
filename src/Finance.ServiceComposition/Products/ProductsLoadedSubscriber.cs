@@ -22,9 +22,9 @@ class ProductsLoadedSubscriber : ICompositionEventsSubscriber
     {
         publisher.Subscribe<ProductsLoaded>((@event, request) =>
         {
-            var col = dbContext.Database.GetCollection<Product>();
+            var productsCollection = dbContext.Database.GetCollection<Product>();
             // Can't find a way to query LiteDb with Contains, so we'll do it like this for now
-            var resultSet = col.Query().ToList();
+            var resultSet = productsCollection.Query().ToList();
 
             foreach (var product in @event.Products)
             {

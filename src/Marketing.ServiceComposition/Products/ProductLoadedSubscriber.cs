@@ -1,14 +1,13 @@
 ﻿using Catalog.ServiceComposition.Events;
-using Finance.Data;
-using Finance.Data.Models;
 using ITOps.Shared;
+using Marketing.Data;
+using Marketing.Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Products;
+namespace Marketing.ServiceComposition.Products;
 
-public class ProductLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
+class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEventsSubscriber
 {
     readonly ILiteDbContext dbContext = dbContext;
 
@@ -20,8 +19,8 @@ public class ProductLoadedSubscriber(FinanceDbContext dbContext) : ICompositionE
             var productCollection = dbContext.Database.GetCollection<Product>();
             var product = productCollection.Query().Where(s => s.ProductId == @event.ProductId).Single();
 
-            @event.Product.Price = product.Price;
-            @event.Product.Discount = product.Discount;
+            @event.Product.Stars = product.Stars;
+            @event.Product.ReviewCount = product.ReviewCount;
 
             return Task.CompletedTask;
         });
