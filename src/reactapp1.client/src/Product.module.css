@@ -26,6 +26,23 @@
   justify-content: space-between;
   align-items: baseline;
   height: 10em;
+  gap: 2em;
+}
+
+.imageAndDetails .productDetails .priceDetails {
+  flex: 0;
+}
+
+.imageAndDetails .productDetails .priceDetails * {
+  width: max-content;
+}
+
+.imageAndDetails .productDetails .descriptionAndStock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1em;
+  height: 100%;
 }
 
 .imageAndDetails .productDetails > div {
