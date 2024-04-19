@@ -27,11 +27,17 @@ public class AddToCartHandler : ICompositionRequestsHandler
 
         var existingCartItem = cart?.Items.SingleOrDefault(s => s.ProductId == productToAdd.Detail.Id);
         if (existingCartItem != null)
+        {
             existingCartItem.Quantity += productToAdd.Detail.Quantity;
+            if (existingCartItem.Quantity == 0)
+            {
+                cart?.Items.Remove(existingCartItem);
+            }
+        }
         else
         {
             var newCartItem = new CartItem()
-                { ProductId = productToAdd.Detail.Id, Quantity = productToAdd.Detail.Quantity };
+            { ProductId = productToAdd.Detail.Id, Quantity = productToAdd.Detail.Quantity };
 
             cart?.Items.Add(newCartItem);
         }

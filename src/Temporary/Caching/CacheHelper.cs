@@ -25,7 +25,7 @@ public class CacheHelper(IDistributedCache distributedCache)
         var shortOrderId = cart.OrderId.ToString()[..8];
 
         var options = new DistributedCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+            .SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
         var serializedCart = JsonSerializer.Serialize(cart);
         await distributedCache.SetAsync($"{UserCartSessionKeyName}{shortOrderId}", Encoding.UTF8.GetBytes(serializedCart), options);
