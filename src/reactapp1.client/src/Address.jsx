@@ -35,7 +35,7 @@ export default function Address() {
       const [_, setBillingAddress] = billingAddressState;
       setBillingAddress(addressModel.billingAddress);
     }
-    setFullName(addressModel.fullName);
+    setFullName(addressModel.fullName ?? "");
     setBillingSameAsShipping(addressModel.isBillingAddressSame);
   }
 
