@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLoadData } from "../misc";
 import { getCartItems } from "../orderService";
 import ItemRow from "./ItemRow";
@@ -5,7 +6,8 @@ import ItemRow from "./ItemRow";
 import styles from "./Items.module.css";
 
 export default function Items({ id }) {
-  const { data: items } = useLoadData(getCartItems, id);
+  const [refreshTrigger, setRefreshTrigger] = useState(crypto.randomUUID());
+  const { data: items } = useLoadData(getCartItems, id, { refreshTrigger });
 
   return (
     <table className={styles.items}>
@@ -18,7 +20,11 @@ export default function Items({ id }) {
       </thead>
       <tbody>
         {(items ?? []).map((item) => (
-          <ItemRow key={item.productId} item={item} />
+          <ItemRow
+            key={item.productId}
+            item={item}
+            onChange={() => setRefreshTrigger(crypto.randomUUID())}
+          />
         ))}
       </tbody>
     </table>
