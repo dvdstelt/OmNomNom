@@ -3,7 +3,11 @@ import ProductImage from "./Product/ProductImage";
 import ProductRating from "./Product/ProductRating";
 import ShippingDetails from "./Product/ShippingDetails";
 import StockDetails from "./Product/StockDetails";
-import { addProductToCart, getProductName } from "./productService";
+import {
+  addProductToCart,
+  getProductDescription,
+  getProductName,
+} from "./productService";
 import { useLoadData } from "./misc";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
@@ -17,6 +21,10 @@ export default function Product() {
   const { currentOrderId, setCurrentOrderId } = useContext(OrderIdContext);
 
   const { data: productName } = useLoadData(getProductName, productId);
+  const { data: productDescription } = useLoadData(
+    getProductDescription,
+    productId
+  );
   useEffect(() => {
     document.title = `${productName} - omnomnom.com`;
   }, [productName]);
@@ -37,8 +45,13 @@ export default function Product() {
         <ProductImage id={productId} className={styles.productImage} />
         <div className={styles.productDetailsAndInfo}>
           <div className={styles.productDetails}>
-            <StockDetails id={productId} />
-            <PriceDetails id={productId} />
+            <div className={styles.descriptionAndStock}>
+              <span>{productDescription}</span>
+              <StockDetails id={productId} />
+            </div>
+            <div className={styles.priceDetails}>
+              <PriceDetails id={productId} />
+            </div>
           </div>
           <div className={styles.buttonGroup}>
             <button type="button" onClick={addToCart}>

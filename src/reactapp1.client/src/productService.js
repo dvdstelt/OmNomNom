@@ -31,6 +31,11 @@ export async function getProductName(id) {
   return model.name;
 }
 
+export async function getProductDescription(id) {
+  const model = await memoisedProduct(id);
+  return model.description;
+}
+
 export async function getProductImage(id) {
   const model = await memoisedProduct(id);
   return model.imageUrl;
