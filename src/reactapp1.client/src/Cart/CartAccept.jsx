@@ -21,10 +21,6 @@ export default function CartAccept({ id, className }) {
           <Price price={total} />
         </span>
       </div>
-      <div>
-        <input id="gift" type="checkbox" />
-        <label htmlFor="gift">This list contains a gift</label>
-      </div>
       <button onClick={proceed}>Proceed to Checkout</button>
     </div>
   );
