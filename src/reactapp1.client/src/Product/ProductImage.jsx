@@ -7,6 +7,12 @@ export default function ProductImage({ id, className }) {
   return loading ? (
     <div>Loading...</div>
   ) : (
-    imageSrc && <img className={className} src={imageSrc} alt="product image" />
+    imageSrc && (
+      <img
+        className={className}
+        src={`/products/${imageSrc}`}
+        alt="product image"
+      />
+    )
   );
 }

@@ -33,7 +33,7 @@ export async function getProductName(id) {
 
 export async function getProductImage(id) {
   const model = await memoisedProduct(id);
-  return model.image;
+  return model.imageUrl;
 }
 
 export async function getProductRating(id) {
