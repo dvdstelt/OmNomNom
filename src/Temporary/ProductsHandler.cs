@@ -8,7 +8,7 @@ namespace OmNomNom.Website.ViewModelComposition;
 
 public class ProductsHandler : ICompositionRequestsHandler
 {
-    [HttpGet("/products")]
+    //[HttpGet("/products")]
     public Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
