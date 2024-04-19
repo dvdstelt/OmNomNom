@@ -31,7 +31,7 @@ public class Cart : ICompositionRequestsHandler
 
         vm.OrderId = orderId;
 
-        var cart = await cacheHelper.GetCart(orderId);
+        UserCart cart = await cacheHelper.GetCart(orderId);
 
         vm.CartItems = cart.Items;
         vm.TotalCartPrice = 110; // TODO: Calculate this while retrieving

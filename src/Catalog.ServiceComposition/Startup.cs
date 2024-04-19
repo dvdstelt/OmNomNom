@@ -1,7 +1,7 @@
 ﻿using Catalog.Data;
 using Catalog.Data.Migrations;
+using Catalog.ServiceComposition.Helpers;
 using ITOps.Shared;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
 
@@ -16,5 +16,6 @@ public class Startup : IViewModelCompositionOptionsCustomization
             var dbOptions = new LiteDbOptions("catalog", DatabaseInitializer.Initialize);
             return new CatalogDbContext(dbOptions);
         });
+        options.Services.AddSingleton<CacheHelper>();
     }
 }
