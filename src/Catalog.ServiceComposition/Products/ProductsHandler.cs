@@ -37,6 +37,6 @@ public class ProductsHandler : ICompositionRequestsHandler
             Products = productsModel
         });
 
-        vm.Products = productsModel.Values;
+        vm.Products = productsModel.Values.ToList();
     }
 }

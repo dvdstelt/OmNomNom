@@ -1,37 +1,39 @@
 ﻿using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Finance.Data.Models;
-using ITOps.Shared;
-using LiteDB;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Products;
+namespace Finance.ServiceComposition.Orders;
 
-class ProductsLoadedSubscriber : ICompositionEventsSubscriber
+public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    readonly ILiteDbContext dbContext;
+    readonly FinanceDbContext dbContext = dbContext;
 
-    public ProductsLoadedSubscriber(FinanceDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
-    [HttpGet("/products")]
+    [HttpGet("/cart/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductsLoaded>((@event, request) =>
+        publisher.Subscribe<CartLoaded>((@event, request) =>
         {
             var productsCollection = dbContext.Database.GetCollection<Product>();
             // TODO: Figure out if `Contains` is possible with LiteDb
             var resultSet = productsCollection.Query().ToList();
 
-            foreach (var product in @event.Products)
+            decimal totalPrice = 0;
+
+            foreach (var product in @event.OrderedProducts)
             {
                 var matchingProduct  = resultSet.Single(s => s.ProductId == product.Key);
                 product.Value.Price = matchingProduct.Price;
                 product.Value.Discount = matchingProduct.Discount;
+
+                var itemPrice = matchingProduct.Price * (int)product.Value.Quantity;
+                var discount = itemPrice / 100 * matchingProduct.Discount;
+                totalPrice += itemPrice - discount;
             }
+
+            var vm = request.GetComposedResponseModel();
+            vm.TotalCartPrice = totalPrice;
 
             return Task.CompletedTask;
         });
