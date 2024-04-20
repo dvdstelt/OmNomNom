@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 
-namespace Catalog.ServiceComposition.Orders;
+namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class CartHandler(CacheHelper cacheHelper, CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class ShoppingCartHandler(CacheHelper cacheHelper, CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     readonly CacheHelper cacheHelper = cacheHelper;
     readonly CatalogDbContext dbContext = dbContext;

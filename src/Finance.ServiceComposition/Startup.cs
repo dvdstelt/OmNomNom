@@ -1,5 +1,5 @@
-﻿using Catalog.Data.Migrations;
-using Finance.Data;
+﻿using Finance.Data;
+using Finance.Data.Migrations;
 using ITOps.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

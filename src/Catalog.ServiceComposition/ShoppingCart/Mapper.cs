@@ -1,8 +1,7 @@
 ﻿using System.Dynamic;
-using System.Runtime.InteropServices;
 using Catalog.Data.Models;
 
-namespace Catalog.ServiceComposition.Orders;
+namespace Catalog.ServiceComposition.ShoppingCart;
 
 public static class Mapper
 {
@@ -13,14 +12,14 @@ public static class Mapper
         foreach (var product in order.Products)
         {
             dynamic vm = new ExpandoObject();
-            vm.ProductId = product.Value.ProductId;
-            vm.Quantity = product.Value.Quantity;
+            vm.ProductId = product.ProductId;
+            vm.Quantity = product.Quantity;
 
-            var matchingProduct = products.Single(p => p.ProductId == product.Value.ProductId);
+            var matchingProduct = products.Single(p => p.ProductId == product.ProductId);
             vm.Name = matchingProduct.Name;
             vm.ImageUrl = matchingProduct.ImageUrl;
 
-            productsViewModel[product.Value.ProductId] = vm;
+            productsViewModel[product.ProductId] = vm;
         }
 
         return productsViewModel;

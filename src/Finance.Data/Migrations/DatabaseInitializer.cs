@@ -1,7 +1,7 @@
 ﻿using Finance.Data.Models;
 using LiteDB;
 
-namespace Catalog.Data.Migrations;
+namespace Finance.Data.Migrations;
 
 public static class DatabaseInitializer
 {
