@@ -1,3 +1,4 @@
+using ITOps.Shared.EndpointConfiguration;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +15,17 @@ builder.Services.AddCors(options =>
                        .AllowAnyHeader();
             }));
 builder.Services.AddControllers();
-builder.Services.AddViewModelComposition(o =>
+builder.Services.AddViewModelComposition();
+
+var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
+endpointConfiguration.Configure(s =>
 {
-    o.EnableWriteSupport();
+    // TODO: Figure out how this can be defined per service and not globally
+    s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");
+    s.RouteToEndpoint(typeof(Catalog.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Catalog");
 });
+endpointConfiguration.SendOnly();
+builder.UseNServiceBus(endpointConfiguration);
 
 // Add cache which is used for storing the cart for now.
 builder.Services.AddDistributedMemoryCache();

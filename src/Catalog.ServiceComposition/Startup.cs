@@ -2,8 +2,10 @@
 using Catalog.Data.Migrations;
 using Catalog.ServiceComposition.Helpers;
 using ITOps.Shared;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
+using NServiceBus;
 
 namespace Catalog.ServiceComposition;
 

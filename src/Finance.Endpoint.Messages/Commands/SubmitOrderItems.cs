@@ -1,10 +1,9 @@
-﻿namespace Finance.Data.Models;
+﻿namespace Finance.Endpoint.Messages.Commands;
 
-public class Order
+public class SubmitOrderItems
 {
     public Guid OrderId { get; set; }
-    public List<OrderItem> Items { get; set; } = [];
-    public Address BillingAddress { get; set; } = new();
+    public List<OrderItem> Items { get; set; } = new();
 }
 
 public class OrderItem

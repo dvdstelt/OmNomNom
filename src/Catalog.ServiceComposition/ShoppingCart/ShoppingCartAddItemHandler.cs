@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
-namespace Catalog.ServiceComposition.Orders;
+namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class AddProductToCartHandler(CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/addproduct/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -16,17 +16,17 @@ public class AddProductToCartHandler(CacheHelper cacheHelper) : ICompositionRequ
         var productId = productToAdd.Detail.Id;
 
         var order = await cacheHelper.GetOrder(orderId);
-        var existingOrderItem = order.Products.SingleOrDefault(p => p.Key == productId);
-        if (existingOrderItem.Value != null)
+        var existingOrderItem = order.Products.SingleOrDefault(p => p.ProductId == productId);
+        if (existingOrderItem != null)
         {
-            existingOrderItem.Value.Quantity += productToAdd.Detail.Quantity;
-            if (existingOrderItem.Value.Quantity <= 0)
-                order.Products.TryRemove(existingOrderItem);
+            existingOrderItem.Quantity += productToAdd.Detail.Quantity;
+            if (existingOrderItem.Quantity <= 0)
+                order.Products.Remove(existingOrderItem);
         }
         else
         {
-            var orderItem = new OrderProduct() { ProductId = productId, Quantity = productToAdd.Detail.Quantity };
-            order.Products.TryAdd(productId, orderItem);
+            var orderItem = new OrderItem() { ProductId = productId, Quantity = productToAdd.Detail.Quantity };
+            order.Products.Add(orderItem);
         }
 
         await cacheHelper.StoreOrder(order);

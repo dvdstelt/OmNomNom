@@ -1,12 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿namespace Catalog.Endpoint.Messages.Commands;
 
-namespace Catalog.Data.Models;
-
-public class Order
+public class SubmitOrderItems
 {
     public Guid OrderId { get; set; }
-
-    public List<OrderItem> Products { get; set; } = [];
+    public List<OrderItem> Items { get; set; } = new();
 }
 
 public class OrderItem
