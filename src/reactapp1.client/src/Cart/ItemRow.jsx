@@ -27,7 +27,7 @@ export default function ItemRow({ item, onChange }) {
 
   async function increaseQuantity() {
     await addProductToCart(currentOrderId, { id: item.productId, quantity: 1 });
-    onChange();
+    onChange && onChange();
   }
 
   return (
