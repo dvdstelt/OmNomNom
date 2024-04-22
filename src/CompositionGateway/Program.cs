@@ -23,6 +23,7 @@ endpointConfiguration.Configure(s =>
     // TODO: Figure out how this can be defined per service and not globally
     s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");
     s.RouteToEndpoint(typeof(Catalog.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Catalog");
+    s.RouteToEndpoint(typeof(Shipping.Endpoint.Messages.Commands.SubmitDeliveryOption).Assembly, "Shipping");
 });
 endpointConfiguration.SendOnly();
 builder.UseNServiceBus(endpointConfiguration);
