@@ -32,6 +32,6 @@ public class DeliveryOptionsHandler : ICompositionRequestsHandler
             DeliveryOptions = optionsModel
         });
 
-        vm.DeliveryOptions = optionsModel;
+        vm.DeliveryOptions = optionsModel.Select(kvp => kvp.Value);
     }
 }
