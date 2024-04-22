@@ -36,7 +36,15 @@ export default function Address() {
       setBillingAddress(addressModel.billingAddress);
     }
     setFullName(addressModel.fullName ?? "");
-    setBillingSameAsShipping(addressModel.isBillingAddressSame);
+    setBillingSameAsShipping(
+      Object.keys(blankAddress)
+        .filter((keyName) => keyName !== "id")
+        .every(
+          (keyName) =>
+            addressModel.shippingAddress[keyName] ===
+            addressModel.billingAddress[keyName]
+        )
+    );
   }
 
   useEffect(() => {
