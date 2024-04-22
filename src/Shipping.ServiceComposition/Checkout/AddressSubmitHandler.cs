@@ -1,10 +1,10 @@
-﻿using Finance.Data.Models;
-using Finance.Endpoint.Messages.Commands;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
+using Shipping.Data.Models;
+using Shipping.Endpoint.Messages.Commands;
 
-namespace Finance.ServiceComposition.Checkout;
+namespace Shipping.ServiceComposition.Checkout;
 
 public class AddressSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
@@ -15,14 +15,14 @@ public class AddressSubmitHandler(IMessageSession messageSession) : IComposition
     {
         var submitted = await request.Bind<OrderAddressDetails>();
 
-        var message = new SubmitBillingAddress()
+        var message = new SubmitShippingAddress()
         {
             OrderId = submitted.OrderId,
-            FullName = submitted.Details.BillingAddress.FullName,
-            Street = submitted.Details.BillingAddress.Street,
-            ZipCode = submitted.Details.BillingAddress.ZipCode,
-            Town = submitted.Details.BillingAddress.Town,
-            Country = submitted.Details.BillingAddress.Country,
+            FullName = submitted.Details.ShippingAddress.FullName,
+            Street = submitted.Details.ShippingAddress.Street,
+            ZipCode = submitted.Details.ShippingAddress.ZipCode,
+            Town = submitted.Details.ShippingAddress.Town,
+            Country = submitted.Details.ShippingAddress.Country,
         };
     }
 
@@ -33,7 +33,7 @@ public class AddressSubmitHandler(IMessageSession messageSession) : IComposition
 
         public class OrderAddress
         {
-            public Address BillingAddress { get; set; }
+            public Address ShippingAddress { get; set; }
         }
     }
 }
