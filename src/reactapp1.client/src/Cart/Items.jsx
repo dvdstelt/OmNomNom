@@ -1,20 +1,8 @@
-import { useEffect, useState } from "react";
-import { useLoadData } from "../misc";
-import { getCartItems } from "../orderService";
 import ItemRow from "./ItemRow";
-import { useNavigate } from "react-router-dom";
 
 import styles from "./Items.module.css";
 
-export default function Items({ id }) {
-  const [refreshTrigger, setRefreshTrigger] = useState(crypto.randomUUID());
-  const { data: items } = useLoadData(getCartItems, id, { refreshTrigger });
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (items?.length === 0) navigate("/");
-  });
-
+export default function Items({ items, refreshCart }) {
   return (
     <table className={styles.items}>
       <thead>
@@ -26,11 +14,7 @@ export default function Items({ id }) {
       </thead>
       <tbody>
         {(items ?? []).map((item) => (
-          <ItemRow
-            key={item.productId}
-            item={item}
-            onChange={() => setRefreshTrigger(crypto.randomUUID())}
-          />
+          <ItemRow key={item.productId} item={item} onChange={refreshCart} />
         ))}
       </tbody>
     </table>

@@ -40,7 +40,7 @@ public class AddressHandler(ShippingDbContext dbContext) : ICompositionRequestsH
         // of the best football team in The Netherlands!
         return new Address()
         {
-            Fullname = "Dennis van der Stelt",
+            FullName = "Dennis van der Stelt",
             Street = "Van Zandvlietplein 1",
             ZipCode = "3077 AA",
             Town = "Rotterdam",

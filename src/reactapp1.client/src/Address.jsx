@@ -35,7 +35,7 @@ export default function Address() {
       const [_, setBillingAddress] = billingAddressState;
       setBillingAddress(addressModel.billingAddress);
     }
-    setFullName(addressModel.fullName ?? "");
+    setFullName(addressModel.shippingAddress.fullName ?? "");
     setBillingSameAsShipping(
       Object.keys(blankAddress)
         .filter((keyName) => keyName !== "id")
@@ -55,7 +55,7 @@ export default function Address() {
     const [shippingAddress] = shippingAddressState;
     const [billingAddress] = billingAddressState;
 
-    await axios.post(`https://localhost:7126/cart/${orderId}`, {
+    await axios.post(`https://localhost:7126/buy/address/${orderId}`, {
       fullName,
       shippingAddress,
       billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
