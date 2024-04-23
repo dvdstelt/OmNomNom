@@ -19,6 +19,7 @@
       <ProjectReference Include="..\Catalog.ServiceComposition\Catalog.ServiceComposition.csproj" />
       <ProjectReference Include="..\Finance.ServiceComposition\Finance.ServiceComposition.csproj" />
       <ProjectReference Include="..\Marketing.ServiceComposition\Marketing.ServiceComposition.csproj" />
+      <ProjectReference Include="..\PaymentInfo.Endpoint.Messages\PaymentInfo.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\PaymentInfo.ServiceComposition\PaymentInfo.ServiceComposition.csproj" />
       <ProjectReference Include="..\Shipping.ServiceComposition\Shipping.ServiceComposition.csproj" />
     </ItemGroup>

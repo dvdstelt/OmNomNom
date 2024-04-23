@@ -9,21 +9,12 @@ namespace Finance.ServiceComposition;
 
 public class Startup : IViewModelCompositionOptionsCustomization
 {
-    // public Startup(IConfiguration configuration)
-    // {
-    //     Configuration = configuration;
-    // }
-    //
-    // IConfiguration Configuration { get; }
-
     public void Customize(ViewModelCompositionOptions options)
     {
-        // options.Services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptionsFinance"))
-        //     .Configure<LiteDbOptions>(s =>
-        //     {
-        //         s.DatabaseName = "finance";
-        //         s.DatabaseInitializer = DatabaseInitializer.Initialize;
-        //     });
-        options.Services.AddSingleton<FinanceDbContext>(provider => new FinanceDbContext(new LiteDbOptions("finance", DatabaseInitializer.Initialize)));
+        options.Services.AddSingleton<FinanceDbContext>(provider =>
+        {
+            var liteDbOptions = new LiteDbOptions("finance", DatabaseInitializer.Initialize);
+            return new FinanceDbContext(liteDbOptions);
+        });
     }
 }

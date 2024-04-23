@@ -24,6 +24,7 @@ endpointConfiguration.Configure(s =>
     s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");
     s.RouteToEndpoint(typeof(Catalog.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Catalog");
     s.RouteToEndpoint(typeof(Shipping.Endpoint.Messages.Commands.SubmitDeliveryOption).Assembly, "Shipping");
+    s.RouteToEndpoint(typeof(PaymentInfo.Endpoint.Messages.Commands.SubmitPaymentInfo).Assembly, "PaymentInfo");
 });
 endpointConfiguration.SendOnly();
 builder.UseNServiceBus(endpointConfiguration);
