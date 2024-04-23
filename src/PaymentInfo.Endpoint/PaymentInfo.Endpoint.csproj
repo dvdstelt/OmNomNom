@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\PaymentInfo.Data\PaymentInfo.Data.csproj" />
       <ProjectReference Include="..\PaymentInfo.Endpoint.Messages\PaymentInfo.Endpoint.Messages.csproj" />
     </ItemGroup>

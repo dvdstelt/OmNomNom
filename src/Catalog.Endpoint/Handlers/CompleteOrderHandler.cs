@@ -6,16 +6,9 @@ using NServiceBus.Logging;
 
 namespace Catalog.Endpoint.Handlers;
 
-public class CompleteOrderHandler : IHandleMessages<CompleteOrder>
+public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<CompleteOrder>
 {
-    private readonly CatalogDbContext dbContext;
-    
     static ILog log = LogManager.GetLogger<CompleteOrderHandler>();
-
-    public CompleteOrderHandler(CatalogDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
 
     public async Task Handle(CompleteOrder message, IMessageHandlerContext context)
     {
