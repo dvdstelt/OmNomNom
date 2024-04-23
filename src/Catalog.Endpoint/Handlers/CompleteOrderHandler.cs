@@ -20,6 +20,7 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
 
         var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).Single();
 
+        // Verify for each product that is being ordered if there's enough in stock
         var itemsNotFulfilled = new OrderItemsNotFulfilled();
         itemsNotFulfilled.OrderId = message.OrderId;
         foreach (var orderItem in order.Products)
@@ -57,6 +58,9 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
             return;
         }
 
+        // We should figure out what could be ordered and what not, but don't want to make the
+        // solution too difficult. Let's continue...
+        
         var orderAccepted = new OrderAccepted() { OrderId = message.OrderId };
         await context.Publish(orderAccepted);
         

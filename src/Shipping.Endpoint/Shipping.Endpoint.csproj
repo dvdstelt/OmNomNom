@@ -14,7 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+      <ProjectReference Include="..\PaymentInfo.Endpoint.Messages\PaymentInfo.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Shipping.Data\Shipping.Data.csproj" />
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
     </ItemGroup>
