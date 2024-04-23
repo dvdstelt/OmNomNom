@@ -9,8 +9,6 @@ namespace Finance.ServiceComposition.Checkout;
 
 public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHandler
 {
-    readonly FinanceDbContext dbContext = dbContext;
-
     [HttpGet("/buy/address/{orderId}")]
     public Task Handle(HttpRequest request)
     {

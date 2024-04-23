@@ -7,8 +7,6 @@ namespace Shipping.ServiceComposition.Checkout;
 
 public class DeliveryOptionSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession messageSession = messageSession;
-
     [HttpPost("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
     {

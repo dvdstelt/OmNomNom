@@ -7,8 +7,6 @@ namespace PaymentInfo.ServiceComposition.Checkout;
 
 public class CreditCardSubmit(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession messageSession = messageSession;
-
     [HttpPost("/buy/creditcard/{creditCardId}")]
     public async Task Handle(HttpRequest request)
     {

@@ -11,9 +11,6 @@ namespace Catalog.ServiceComposition.ShoppingCart;
 
 public class ShoppingCartHandler(CacheHelper cacheHelper, CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
-    readonly CacheHelper cacheHelper = cacheHelper;
-    readonly CatalogDbContext dbContext = dbContext;
-
     [HttpGet("/cart/{orderId}")]
     public async Task Handle(HttpRequest request)
     {

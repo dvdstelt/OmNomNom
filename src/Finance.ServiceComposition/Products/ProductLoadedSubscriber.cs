@@ -10,8 +10,6 @@ namespace Finance.ServiceComposition.Products;
 
 public class ProductLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    readonly ILiteDbContext dbContext = dbContext;
-
     [HttpGet("/product/{productId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

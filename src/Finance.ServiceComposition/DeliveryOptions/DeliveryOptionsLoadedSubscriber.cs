@@ -6,15 +6,8 @@ using Shipping.ServiceComposition.Events;
 
 namespace Finance.ServiceComposition.DeliveryOptions;
 
-public class DeliveryOptionsLoadedSubscriber : ICompositionEventsSubscriber
+public class DeliveryOptionsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    private readonly FinanceDbContext dbContext;
-
-    public DeliveryOptionsLoadedSubscriber(FinanceDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-    
     [HttpGet("/deliveryoptions")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

@@ -8,14 +8,9 @@ using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
 
-class ProductsLoadedSubscriber : ICompositionEventsSubscriber
+class ProductsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    readonly ILiteDbContext dbContext;
-
-    public ProductsLoadedSubscriber(FinanceDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
+    readonly ILiteDbContext dbContext = dbContext;
 
     [HttpGet("/products")]
     public void Subscribe(ICompositionEventsPublisher publisher)

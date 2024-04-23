@@ -8,8 +8,6 @@ namespace Finance.ServiceComposition.Orders;
 
 public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    readonly FinanceDbContext dbContext = dbContext;
-
     [HttpGet("/cart/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

@@ -8,8 +8,6 @@ namespace PaymentInfo.ServiceComposition.Checkout;
 
 public class CreditCard(PaymentInfoDbContext dbContext) : ICompositionRequestsHandler
 {
-    readonly PaymentInfoDbContext dbContext = dbContext;
-
     [HttpGet("/buy/creditcard/{customerId}")]
     public Task Handle(HttpRequest request)
     {

@@ -8,7 +8,6 @@ namespace Catalog.ServiceComposition.Helpers;
 public class CacheHelper(IDistributedCache distributedCache)
 {
     const string OrderSessionKeyName = "UserOrder";
-    readonly IDistributedCache distributedCache = distributedCache;
 
     public async Task<Order> GetOrder(Guid orderId)
     {
