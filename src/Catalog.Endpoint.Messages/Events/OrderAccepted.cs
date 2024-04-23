@@ -1,4 +1,4 @@
-﻿namespace Catalog.Endpoint.Messages.Commands;
+﻿namespace Catalog.Endpoint.Messages.Events;
 
 public class OrderAccepted
 {

@@ -1,4 +1,5 @@
 ﻿using Catalog.Endpoint.Messages.Commands;
+using Catalog.Endpoint.Messages.Events;
 using NServiceBus.Logging;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Models;
