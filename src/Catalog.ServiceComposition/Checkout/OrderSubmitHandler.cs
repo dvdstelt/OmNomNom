@@ -1,22 +1,22 @@
 ﻿using Catalog.Endpoint.Messages.Commands;
+using Catalog.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class OrderSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
+public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
-    readonly IMessageSession messageSession = messageSession;
-
     [HttpPost("/cart/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
-        var submitted = await request.Bind<ShoppingCart>();
-
+        var data = await request.Bind<ShoppingCart>();
+        var order = await cacheHelper.GetOrder(data.OrderId);
+        
         var message = new SubmitOrderItems();
-        message.OrderId = submitted.OrderId;
-        foreach (var item in submitted.Items)
+        message.OrderId = data.OrderId;
+        foreach (var item in order.Products)
         {
             message.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity });
         }
@@ -27,12 +27,5 @@ public class OrderSubmitHandler(IMessageSession messageSession) : ICompositionRe
     class ShoppingCart
     {
         [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public List<ShoppingCartItem> Items { get; set; } = new();
-    }
-
-    class ShoppingCartItem
-    {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
     }
 }

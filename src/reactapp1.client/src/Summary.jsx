@@ -33,7 +33,7 @@ export default function Summary() {
   }, []);
 
   async function placeOrder() {
-    //await axios.post(`https://localhost:7126/buy/payment/${orderId}`, {??});
+    await axios.post(`https://localhost:7126/buy/summary/${orderId}`, {});
     setCurrentOrderId(null);
     navigate(`/`);
   }
