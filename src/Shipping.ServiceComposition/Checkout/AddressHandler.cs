@@ -10,8 +10,6 @@ namespace Shipping.ServiceComposition.Checkout;
 
 public class AddressHandler(ShippingDbContext dbContext) : ICompositionRequestsHandler
 {
-    readonly ShippingDbContext dbContext = dbContext;
-
     [HttpGet("/buy/address/{orderId}")]
     public Task Handle(HttpRequest request)
     {

@@ -9,8 +9,6 @@ namespace Marketing.ServiceComposition.Products;
 
 class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEventsSubscriber
 {
-    readonly ILiteDbContext dbContext = dbContext;
-
     [HttpGet("/product/{productId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

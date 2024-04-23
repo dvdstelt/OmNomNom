@@ -7,15 +7,8 @@ using Shipping.ServiceComposition.Events;
 
 namespace Shipping.ServiceComposition.DeliveryOptions;
 
-public class DeliveryOptionsHandler : ICompositionRequestsHandler
+public class DeliveryOptionsHandler(ShippingDbContext dbContext) : ICompositionRequestsHandler
 {
-    private readonly ShippingDbContext dbContext;
-
-    public DeliveryOptionsHandler(ShippingDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-    
     [HttpGet("/deliveryoptions")]
     public async Task Handle(HttpRequest request)
     {

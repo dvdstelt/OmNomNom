@@ -7,8 +7,6 @@ namespace Catalog.Endpoint.Handlers;
 
 public class SubmitOrderItemsHandler(CatalogDbContext dbContext) : IHandleMessages<SubmitOrderItems>
 {
-    readonly CatalogDbContext dbContext = dbContext;
-
     public Task Handle(SubmitOrderItems message, IMessageHandlerContext context)
     {
         var orderCollection = dbContext.Database.GetCollection<Order>();

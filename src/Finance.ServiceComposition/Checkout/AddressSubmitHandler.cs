@@ -8,8 +8,6 @@ namespace Finance.ServiceComposition.Checkout;
 
 public class AddressSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession messageSession = messageSession;
-
     [HttpPost("/buy/address/{orderId}")]
     public async Task Handle(HttpRequest request)
     {

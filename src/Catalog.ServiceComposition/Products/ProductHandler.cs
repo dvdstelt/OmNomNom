@@ -8,15 +8,8 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Products;
 
-public class ProductHandler : ICompositionRequestsHandler
+public class ProductHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
-    readonly CatalogDbContext dbContext;
-
-    public ProductHandler(CatalogDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
     [HttpGet("/product/{productId}")]
     public async Task Handle(HttpRequest request)
     {
