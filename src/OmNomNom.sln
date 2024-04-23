@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmNomNom.Website", "OmNomNom.Website\OmNomNom.Website.csproj", "{D72064B6-52D0-4492-8290-8F5B40F4FE85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmNomNom.BackOffice", "OmNomNom.BackOffice\OmNomNom.BackOffice.csproj", "{D72064B6-52D0-4492-8290-8F5B40F4FE85}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompositionGateway", "CompositionGateway\CompositionGateway.csproj", "{1CE6F9A9-A986-438D-BBD3-3AF5109D902B}"
 EndProject
