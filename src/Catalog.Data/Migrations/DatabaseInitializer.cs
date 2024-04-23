@@ -15,7 +15,7 @@ public static class DatabaseInitializer
 
         customers.InsertBulk(SeedData.Products());
 
-        var inventory = context.GetCollection<InventoryDeltas>();
+        var inventory = context.GetCollection<InventoryDelta>();
         inventory.InsertBulk(SeedData.ProductInventory());
 
         var inventorySnapshots = context.GetCollection<InventorySnapshot>();

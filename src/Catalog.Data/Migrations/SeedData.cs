@@ -24,9 +24,9 @@ public class SeedData
         };
     }
 
-    public static IEnumerable<InventoryDeltas> ProductInventory()
+    public static IEnumerable<InventoryDelta> ProductInventory()
     {
-        return new List<InventoryDeltas>
+        return new List<InventoryDelta>
         {
             new() { ProductId = FremontId, Delta = 8, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = MoersleutelId, Delta = 6, TimeStamp = DateTime.UtcNow, },
