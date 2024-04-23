@@ -27,7 +27,7 @@ public class OrderSubmitHandler(IMessageSession messageSession) : ICompositionRe
     class ShoppingCart
     {
         [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public List<ShoppingCartItem> Items { get; set; }
+        [FromBody] public List<ShoppingCartItem> Items { get; set; } = new();
     }
 
     class ShoppingCartItem
