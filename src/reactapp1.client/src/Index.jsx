@@ -44,8 +44,13 @@ export default function Index() {
               >
                 <CarouselItem
                   id={product.productId}
+                  imageUrl={product.imageUrl}
                   name={product.name}
                   price={product.price}
+                  rating={{
+                    stars: product.stars,
+                    reviewCount: product.reviewCount,
+                  }}
                 />
               </Link>
             ))}
