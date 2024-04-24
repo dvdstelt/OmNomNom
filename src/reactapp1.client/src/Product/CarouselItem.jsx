@@ -3,14 +3,18 @@ import Price from "../misc/Price";
 import ProductImage from "./ProductImage";
 import ProductRating from "./ProductRating";
 
-export default function CarouselItem({ id, name, price }) {
+export default function CarouselItem({ id, imageUrl, name, price, rating }) {
   return (
     <div className={styles.carouselItem}>
       <div className={styles.imageContainer}>
-        <ProductImage id={id} className={styles.productImage} />
+        <ProductImage
+          id={id}
+          imageUrl={imageUrl}
+          className={styles.productImage}
+        />
       </div>
       <div>{name}</div>
-      <ProductRating id={id} />
+      <ProductRating id={id} rating={rating} />
       <div className={styles.price}>
         <Price price={price} />
       </div>

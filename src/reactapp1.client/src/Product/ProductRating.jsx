@@ -6,8 +6,11 @@ import { useLoadData } from "@/misc";
 
 import styles from "./ProductRating.module.css";
 
-export default function ProductRating({ id, className, long = false }) {
-  const { data: ratingData } = useLoadData(getProductRating, id);
+export default function ProductRating({ id, rating, className, long = false }) {
+  const { data: ratingData } = useLoadData(
+    rating ? () => rating : getProductRating,
+    id
+  );
   const starItems =
     ratingData &&
     Array.from({ length: 5 }).map((_, i) => {
