@@ -11,7 +11,7 @@ export default function Items({ orderId, includeImages = false }) {
   return (
     <div className={styles.items}>
       {(items ?? []).map((item) => (
-        <div className={styles.itemContainer}>
+        <div key={item.productId} className={styles.itemContainer}>
           {includeImages && (
             <div className={styles.imageContainer}>
               <ProductImage id={item.productId} className={styles.image} />
