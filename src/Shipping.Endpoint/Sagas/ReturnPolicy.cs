@@ -3,7 +3,7 @@
 namespace Shipping.Endpoint.Sagas;
 
 public class ReturnPolicy : Saga<ReturnPolicy.ReturnPolicyData>,
-    IHandleMessages<OrderShipped>
+    IAmStartedByMessages<OrderShipped>
 {
     protected override void ConfigureHowToFindSaga(SagaPropertyMapper<ReturnPolicyData> mapper)
     {
@@ -18,7 +18,7 @@ public class ReturnPolicy : Saga<ReturnPolicy.ReturnPolicyData>,
         // We now wait if we get messages that a customer wants to return items.
         return Task.CompletedTask;
     }
-    
+
     public class ReturnPolicyData : ContainSagaData
     {
         public Guid OrderId { get; set; }

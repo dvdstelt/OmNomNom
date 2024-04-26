@@ -19,6 +19,7 @@ public static class SeedData
     {
         return new List<Product>
         {
+            // PriceId can be random, as it's only used in orders and we don't seed orders
             new() { ProductId = FremontId, Price = 35, Discount = 0 },
             new() { ProductId = MoersleutelId, Price = 12, Discount = 0 },
             new() { ProductId = WhiteDogId, Price = 6, Discount = 0 },
