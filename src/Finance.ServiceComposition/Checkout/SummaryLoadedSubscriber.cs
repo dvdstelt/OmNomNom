@@ -27,6 +27,10 @@ public class SummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionE
                 totalPrice += matchingProduct.Quantity * matchingProduct.Price;
             }
 
+            var vm = request.GetComposedResponseModel();
+            vm.TotalPrice += totalPrice;
+
+
             return Task.CompletedTask;
         });
     }

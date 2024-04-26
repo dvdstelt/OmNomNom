@@ -17,6 +17,9 @@ public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : IComp
 
             @event.DeliveryOption.Price = deliveryOption.Price;
 
+            var vm = request.GetComposedResponseModel();
+            vm.TotalPrice += deliveryOption.Price;
+
             return Task.CompletedTask;
         });
     }
