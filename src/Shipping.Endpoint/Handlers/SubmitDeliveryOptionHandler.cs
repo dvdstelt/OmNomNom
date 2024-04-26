@@ -6,8 +6,6 @@ namespace Shipping.Endpoint.Handlers;
 
 public class SubmitDeliveryOptionHandler(ShippingDbContext dbContext) : IHandleMessages<SubmitDeliveryOption>
 {
-    readonly ShippingDbContext dbContext = dbContext;
-
     public Task Handle(SubmitDeliveryOption message, IMessageHandlerContext context)
     {
         var orderCollection = dbContext.Database.GetCollection<Order>();

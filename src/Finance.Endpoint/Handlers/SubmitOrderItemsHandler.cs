@@ -7,11 +7,10 @@ namespace Finance.Endpoint.Handlers;
 
 public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitOrderItems>
 {
-    readonly FinanceDbContext dbContext = dbContext;
-
     public Task Handle(SubmitOrderItems message, IMessageHandlerContext context)
     {
         var orderCollection = dbContext.Database.GetCollection<Order>();
+        var productCollection = dbContext.Database.GetCollection<Product>();
 
         var order = new Order
         {
@@ -19,7 +18,9 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
         };
         foreach (var item in message.Items)
         {
-            order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, PriceId = item.PriceId });
+            // NOTE: Never ever do this! Don't retrieve price after submitting the order.
+            var product = productCollection.Query().Where(s => s.ProductId == item.ProductId).Single();
+            order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, Price = product.Price});
         }
         orderCollection.Insert(order);
 

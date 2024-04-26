@@ -22,6 +22,8 @@ public class AddressSubmitHandler(IMessageSession messageSession) : IComposition
             Town = submitted.Details.ShippingAddress.Town,
             Country = submitted.Details.ShippingAddress.Country,
         };
+
+        await messageSession.Send(message);
     }
 
     class OrderAddressDetails

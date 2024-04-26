@@ -15,6 +15,9 @@ public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionR
         var orderId = productToAdd.orderId;
         var productId = productToAdd.Detail.Id;
 
+        if (productToAdd.orderId == Guid.Empty)
+            orderId = Guid.NewGuid();
+
         var order = await cacheHelper.GetOrder(orderId);
         var existingOrderItem = order.Products.SingleOrDefault(p => p.ProductId == productId);
         if (existingOrderItem != null)
@@ -33,6 +36,9 @@ public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionR
 
         var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
+
+        // var xxx = new JsonResult(orderId);
+        // request.SetActionResult(xxx);
     }
 
     class ProductModel
