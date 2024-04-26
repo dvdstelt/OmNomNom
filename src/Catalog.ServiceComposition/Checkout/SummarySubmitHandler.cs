@@ -1,4 +1,4 @@
-﻿using Catalog.Endpoint.Messages.Commands;
+using Catalog.Endpoint.Messages.Commands;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
