@@ -22,7 +22,7 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
             var product = productCollection.Query().Where(s => s.ProductId == item.ProductId).Single();
             order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, Price = product.Price});
         }
-        orderCollection.Insert(order);
+        orderCollection.Upsert(order);
 
         return Task.CompletedTask;
     }
