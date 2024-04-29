@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
+      <ProjectReference Include="..\Catalog.ServiceComposition\Catalog.ServiceComposition.csproj" />
       <ProjectReference Include="..\Shipping.Data\Shipping.Data.csproj" />
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Shipping.ServiceComposition.Events\Shipping.ServiceComposition.Events.csproj" />

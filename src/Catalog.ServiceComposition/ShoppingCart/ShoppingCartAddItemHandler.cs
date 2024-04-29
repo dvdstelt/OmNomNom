@@ -36,9 +36,6 @@ public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionR
 
         var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
-
-        // var xxx = new JsonResult(orderId);
-        // request.SetActionResult(xxx);
     }
 
     class ProductModel
