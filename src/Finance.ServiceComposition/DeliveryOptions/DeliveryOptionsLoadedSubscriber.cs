@@ -8,7 +8,7 @@ namespace Finance.ServiceComposition.DeliveryOptions;
 
 public class DeliveryOptionsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    [HttpGet("/deliveryoptions")]
+    [HttpGet("/buy/shipping/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
         publisher.Subscribe<DeliveryOptionsLoaded>((@event, request) =>

@@ -14,16 +14,8 @@ builder.Services.AddCors(options =>
                 policy.WithOrigins("https://127.0.0.1:5173", "https://localhost:5173")
                        .AllowAnyHeader();
             }));
-builder.Services.AddViewModelComposition(options =>
-{
-    // options.ResponseSerialization.UseOutputFormatters = true;
-    // options.ResponseSerialization.DefaultResponseCasing = ResponseCasing.CamelCase;
-});
+builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
-// builder.Services.AddControllers().AddNewtonsoftJson();
-// builder.Services.AddControllersWithViews();
-// builder.Services.AddMvc();
-// builder.Services.AddRazorPages();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
 endpointConfiguration.Configure(s =>

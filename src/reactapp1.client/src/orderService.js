@@ -38,6 +38,6 @@ async function getShipping(orderId) {
 const memoisedShipping = memoizeOne(getShipping);
 
 export async function getDeliveryOptions(orderId) {
-  const { data } = await axios.get(`https://localhost:7126/deliveryoptions`);
+  const { data } = await axios.get(`https://localhost:7126/buy/shipping/${orderId}`);
   return data;
 }
