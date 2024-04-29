@@ -27,6 +27,7 @@ public class SummaryHandler(CatalogDbContext dbContext) : ICompositionRequestsHa
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new SummaryLoaded()
         {
+            OrderId = orderId,
             Products = productsModel
         });
 

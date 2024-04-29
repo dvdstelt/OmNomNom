@@ -19,7 +19,7 @@ public class SubmitOrderItemsHandler(CatalogDbContext dbContext) : IHandleMessag
         {
             order.Products.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity });
         }
-        orderCollection.Insert(order);
+        orderCollection.Upsert(order);
 
         return Task.CompletedTask;
     }
