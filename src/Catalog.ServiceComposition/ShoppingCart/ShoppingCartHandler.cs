@@ -18,13 +18,6 @@ public class ShoppingCartHandler(CacheHelper cacheHelper, CatalogDbContext dbCon
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
 
-        if (orderId == Guid.Empty)
-        {
-            vm.OrderId = Guid.NewGuid();
-            vm.CartItems = new Dictionary<Guid, dynamic>();
-            return;
-        }
-
         var order = await cacheHelper.GetOrder(orderId);
 
         var productsCollection = dbContext.Database.GetCollection<Product>();
