@@ -1,6 +1,7 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Website" type="CompoundRunConfigurationType">
     <toRun name="CompositionGateway: https" type="LaunchSettings" />
+    <toRun name="OmNomNom.BackOffice: https" type="LaunchSettings" />
     <toRun name="reactapp1.client: run" type="js.build_tools.npm" />
     <method v="2" />
   </configuration>
