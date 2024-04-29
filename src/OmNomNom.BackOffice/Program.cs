@@ -1,3 +1,4 @@
+using ITOps.Shared.EndpointConfiguration;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddViewModelComposition(options =>
 {
     options.EnableCompositionOverControllers();
+});
+
+builder.Host.UseNServiceBus(c =>
+{
+    var endpointConfiguration = new EndpointConfiguration("OmNomNomBackOffice");
+    endpointConfiguration.Configure();
+
+    return endpointConfiguration;
 });
 
 var app = builder.Build();
