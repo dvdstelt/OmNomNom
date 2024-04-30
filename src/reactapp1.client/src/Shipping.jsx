@@ -1,11 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoadData } from "./misc";
-import { getDeliveryOptions } from "./orderService";
+import { getSelectedDeliveryOption, saveShipping } from "./orderService";
 import ProgressBar, { Stages } from "./misc/ProgressBar";
 import DeliveryOptions from "./Shipping/DeliveryOptions";
 import Items from "./Shipping/Items";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import styles from "./Shipping.module.css";
 
@@ -14,21 +13,16 @@ export default function Shipping() {
   const [selectedDeliveryOptionId, setSelectedDeliveryOptionId] = useState("");
   const navigate = useNavigate();
 
-  const { data } = useLoadData(getDeliveryOptions, orderId, {
-    callback: deliveryOptionsLoaded,
+  useLoadData(getSelectedDeliveryOption, orderId, {
+    callback: setSelectedDeliveryOptionId,
   });
-  function deliveryOptionsLoaded({ selectedId }) {
-    setSelectedDeliveryOptionId(selectedId);
-  }
 
   useEffect(() => {
     document.title = "Shipping - omnomnom.com";
   }, []);
 
   async function saveAndContinue() {
-    await axios.post(`https://localhost:7126/buy/shipping/${orderId}`, {
-      deliveryOptionId: selectedDeliveryOptionId,
-    });
+    await saveShipping(orderId, selectedDeliveryOptionId);
     navigate(`/buy/payment/${orderId}`);
   }
 
@@ -44,7 +38,7 @@ export default function Shipping() {
         <div>
           <h2>Choose a delivery option</h2>
           <DeliveryOptions
-            options={data?.deliveryOptions ?? []}
+            orderId={orderId}
             selectionId={selectedDeliveryOptionId}
             setSelectionId={setSelectedDeliveryOptionId}
           />

@@ -52,7 +52,7 @@ export default function Address() {
     const [shippingAddress] = shippingAddressState;
     const [billingAddress] = billingAddressState;
 
-    await axios.post(`https://localhost:7126/buy/address/${orderId}`, {
+    saveAddress(orderId, {
       shippingAddress,
       billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
     });
