@@ -12,10 +12,17 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
         var orderCollection = dbContext.Database.GetCollection<Order>();
         var productCollection = dbContext.Database.GetCollection<Product>();
 
-        var order = new Order
+        var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).SingleOrDefault();
+
+        if (order == null)
         {
-            OrderId = message.OrderId
-        };
+            order = new Order
+            {
+                OrderId = message.OrderId
+            };
+        }
+        order.Items = new();
+        
         foreach (var item in message.Items)
         {
             // NOTE: Never ever do this! Don't retrieve price after submitting the order.

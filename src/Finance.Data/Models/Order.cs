@@ -5,6 +5,7 @@ public class Order
     public Guid OrderId { get; set; }
     public List<OrderItem> Items { get; set; } = [];
     public Address BillingAddress { get; set; } = new();
+    public Guid DeliveryOptionId { get; set; }
 }
 
 public class OrderItem
