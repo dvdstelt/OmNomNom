@@ -12,6 +12,23 @@ export const CurrencyType = Object.freeze({
   Other: "Other",
 });
 
+export function cardIcon(cardType) {
+  switch (cardType) {
+    case CardType.MasterCard:
+      return masterCardIcon;
+    case CardType.Visa:
+      return visaIcon;
+    case CardType.Discover:
+      return discoverIcon;
+    case CardType.Diners:
+      return dinersIcon;
+    case CardType.Amex:
+      return amexIcon;
+    case CardType.UnionPay:
+      return upayIcon;
+  }
+}
+
 import styles from "./Card.module.css";
 import masterCardIcon from "@/assets/mastercard.png";
 import visaIcon from "@/assets/visa.png";
@@ -21,22 +38,7 @@ import amexIcon from "@/assets/amex.png";
 import upayIcon from "@/assets/unionpay.png";
 
 export default function Card({ details }) {
-  const icon = (() => {
-    switch (details.cardType) {
-      case CardType.MasterCard:
-        return masterCardIcon;
-      case CardType.Visa:
-        return visaIcon;
-      case CardType.Discover:
-        return discoverIcon;
-      case CardType.Diners:
-        return dinersIcon;
-      case CardType.Amex:
-        return amexIcon;
-      case CardType.UnionPay:
-        return upayIcon;
-    }
-  })();
+  const icon = cardIcon(details.cardType);
 
   return (
     <div className={styles.card}>
