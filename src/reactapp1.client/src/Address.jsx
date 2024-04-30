@@ -3,7 +3,6 @@ import { useLoadData } from "./misc";
 import { getAddress } from "./orderService";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import TextField from "./misc/TextField";
 import AddressEdit from "./Address/AddressEdit";
 
 import styles from "./Address.module.css";
@@ -21,7 +20,6 @@ export default function Address() {
   const { orderId } = useParams();
   const shippingAddressState = useState(blankAddress);
   const billingAddressState = useState(blankAddress);
-  const [fullName, setFullName] = useState("");
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const navigate = useNavigate();
 
@@ -35,7 +33,6 @@ export default function Address() {
       const [_, setBillingAddress] = billingAddressState;
       setBillingAddress(addressModel.billingAddress);
     }
-    setFullName(addressModel.shippingAddress.fullName ?? "");
     setBillingSameAsShipping(
       Object.keys(blankAddress)
         .filter((keyName) => keyName !== "id")
@@ -56,7 +53,6 @@ export default function Address() {
     const [billingAddress] = billingAddressState;
 
     await axios.post(`https://localhost:7126/buy/address/${orderId}`, {
-      fullName,
       shippingAddress,
       billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
     });
@@ -68,7 +64,6 @@ export default function Address() {
       <ProgressBar stage={Stages.Address} />
       <h1>Where should we deliver your order?</h1>
       <h2>Enter a shipping address</h2>
-      <TextField value={fullName} onChange={setFullName} label="Full Name" />
       <AddressEdit state={shippingAddressState} />
       <div>
         <input

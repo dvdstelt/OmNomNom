@@ -16,6 +16,11 @@ export default function AddressEdit({ state }) {
   return (
     <div className={styles.addressEdit}>
       <TextField
+        label="Full Name"
+        value={address.fullName}
+        onChange={updateAddress((x, value) => (x.fullName = value))}
+      />
+      <TextField
         label="Address Line 1"
         value={address.street}
         onChange={updateAddress((x, value) => (x.street = value))}
