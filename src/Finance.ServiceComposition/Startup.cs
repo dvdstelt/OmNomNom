@@ -1,5 +1,6 @@
 ﻿using Finance.Data;
 using Finance.Data.Migrations;
+using Finance.ServiceComposition.Helpers;
 using ITOps.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,5 +17,6 @@ public class Startup : IViewModelCompositionOptionsCustomization
             var liteDbOptions = new LiteDbOptions("finance", DatabaseInitializer.Initialize);
             return new FinanceDbContext(liteDbOptions);
         });
+        options.Services.AddSingleton<CacheHelper>();
     }
 }

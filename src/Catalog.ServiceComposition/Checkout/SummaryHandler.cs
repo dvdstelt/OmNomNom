@@ -2,6 +2,7 @@
 using Catalog.Data;
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
+using Catalog.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -9,19 +10,22 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class SummaryHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
-        var vm = request.GetComposedResponseModel();
-
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
 
         var orderCollection = dbContext.Database.GetCollection<Order>();
         var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
 
+        if (order == null)
+        {
+            order = await cacheHelper.GetOrder(orderId);
+        }
+        
         var productsModel = MapToDictionary(order.Products);
 
         try
@@ -38,6 +42,7 @@ public class SummaryHandler(CatalogDbContext dbContext) : ICompositionRequestsHa
             //TODO: Dennis, why is Items empty in the SummaryLoaded event handler?
         }
 
+        var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
         vm.Products = productsModel;
     }

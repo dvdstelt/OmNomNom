@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shipping.Data;
 using Shipping.Data.Migrations;
+using Shipping.Endpoint.Messages.Commands;
 
 const string EndpointName = "Shipping";
 
@@ -18,7 +19,10 @@ hostBuilder.Services.AddSingleton<ShippingDbContext>(provider =>
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure();
+endpointConfiguration.Configure(routing =>
+{
+    routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
+});
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();
