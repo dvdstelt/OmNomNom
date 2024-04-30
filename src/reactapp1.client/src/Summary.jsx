@@ -5,16 +5,12 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { OrderIdContext } from "./App";
 import Price from "./misc/Price";
+import Items from "./Shipping/Items";
+import { getAddress, getOrderSummary } from "./orderService";
+import { blankAddress } from "./Address";
+import { cardIcon } from "./Payment/Card";
 
 import styles from "./Summary.module.css";
-import masterCardIcon from "@/assets/mastercard.png";
-import visaIcon from "@/assets/visa.png";
-import discoverIcon from "@/assets/discover.png";
-import dinersIcon from "@/assets/diners.png";
-import amexIcon from "@/assets/amex.png";
-import upayIcon from "@/assets/unionpay.png";
-import Items from "./Shipping/Items";
-import { getOrderSummary } from "./orderService";
 
 export default function Summary() {
   const { orderId } = useParams();
@@ -22,6 +18,9 @@ export default function Summary() {
   const navigate = useNavigate();
 
   const { data: summaryData } = useLoadData(getOrderSummary, orderId);
+  const { data: addressData } = useLoadData(getAddress, orderId);
+
+  const paymentCardIcon = cardIcon("MasterCard");
 
   useEffect(() => {
     document.title = "Order Summary - omnomnom.com";
@@ -32,6 +31,16 @@ export default function Summary() {
     setCurrentOrderId(null);
     navigate(`/`);
   }
+
+  const billingSameAsShipping =
+    addressData &&
+    Object.keys(blankAddress)
+      .filter((keyName) => keyName !== "id" && keyName !== "fullName")
+      .every(
+        (keyName) =>
+          addressData.shippingAddress[keyName] ===
+          addressData.billingAddress[keyName]
+      );
 
   return (
     <div className={styles.summary}>
@@ -45,9 +54,16 @@ export default function Summary() {
                 <h2>Shipping Address</h2>
                 <Link to={`/buy/shipping/${orderId}`}>change</Link>
               </span>
-              <div>Udi Dahan</div>
-              <div>20 Uri Tzvi Greenberg Street</div>
-              <div>Haifa, Israel</div>
+              {addressData ? (
+                <>
+                  <div>{addressData.shippingAddress.fullName}</div>
+                  <div>{addressData.shippingAddress.street}</div>
+                  <div>{`${addressData.shippingAddress.town}, ${addressData.shippingAddress.country}`}</div>
+                  <div>{addressData.shippingAddress.zipCode}</div>
+                </>
+              ) : (
+                "Loading..."
+              )}
             </div>
             <div className={styles.paymentAndBilling}>
               <div>
@@ -56,7 +72,7 @@ export default function Summary() {
                   <Link to={`/buy/payment/${orderId}`}>change</Link>
                 </span>
                 <span className={styles.inline}>
-                  <img src={masterCardIcon} />
+                  <img src={paymentCardIcon} />
                   <span>ending in 2464</span>
                 </span>
               </div>
@@ -65,7 +81,21 @@ export default function Summary() {
                   <h2>Billing Address</h2>
                   <Link to={`/buy/shipping/${orderId}`}>change</Link>
                 </span>
-                <div>Same as shipping address</div>
+                {addressData ? (
+                  <div>
+                    {billingSameAsShipping ? (
+                      "Same as shipping address"
+                    ) : (
+                      <>
+                        <div>{addressData.billingAddress.street}</div>
+                        <div>{`${addressData.billingAddress.town}, ${addressData.billingAddress.country}`}</div>
+                        <div>{addressData.billingAddress.zipCode}</div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  "Loading..."
+                )}
               </div>
             </div>
           </div>

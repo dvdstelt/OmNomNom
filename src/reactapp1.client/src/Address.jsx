@@ -6,10 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import AddressEdit from "./Address/AddressEdit";
 
 import styles from "./Address.module.css";
-import axios from "axios";
 
-const blankAddress = {
+export const blankAddress = {
   id: "",
+  fullName: "",
   street: "",
   zipCode: "",
   town: "",

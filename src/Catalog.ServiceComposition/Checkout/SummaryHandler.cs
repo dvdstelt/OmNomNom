@@ -24,12 +24,19 @@ public class SummaryHandler(CatalogDbContext dbContext) : ICompositionRequestsHa
 
         var productsModel = MapToDictionary(order.Products);
 
-        var context = request.GetCompositionContext();
-        await context.RaiseEvent(new SummaryLoaded()
+        try
         {
-            OrderId = orderId,
-            Products = productsModel
-        });
+            var context = request.GetCompositionContext();
+            await context.RaiseEvent(new SummaryLoaded()
+            {
+                OrderId = orderId,
+                Products = productsModel
+            });
+        }
+        catch
+        {
+            //TODO: Dennis, why is Items empty in the SummaryLoaded event handler?
+        }
 
         vm.OrderId = orderId;
         vm.Products = productsModel;

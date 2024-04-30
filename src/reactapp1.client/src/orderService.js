@@ -89,9 +89,15 @@ export async function savePayment(orderId, paymentData) {
   memoisedPayment.clear();
 }
 
-export async function getOrderSummary(orderId) {
+async function getSummary(orderId) {
   const { data } = await axios.get(
     `https://localhost:7126/buy/summary/${orderId}`
   );
+  return data;
+}
+const memoisedSummary = memoizeOne(getSummary);
+
+export async function getOrderSummary(orderId) {
+  const data = await memoisedSummary(orderId);
   return data;
 }
