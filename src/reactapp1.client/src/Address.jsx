@@ -1,6 +1,6 @@
 import ProgressBar, { Stages } from "./misc/ProgressBar";
 import { useLoadData } from "./misc";
-import { getAddress } from "./orderService";
+import { getAddress, saveAddress } from "./orderService";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddressEdit from "./Address/AddressEdit";
@@ -52,7 +52,7 @@ export default function Address() {
     const [shippingAddress] = shippingAddressState;
     const [billingAddress] = billingAddressState;
 
-    saveAddress(orderId, {
+    await saveAddress(orderId, {
       shippingAddress,
       billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
     });
