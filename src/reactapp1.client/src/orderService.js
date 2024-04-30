@@ -29,7 +29,7 @@ export async function getAddress(orderId) {
   return data;
 }
 
-export async function saveAddress(orderId) {
+export async function saveAddress(orderId, addressData) {
   await axios.post(
     `https://localhost:7126/buy/address/${orderId}`,
     addressData
