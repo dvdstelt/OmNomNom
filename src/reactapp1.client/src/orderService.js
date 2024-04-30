@@ -61,6 +61,26 @@ export async function saveShipping(orderId, deliveryOptionId) {
   memoisedShipping.clear();
 }
 
+async function getPayment(orderId) {
+  const { data } = await axios.get(
+    `https://localhost:7126/buy/payment/${orderId}`
+  );
+  return data;
+}
+const memoisedPayment = memoizeOne(getShipping);
+
+export async function getCreditCards(customerId) {
+  const { data } = await axios.get(
+    `https://localhost:7126/buy/creditcard/${customerId}`
+  );
+  return data.creditCards;
+}
+
+export async function getPaymentInfo(orderId) {
+  const data = await memoisedPayment(orderId);
+  return data.cardId;
+}
+
 export async function getOrderSummary(orderId) {
   const { data } = await axios.get(
     `https://localhost:7126/buy/summary/${orderId}`

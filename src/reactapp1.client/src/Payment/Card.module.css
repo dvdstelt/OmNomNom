@@ -40,3 +40,12 @@
 .cardNumber {
   font-size: 0.9em;
 }
+
+.currencyType {
+  width: 3em;
+  display: none;
+}
+
+.currencyType.visible {
+  display: block;
+}

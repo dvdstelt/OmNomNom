@@ -8,7 +8,15 @@ export default function DeliveryOptions({
   selectionId,
   setSelectionId,
 }) {
-  const { data: options } = useLoadData(getDeliveryOptions, orderId);
+  const { data: options } = useLoadData(getDeliveryOptions, orderId, {
+    callback: optionsLoaded,
+  });
+
+  function optionsLoaded(options) {
+    if (!selectionId) {
+      setSelectionId(options[0].deliveryOptionId);
+    }
+  }
 
   return (
     <div>
@@ -20,10 +28,7 @@ export default function DeliveryOptions({
               type="radio"
               name="deliveryOption"
               value={option.deliveryOptionId}
-              checked={
-                (selectionId ?? options[0].deliveryOptionId) ===
-                option.deliveryOptionId
-              }
+              checked={selectionId === option.deliveryOptionId}
               onChange={() => setSelectionId(option.deliveryOptionId)}
             />
             <label htmlFor={option.deliveryOptionId}>{option.name}</label>
