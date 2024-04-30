@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import styles from "./CartAccept.module.css";
 
-export default function CartAccept({ id, className, proceed }) {
+export default function CartAccept({ id, className, proceed, discard }) {
   const [refreshTrigger, setRefreshTrigger] = useState(crypto.randomUUID());
   const { data: total } = useLoadData(getCartTotal, id, { refreshTrigger });
 
@@ -21,6 +21,10 @@ export default function CartAccept({ id, className, proceed }) {
         </span>
       </div>
       <button onClick={proceed}>Proceed to Checkout</button>
+      <div className={styles.centre}>--OR--</div>
+      <button className={styles.discard} onClick={discard}>
+        Discard Cart
+      </button>
     </div>
   );
 }
