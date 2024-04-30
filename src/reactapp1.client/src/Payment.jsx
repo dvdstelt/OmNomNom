@@ -3,7 +3,7 @@ import { useLoadData } from "./misc";
 import ProgressBar, { Stages } from "./misc/ProgressBar";
 import { useEffect, useState } from "react";
 import Card, { CardType, CurrencyType } from "./Payment/Card";
-import { getCreditCards, getPaymentInfo } from "./orderService";
+import { getCreditCards, getPaymentInfo, savePayment } from "./orderService";
 
 import styles from "./Payment.module.css";
 import masterCardIcon from "@/assets/mastercard.png";
@@ -31,38 +31,12 @@ export default function Payment() {
     }
   }
 
-  // const { data } = useLoadData(getDeliveryOptions, orderId, {
-  //   callback: deliveryOptionsLoaded,
-  // });
-  // function deliveryOptionsLoaded({ selectedId }) {
-  //   setSelectedDeliveryOptionId(selectedId);
-  // }
-
-  // const cards = [
-  //   {
-  //     id: "3102b0fa-e306-48e0-a6c7-a9277dc002fb",
-  //     type: CardType.MasterCard,
-  //     shortNumber: 2464,
-  //     name: "Udi Dahan",
-  //     expiry: "09/2026",
-  //     currencyType: CurrencyType.USD,
-  //   },
-  //   {
-  //     id: "3102b0fa-e306-48e0-a6c7-a9277dc002fc",
-  //     type: CardType.Amex,
-  //     shortNumber: 9999,
-  //     name: "Fakey McFakerson",
-  //     expiry: "01/2099",
-  //     currencyType: CurrencyType.Other,
-  //   },
-  // ];
-
   useEffect(() => {
     document.title = "Payment Options - omnomnom.com";
   }, []);
 
   async function saveAndContinue() {
-    //await axios.post(`https://localhost:7126/buy/payment/${orderId}`, {??});
+    await savePayment(orderId, { creditCardId: selectedCard });
     navigate(`/buy/summary/${orderId}`);
   }
 

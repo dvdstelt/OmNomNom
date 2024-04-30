@@ -19,14 +19,8 @@ import discoverIcon from "@/assets/discover.png";
 import dinersIcon from "@/assets/diners.png";
 import amexIcon from "@/assets/amex.png";
 import upayIcon from "@/assets/unionpay.png";
-import { useState } from "react";
 
 export default function Card({ details }) {
-  //TODO: this will need to be hoisted to the parent for saving
-  const [selectedCurrencyType, setSelectedCurrencyType] = useState(
-    details.currency
-  );
-
   const icon = (() => {
     switch (details.cardType) {
       case CardType.MasterCard:
@@ -71,11 +65,11 @@ export default function Card({ details }) {
           <div>
             <input
               type="radio"
+              readOnly={true}
               id={`${details.cardId}currencyType${CurrencyType.USD}`}
               value={CurrencyType.USD}
               name={`${details.cardId}currencyType`}
-              checked={selectedCurrencyType === CurrencyType.USD}
-              onChange={() => setSelectedCurrencyType(CurrencyType.USD)}
+              checked={details.currency === CurrencyType.USD}
             />
             <label htmlFor={`currencyType${CurrencyType.USD}`}>
               My card is in US Dollars
@@ -84,22 +78,22 @@ export default function Card({ details }) {
           <div>
             <input
               type="radio"
+              readOnly={true}
               id={`${details.cardId}currencyType${CurrencyType.Other}`}
               value={CurrencyType.Other}
               name={`${details.cardId}currencyType`}
-              checked={selectedCurrencyType !== CurrencyType.USD}
-              onChange={() => setSelectedCurrencyType("")}
+              checked={details.currency !== CurrencyType.USD}
             />
             <label htmlFor={`currencyType${CurrencyType.Other}`}>
               My card is in a different currency
             </label>
             <input
               maxLength={3}
+              readOnly={true}
               className={`${styles.currencyType} ${
-                selectedCurrencyType !== CurrencyType.USD ? styles.visible : ""
+                details.currency !== CurrencyType.USD ? styles.visible : ""
               }`}
-              value={selectedCurrencyType}
-              onChange={(e) => setSelectedCurrencyType(e.currentTarget.value)}
+              value={details.currency}
             />
           </div>
         </div>

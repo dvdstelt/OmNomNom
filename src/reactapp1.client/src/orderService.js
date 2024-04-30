@@ -67,7 +67,7 @@ async function getPayment(orderId) {
   );
   return data;
 }
-const memoisedPayment = memoizeOne(getShipping);
+const memoisedPayment = memoizeOne(getPayment);
 
 export async function getCreditCards(customerId) {
   const { data } = await axios.get(
@@ -79,6 +79,14 @@ export async function getCreditCards(customerId) {
 export async function getPaymentInfo(orderId) {
   const data = await memoisedPayment(orderId);
   return data.cardId;
+}
+
+export async function savePayment(orderId, paymentData) {
+  await axios.post(
+    `https://localhost:7126/buy/payment/${orderId}`,
+    paymentData
+  );
+  memoisedPayment.clear();
 }
 
 export async function getOrderSummary(orderId) {
