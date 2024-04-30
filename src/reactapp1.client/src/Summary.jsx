@@ -14,19 +14,14 @@ import dinersIcon from "@/assets/diners.png";
 import amexIcon from "@/assets/amex.png";
 import upayIcon from "@/assets/unionpay.png";
 import Items from "./Shipping/Items";
+import { getOrderSummary } from "./orderService";
 
 export default function Summary() {
   const { orderId } = useParams();
-  const [selectedCard, setSelectedCard] = useState("");
   const { setCurrentOrderId } = useContext(OrderIdContext);
   const navigate = useNavigate();
 
-  // const { data } = useLoadData(getDeliveryOptions, orderId, {
-  //   callback: deliveryOptionsLoaded,
-  // });
-  // function deliveryOptionsLoaded({ selectedId }) {
-  //   setSelectedDeliveryOptionId(selectedId);
-  // }
+  const { data: summaryData } = useLoadData(getOrderSummary, orderId);
 
   useEffect(() => {
     document.title = "Order Summary - omnomnom.com";
