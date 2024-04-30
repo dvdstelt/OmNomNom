@@ -1,15 +1,15 @@
 export const CardType = Object.freeze({
-  MasterCard: 1,
-  Visa: 2,
-  Discover: 3,
-  Diners: 4,
-  Amex: 5,
-  UnionPay: 6,
+  MasterCard: "MasterCard",
+  Visa: "Visa",
+  Discover: "Discover",
+  Diners: "Diners",
+  Amex: "Amex",
+  UnionPay: "UnionPay",
 });
 
 export const CurrencyType = Object.freeze({
-  USD: 1,
-  Other: 2,
+  USD: "USD",
+  Other: "Other",
 });
 
 import styles from "./Card.module.css";
@@ -24,11 +24,11 @@ import { useState } from "react";
 export default function Card({ details }) {
   //TODO: this will need to be hoisted to the parent for saving
   const [selectedCurrencyType, setSelectedCurrencyType] = useState(
-    details.currencyType
+    details.currency
   );
 
   const icon = (() => {
-    switch (details.type) {
+    switch (details.cardType) {
       case CardType.MasterCard:
         return masterCardIcon;
       case CardType.Visa:
@@ -53,25 +53,27 @@ export default function Card({ details }) {
             <span className={styles.cardType}>
               {
                 Object.keys(CardType)[
-                  Object.values(CardType).indexOf(details.type)
+                  Object.values(CardType).indexOf(details.cardType)
                 ]
               }
             </span>
             <span className={styles.cardNumber}>
-              {`ending in ${details.shortNumber}`}
+              {`ending in ${details.lastDigits}`}
             </span>
           </div>
-          <span className={styles.cardName}>{details.name}</span>
-          <span className={styles.cardExpiry}>{details.expiry}</span>
+          <span className={styles.cardName}>{details.cardHolder}</span>
+          <span className={styles.cardExpiry}>
+            {details.expiryDate.padStart(7, "0")}
+          </span>
         </div>
         <div className={styles.currencyDetails}>
           <span>Please tell us the currency of your card</span>
           <div>
             <input
               type="radio"
-              id={`${details.id}currencyType${CurrencyType.USD}`}
+              id={`${details.cardId}currencyType${CurrencyType.USD}`}
               value={CurrencyType.USD}
-              name={`${details.id}currencyType`}
+              name={`${details.cardId}currencyType`}
               checked={selectedCurrencyType === CurrencyType.USD}
               onChange={() => setSelectedCurrencyType(CurrencyType.USD)}
             />
@@ -82,15 +84,23 @@ export default function Card({ details }) {
           <div>
             <input
               type="radio"
-              id={`${details.id}currencyType${CurrencyType.Other}`}
+              id={`${details.cardId}currencyType${CurrencyType.Other}`}
               value={CurrencyType.Other}
-              name={`${details.id}currencyType`}
-              checked={selectedCurrencyType === CurrencyType.Other}
-              onChange={() => setSelectedCurrencyType(CurrencyType.Other)}
+              name={`${details.cardId}currencyType`}
+              checked={selectedCurrencyType !== CurrencyType.USD}
+              onChange={() => setSelectedCurrencyType("")}
             />
             <label htmlFor={`currencyType${CurrencyType.Other}`}>
               My card is in a different currency
             </label>
+            <input
+              maxLength={3}
+              className={`${styles.currencyType} ${
+                selectedCurrencyType !== CurrencyType.USD ? styles.visible : ""
+              }`}
+              value={selectedCurrencyType}
+              onChange={(e) => setSelectedCurrencyType(e.currentTarget.value)}
+            />
           </div>
         </div>
       </div>
