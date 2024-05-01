@@ -78,7 +78,7 @@ export async function getCreditCards(customerId) {
 
 export async function getPaymentInfo(orderId) {
   const data = await memoisedPayment(orderId);
-  return data.cardId;
+  return data.creditCardId;
 }
 
 export async function savePayment(orderId, paymentData) {

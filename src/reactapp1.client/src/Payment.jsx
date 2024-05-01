@@ -23,12 +23,16 @@ export default function Payment() {
     "01093176-1308-493a-8f67-da5d278e2375",
     { callback: cardsLoaded }
   );
-  useLoadData(getPaymentInfo, orderId, { callback: setSelectedCard });
+  useLoadData(getPaymentInfo, orderId, { callback: paymentInfoLoaded });
 
   function cardsLoaded(loaded) {
     if (!selectedCard) {
       setSelectedCard(loaded[0].cardId);
     }
+  }
+
+  function paymentInfoLoaded(creditCardId) {
+    if (creditCardId) setSelectedCard(creditCardId);
   }
 
   useEffect(() => {
