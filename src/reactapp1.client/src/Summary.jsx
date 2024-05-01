@@ -112,7 +112,11 @@ export default function Summary() {
             </div>
           </div>
           <div className={styles.items}>
-            <Items orderId={orderId} includeImages={true} />
+            <Items
+              orderId={orderId}
+              overrideItems={products}
+              includeImages={true}
+            />
           </div>
         </div>
         <div className={styles.priceDetails}>
