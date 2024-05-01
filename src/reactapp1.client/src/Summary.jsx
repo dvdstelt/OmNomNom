@@ -42,6 +42,18 @@ export default function Summary() {
           addressData.billingAddress[keyName]
       );
 
+  const products = Object.values(summaryData?.products ?? {});
+  const productsPrice = (products ?? []).reduce(
+    (sum, product) => sum + product.price * product.quantity,
+    0
+  );
+  const shippingPrice = summaryData?.deliveryOption?.price ?? 0;
+  const taxAmount = summaryData?.taxPercentage
+    ? (summaryData.taxPercentage / 100) * (productsPrice + shippingPrice)
+    : summaryData?.taxAmount
+    ? summaryData.taxAmount
+    : 0;
+
   return (
     <div className={styles.summary}>
       <ProgressBar stage={Stages.Summary} />
@@ -108,23 +120,23 @@ export default function Summary() {
           <h2>Order Summary</h2>
           <div>
             <label>Items:</label>
-            <Price price={42} />
+            <Price price={productsPrice} />
           </div>
           <div>
             <label>Shipping:</label>
-            <Price price={7.98} />
+            <Price price={shippingPrice} />
           </div>
           <div className={styles.spaceAbove}>
             <label>Total before tax:</label>
-            <Price price={49.98} />
+            <Price price={productsPrice + shippingPrice} />
           </div>
           <div>
-            <label>Estimate tax:</label>
-            <Price price={0} />
+            <label>Estimated tax:</label>
+            <Price price={taxAmount} />
           </div>
           <div className={styles.orderTotal}>
             <label>Order Total:</label>
-            <Price price={49.98} />
+            <Price price={summaryData?.totalPrice ?? 0} />
           </div>
         </div>
       </div>
