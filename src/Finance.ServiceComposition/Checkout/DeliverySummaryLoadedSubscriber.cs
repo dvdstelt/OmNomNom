@@ -1,5 +1,6 @@
 ﻿using Finance.Data;
 using Finance.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using Shipping.ServiceComposition.Events;
 
@@ -7,6 +8,7 @@ namespace Finance.ServiceComposition.Checkout;
 
 public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
+    [HttpGet("/buy/summary/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
         publisher.Subscribe<DeliverySummaryLoaded>((@event, request) =>

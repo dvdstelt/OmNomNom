@@ -28,6 +28,8 @@ public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper)
         
         var productsModel = MapToDictionary(order.Products);
 
+        var vm = request.GetComposedResponseModel();
+        vm.TotalPrice = 0m;
         try
         {
             var context = request.GetCompositionContext();
@@ -42,7 +44,6 @@ public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper)
             //TODO: Dennis, why is Items empty in the SummaryLoaded event handler?
         }
 
-        var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
         vm.Products = productsModel;
     }
