@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Migrations;
+using PaymentInfo.ServiceComposition.Helpers;
 using ServiceComposer.AspNetCore;
 
 namespace PaymentInfo.ServiceComposition;
@@ -15,5 +16,6 @@ public class Startup : IViewModelCompositionOptionsCustomization
             var liteDbOptions = new LiteDbOptions("paymentinfo", DatabaseInitializer.Initialize);
             return new PaymentInfoDbContext(liteDbOptions);
         });
+        options.Services.AddSingleton<CacheHelper>();
     }
 }
