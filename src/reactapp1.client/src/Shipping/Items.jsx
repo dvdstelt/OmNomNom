@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import ProductImage from "../Product/ProductImage";
 import { useLoadData } from "../misc";
 import Price from "../misc/Price";
@@ -9,6 +10,7 @@ export default function Items({
   orderId,
   overrideItems,
   includeImages = false,
+  showChange = false,
 }) {
   const { data: items } = useLoadData(
     overrideItems ? () => overrideItems : getCartItems,
@@ -37,6 +39,7 @@ export default function Items({
               </span>
               <span>-</span>
               <span>{`Quantity: ${item.quantity}`}</span>
+              {showChange && <Link to={`/cart/${orderId}`}>change</Link>}
             </div>
           </div>
         </div>

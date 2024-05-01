@@ -12,7 +12,7 @@ import styles from "./Cart.module.css";
 export default function Cart() {
   const { orderId } = useParams();
   const [refreshTrigger, setRefreshTrigger] = useState(crypto.randomUUID());
-  const { data: items } = useLoadData(getCartItems, orderId, {
+  const { data: items, loading } = useLoadData(getCartItems, orderId, {
     refreshTrigger,
   });
   const { setCurrentOrderId } = useContext(OrderIdContext);
@@ -20,7 +20,6 @@ export default function Cart() {
 
   useEffect(() => {
     document.title = `Shopping Cart - omnomnom.com`;
-    if (items?.length === 0) navigate("/");
   }, []);
 
   async function saveAndContinue() {
@@ -36,19 +35,28 @@ export default function Cart() {
   return (
     <div className={styles.cart}>
       <h1>Shopping Cart</h1>
-      <div className={styles.contents}>
-        <Items
-          items={items}
-          className={styles.items}
-          refreshCart={() => setRefreshTrigger(crypto.randomUUID())}
-        />
-        <CartAccept
-          id={orderId}
-          className={styles.cartAccept}
-          proceed={saveAndContinue}
-          discard={discardCart}
-        />
-      </div>
+      {!loading && items.length === 0 ? (
+        <div>
+          <div>Cart has expired</div>
+          <button type="button" onClick={discardCart}>
+            OK
+          </button>
+        </div>
+      ) : (
+        <div className={styles.contents}>
+          <Items
+            items={items}
+            className={styles.items}
+            refreshCart={() => setRefreshTrigger(crypto.randomUUID())}
+          />
+          <CartAccept
+            id={orderId}
+            className={styles.cartAccept}
+            proceed={saveAndContinue}
+            discard={discardCart}
+          />
+        </div>
+      )}
     </div>
   );
 }
