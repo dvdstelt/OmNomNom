@@ -12,7 +12,7 @@ export function clearCartCache() {
 }
 
 export async function getCartItems(orderId) {
-  if (!orderId) return [];
+  if (!orderId || orderId === "null") return [];
   const data = await memoisedCart(orderId);
   return data.cartItems;
 }
