@@ -116,6 +116,7 @@ export default function Summary() {
               orderId={orderId}
               overrideItems={products}
               includeImages={true}
+              showChange={true}
             />
           </div>
         </div>
