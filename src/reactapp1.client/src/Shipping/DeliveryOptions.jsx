@@ -12,9 +12,9 @@ export default function DeliveryOptions({
     callback: optionsLoaded,
   });
 
-  function optionsLoaded(options) {
+  function optionsLoaded(loadedOptions) {
     if (!selectionId) {
-      setSelectionId(options[0].deliveryOptionId);
+      setSelectionId(loadedOptions[0].deliveryOptionId);
     }
   }
 

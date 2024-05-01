@@ -14,8 +14,12 @@ export default function Shipping() {
   const navigate = useNavigate();
 
   useLoadData(getSelectedDeliveryOption, orderId, {
-    callback: setSelectedDeliveryOptionId,
+    callback: previousSelectionLoaded,
   });
+
+  function previousSelectionLoaded(loadedOptionId) {
+    if (loadedOptionId) setSelectedDeliveryOptionId(loadedOptionId);
+  }
 
   useEffect(() => {
     document.title = "Shipping - omnomnom.com";
