@@ -14,11 +14,10 @@ public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEven
         publisher.Subscribe<CartLoaded>((@event, request) =>
         {
             var productsCollection = dbContext.Database.GetCollection<Product>();
-            // TODO: Figure out if `Contains` is possible with LiteDb
-            var resultSet = productsCollection.Query().ToList();
+            var productIds = @event.OrderedProducts.Keys.ToList();
+            var resultSet = productsCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
 
             decimal totalPrice = 0;
-
             foreach (var product in @event.OrderedProducts)
             {
                 var matchingProduct  = resultSet.Single(s => s.ProductId == product.Key);

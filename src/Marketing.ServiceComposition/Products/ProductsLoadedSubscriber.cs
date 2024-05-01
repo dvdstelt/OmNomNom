@@ -15,9 +15,9 @@ class ProductsLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvent
     {
         publisher.Subscribe<ProductsLoaded>((@event, request) =>
         {
+            var productIds = @event.Products.Keys.ToList();
             var productCollection = dbContext.Database.GetCollection<Product>();
-            // Can't find a way to query LiteDb with Contains, so we'll do it like this for now
-            var resultSet = productCollection.Query().ToList();
+            var resultSet = productCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
 
             foreach (var product in @event.Products)
             {
