@@ -53,7 +53,7 @@ export async function getProductStockDetails(id) {
 
 export async function getProductPriceDetails(id) {
   const model = await memoisedProduct(id);
-  return { price: model.price, savings: model.savings };
+  return { price: model.price, discount: model.discount };
 }
 
 export function getProductShippingDetails(id) {

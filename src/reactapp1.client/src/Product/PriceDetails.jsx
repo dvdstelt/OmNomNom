@@ -13,7 +13,12 @@ export default function PriceDetails({ id }) {
         <span className={styles.price}>
           <Price price={model.price} />
         </span>
-        <span>{`save $${13.37}`}</span>
+        {model.discount ? (
+          <span>{`save ${model.discount.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}`}</span>
+        ) : null}
       </div>
     )
   );
