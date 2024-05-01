@@ -14,6 +14,7 @@ public class SubmitBillingAddressHandler(FinanceDbContext dbContext) : IHandleMe
         var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).SingleOrDefault() ?? new Order();
 
         order.OrderId = message.OrderId;
+        order.BillingAddress = new();
         order.BillingAddress.FullName = message.FullName;
         order.BillingAddress.Street = message.Street;
         order.BillingAddress.ZipCode = message.ZipCode;

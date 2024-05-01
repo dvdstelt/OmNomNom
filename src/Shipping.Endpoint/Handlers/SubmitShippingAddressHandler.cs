@@ -12,6 +12,7 @@ public class SubmitShippingAddressHandler(ShippingDbContext dbContext) : IHandle
         var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).SingleOrDefault() ?? new Order();
 
         order.OrderId = message.OrderId;
+        order.Address = new();
         order.Address.FullName = message.FullName;
         order.Address.Street = message.Street;
         order.Address.ZipCode = message.ZipCode;
