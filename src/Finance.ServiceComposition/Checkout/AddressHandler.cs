@@ -21,7 +21,7 @@ public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHa
 
         // If there is no order yet, we retrieve the address from the previous order.
         Address address;
-        if (order == null)
+        if (order?.BillingAddress == null)
             address = RetrieveAddressFromPreviousOrder(orderId);
         else
             address = order.BillingAddress;

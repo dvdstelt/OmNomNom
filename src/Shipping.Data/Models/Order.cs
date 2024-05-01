@@ -4,6 +4,6 @@ public class Order
 {
     public Guid OrderId { get; set; }
     public Guid CustomerId { get; set; }
-    public Address Address { get; set; } = new();
+    public Address Address { get; set; }
     public Guid? DeliveryOptionId { get; set; }
 }
