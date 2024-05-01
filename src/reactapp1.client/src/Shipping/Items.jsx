@@ -5,8 +5,16 @@ import { getCartItems } from "../orderService";
 
 import styles from "./Items.module.css";
 
-export default function Items({ orderId, includeImages = false }) {
-  const { data: items } = useLoadData(getCartItems, orderId);
+export default function Items({
+  orderId,
+  overrideItems,
+  includeImages = false,
+}) {
+  const { data: items } = useLoadData(
+    overrideItems ? () => overrideItems : getCartItems,
+    orderId,
+    { refreshTrigger: overrideItems }
+  );
 
   return (
     <div className={styles.items}>
@@ -14,7 +22,11 @@ export default function Items({ orderId, includeImages = false }) {
         <div key={item.productId} className={styles.itemContainer}>
           {includeImages && (
             <div className={styles.imageContainer}>
-              <ProductImage id={item.productId} className={styles.image} />
+              <ProductImage
+                id={item.productId}
+                imageUrl={item.imageUrl}
+                className={styles.image}
+              />
             </div>
           )}
           <div key={item.productId} className={styles.item}>
