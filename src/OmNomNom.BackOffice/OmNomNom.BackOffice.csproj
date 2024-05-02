@@ -16,6 +16,11 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Home\index.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Cart\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\address.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\payment.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\shipping.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\summary.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Cart\index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
