@@ -9,7 +9,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class ShoppingCartHandler( CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class ShoppingCartHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)

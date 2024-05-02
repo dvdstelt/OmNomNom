@@ -13,6 +13,7 @@ class ProductsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsS
     readonly ILiteDbContext dbContext = dbContext;
 
     [HttpGet("/products")]
+    [HttpGet("/email/summary/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
         publisher.Subscribe<ProductsLoaded>((@event, request) =>
