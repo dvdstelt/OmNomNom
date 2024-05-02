@@ -9,6 +9,7 @@ namespace Finance.ServiceComposition.Orders;
 public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
     [HttpGet("/cart/{orderId}")]
+    [HttpGet("/buy/shipping/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
         publisher.Subscribe<CartLoaded>((@event, request) =>

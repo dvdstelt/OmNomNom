@@ -1,6 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoadData } from "./misc";
-import { getSelectedDeliveryOption, saveShipping } from "./orderService";
+import {
+  getSelectedDeliveryOption,
+  getShippingProducts,
+  saveShipping,
+} from "./orderService";
 import ProgressBar, { Stages } from "./misc/ProgressBar";
 import DeliveryOptions from "./Shipping/DeliveryOptions";
 import Items from "./Shipping/Items";
@@ -16,6 +20,7 @@ export default function Shipping() {
   useLoadData(getSelectedDeliveryOption, orderId, {
     callback: previousSelectionLoaded,
   });
+  const { data: products } = useLoadData(getShippingProducts, orderId);
 
   function previousSelectionLoaded(loadedOptionId) {
     if (loadedOptionId) setSelectedDeliveryOptionId(loadedOptionId);
@@ -37,7 +42,7 @@ export default function Shipping() {
       <div className={styles.columns}>
         <div>
           <h2>Shipping from omnomnom.com</h2>
-          <Items orderId={orderId} />
+          <Items orderId={orderId} overrideItems={products} />
         </div>
         <div>
           <h2>Choose a delivery option</h2>
