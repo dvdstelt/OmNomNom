@@ -23,6 +23,10 @@
   flex: 0;
 }
 
+#header > div {
+  display: flex;
+}
+
 #header #logo {
   height: 130%;
 }

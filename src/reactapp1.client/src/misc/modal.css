@@ -1,0 +1,28 @@
+.ReactModalPortal {
+  z-index: 2;
+  position: relative;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #00000090;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  background: var(--neutral-light-10);
+  border-radius: 0.5rem;
+  outline: none;
+  max-width: 80vw;
+  max-height: 90vh;
+  -webkit-box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+  box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+}
