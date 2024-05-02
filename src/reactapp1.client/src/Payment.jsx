@@ -26,9 +26,7 @@ export default function Payment() {
   useLoadData(getPaymentInfo, orderId, { callback: paymentInfoLoaded });
 
   function cardsLoaded(loaded) {
-    if (!selectedCard) {
-      setSelectedCard(loaded[0].cardId);
-    }
+    setSelectedCard((existing) => existing ?? loaded[0].cardId);
   }
 
   function paymentInfoLoaded(creditCardId) {
