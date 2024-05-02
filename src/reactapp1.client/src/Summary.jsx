@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useLoadData, useLocalStorage } from "./misc";
+import { useLoadData } from "./misc";
 import ProgressBar, { Stages } from "./misc/ProgressBar";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 import { OrderIdContext } from "./App";
 import Price from "./misc/Price";
@@ -20,7 +20,7 @@ export default function Summary() {
   const { data: summaryData } = useLoadData(getOrderSummary, orderId);
   const { data: addressData } = useLoadData(getAddress, orderId);
 
-  const paymentCardIcon = cardIcon("MasterCard");
+  const paymentCardIcon = cardIcon(summaryData?.creditCardType);
 
   useEffect(() => {
     document.title = "Order Summary - omnomnom.com";
@@ -85,7 +85,7 @@ export default function Summary() {
                 </span>
                 <span className={styles.inline}>
                   <img src={paymentCardIcon} />
-                  <span>ending in 2464</span>
+                  <span>ending in {summaryData?.creditCardLastDigits}</span>
                 </span>
               </div>
               <div>
