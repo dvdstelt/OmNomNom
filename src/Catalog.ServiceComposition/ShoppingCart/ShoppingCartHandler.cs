@@ -21,8 +21,8 @@ public class ShoppingCartHandler(CacheHelper cacheHelper, CatalogDbContext dbCon
         var order = await cacheHelper.GetOrder(orderId);
 
         var productsCollection = dbContext.Database.GetCollection<Product>();
-        // TODO: Figure out if `Contains` is possible with LiteDb
-        var products = productsCollection.Query().ToList();
+        var productIds = order.Products.Select(s => s.ProductId).ToList();
+        var products = productsCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
         var orderedProducts = Mapper.MapToDictionary(order, products);
 
         var context = request.GetCompositionContext();

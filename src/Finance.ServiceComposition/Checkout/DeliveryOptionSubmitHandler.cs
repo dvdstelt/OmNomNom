@@ -15,7 +15,7 @@ public class DeliveryOptionSubmitHandler(IMessageSession messageSession) : IComp
         var message = new SubmitDeliveryOption()
         {
             OrderId = submitted.OrderId,
-            DeliveryOptionId = submitted.DeliveryOptionId
+            DeliveryOptionId = submitted.Body.DeliveryOptionId
         };
 
         await messageSession.Send(message);
@@ -24,6 +24,11 @@ public class DeliveryOptionSubmitHandler(IMessageSession messageSession) : IComp
     class SelectedDeliveryOption
     {
         [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public Guid DeliveryOptionId { get; set; }
+        [FromBody] public BodyModel Body { get; set; }
+    }
+
+    class BodyModel
+    {
+        public Guid DeliveryOptionId { get; set; }
     }
 }

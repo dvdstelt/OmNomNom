@@ -14,8 +14,6 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
     [HttpGet("/products")]
     public async Task Handle(HttpRequest request)
     {
-        var vm = request.GetComposedResponseModel();
-
         var productCollection = dbContext.Database.GetCollection<Product>();
         var products = productCollection.Query().ToList();
 
@@ -30,6 +28,7 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
             Products = productsModel
         });
 
+        var vm = request.GetComposedResponseModel();
         vm.Products = productsModel.Values.ToList();
     }
 }
