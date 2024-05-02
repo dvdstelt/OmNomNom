@@ -46,7 +46,7 @@ export default function Payment() {
 
   return (
     <div className={styles.payment}>
-      <ProgressBar stage={Stages.Payment} />
+      <ProgressBar stage={Stages.Payment} orderId={orderId} />
       <h1>Select a payment option</h1>
       <h2>Your credit and debit cards</h2>
       <div className={styles.cards}>

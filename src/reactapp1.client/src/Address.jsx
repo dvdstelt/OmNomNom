@@ -61,7 +61,7 @@ export default function Address() {
 
   return (
     <div className={styles.address}>
-      <ProgressBar stage={Stages.Address} />
+      <ProgressBar stage={Stages.Address} orderId={orderId} />
       <h1>Where should we deliver your order?</h1>
       <h2>Enter a shipping address</h2>
       <AddressEdit state={shippingAddressState} />

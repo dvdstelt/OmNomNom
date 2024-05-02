@@ -39,6 +39,11 @@
   color: var(--amazon-orange-dark);
 }
 
+.progressBar > div.active > span > a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .address {
   left: 5%;
 }
