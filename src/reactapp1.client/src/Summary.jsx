@@ -135,10 +135,10 @@ export default function Summary() {
             <label>Total before tax:</label>
             <Price price={productsPrice + shippingPrice} />
           </div>
-          <div>
+          {/* <div>
             <label>Estimated tax:</label>
             <Price price={taxAmount} />
-          </div>
+          </div> */}
           <div className={styles.orderTotal}>
             <label>Order Total:</label>
             <Price price={summaryData?.totalPrice ?? 0} />
