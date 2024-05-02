@@ -15,6 +15,7 @@ import Address from "./Address.jsx";
 import Shipping from "./Shipping.jsx";
 import Payment from "./Payment.jsx";
 import Summary from "./Summary.jsx";
+import ReactModal from "react-modal";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
   )
 );
 
+ReactModal.setAppElement("#root");
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />

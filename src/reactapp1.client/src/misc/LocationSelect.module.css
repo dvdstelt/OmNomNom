@@ -1,0 +1,75 @@
+.locationSelect {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 0.25em;
+  gap: 0.5em;
+  color: var(--neutral-light);
+  font-size: 0.9em;
+  font-weight: 100;
+  padding: 0 0.25em;
+}
+
+.locationSelect > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.locationSelect:hover {
+  border-color: var(--neutral-light);
+}
+
+.locationSelect:focus {
+  border-color: var(--amazon-orange-dark);
+}
+
+.marker {
+  height: 1em;
+}
+
+.locationName {
+  font-weight: bold;
+}
+
+.modal {
+  width: 25em;
+  border-radius: 0.5em;
+  background-color: var(--neutral-light);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.modalHeader {
+  background-color: var(--neutral-mid);
+  padding: 0.75em;
+  border-radius: 0.5em 0.5em 0 0;
+  font-weight: bold;
+}
+
+.modalContent {
+  padding: 0.75em;
+  border-radius: 0 0 0.5em 0.5em;
+}
+
+.instructions {
+  font-size: 0.75em;
+}
+
+.location {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9em;
+  border: 2px solid var(--neutral-mid);
+  border-radius: 0.25em;
+  padding: 0.25em;
+  margin: 0.15em 0;
+  cursor: pointer;
+}
+
+.location.active {
+  border-color: var(--amazon-orange-dark);
+  background-color: var(--amazon-orange-light);
+}
