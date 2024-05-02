@@ -7,32 +7,26 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json.Linq;
 using Shipping.Endpoint.Messages.Events;
 
 namespace OmNomNom.Website.Handlers;
 
-public class OrderShippedHandler : IHandleMessages<OrderShipped>
+public class OrderShippedHandler(
+    IServiceProvider serviceProvider,
+    IRazorViewEngine viewEngine,
+    ITempDataProvider tempDataProvider)
+    : IHandleMessages<OrderShipped>
 {
-    readonly IServiceProvider serviceProvider;
-    readonly IRazorViewEngine viewEngine;
-    readonly ITempDataProvider tempDataProvider;
-    readonly IEnumerable<IProvideOrderData> orderDataProviders;
-
-    public OrderShippedHandler(
-        IServiceProvider serviceProvider,
-        IRazorViewEngine viewEngine,
-        ITempDataProvider tempDataProvider,
-        IEnumerable<IProvideOrderData> orderDataProviders)
-    {
-        this.serviceProvider = serviceProvider;
-        this.viewEngine = viewEngine;
-        this.tempDataProvider = tempDataProvider;
-        this.orderDataProviders = orderDataProviders;
-    }
-
     public async Task Handle(OrderShipped message, IMessageHandlerContext context)
     {
-        orderDataProviders.ToList().ForEach(s => s.GetOrderInfo(message.OrderId));
+        var requestUri = $"https://localhost:7126/email/summary/{message.OrderId}";
+
+        var httpClient = new HttpClient();
+        HttpResponseMessage response = await httpClient.GetAsync(requestUri, context.CancellationToken);
+        response.EnsureSuccessStatusCode();
+        string body = await response.Content.ReadAsStringAsync(context.CancellationToken);
+        var content = JObject.Parse(body);
 
         var httpContext = new DefaultHttpContext
         {
@@ -45,11 +39,11 @@ public class OrderShippedHandler : IHandleMessages<OrderShipped>
         var viewContext = new ViewContext(
             actionContext,
             view,
-            new ViewDataDictionary<CustomerModel>(
+            new ViewDataDictionary<JObject>(
                 metadataProvider: new EmptyModelMetadataProvider(),
                 modelState: new ModelStateDictionary())
             {
-                Model = new CustomerModel() { Fullname = "Dennis van der Stelt"}
+                Model = content // new CustomerModel() { Fullname = "Dennis van der Stelt"}
             },
             new TempDataDictionary(
                 actionContext.HttpContext,
