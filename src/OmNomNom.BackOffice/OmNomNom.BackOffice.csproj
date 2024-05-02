@@ -28,8 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Catalog.Data\Catalog.Data.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\" />
     </ItemGroup>
 
 </Project>
