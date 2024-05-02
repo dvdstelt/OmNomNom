@@ -31,7 +31,7 @@ public static class SeedData
             new() { ProductId = FremontId, Price = 35, Discount = 0 },
             new() { ProductId = MoersleutelId, Price = 12, Discount = 0 },
             new() { ProductId = WhiteDogId, Price = 6, Discount = 0 },
-            new() { ProductId = AbraxasId, Price = 40m, Discount = 10 },
+            new() { ProductId = AbraxasId, Price = 40m, Discount = 0 },
             new() { ProductId = BourbonCountyId, Price = 25m, Discount = 0 },
             new() { ProductId = TwentyTwoId, Price = 11m, Discount = 0 },
             new() { ProductId = SusanId, Price = 9m, Discount = 0 },
