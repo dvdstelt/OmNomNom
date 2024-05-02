@@ -10,9 +10,19 @@ The next presentation will be at:
 
 - **[Techorama Belgium](https://techorama.be/speakers/session/implementing-the-planets-largest-ecommerce-site-using-service-boundaries/)** (May 8, 2024) 
 
-## Service Boundaries
+## Consultancy on Service Boundaries
 
-If you would like more information on implementing service boundaries in your system, contact me at dennis@compilesoftware.nl.
+If you want more information on implementing service boundaries in your system, contact me at dennis@compilesoftware.nl.
+
+I am available for
+
+- Presentations on distributed systems
+  - [Sessionize profile](https://sessionize.com/dennis-van-der-stelt/) 
+- [Workshop](https://sessionize.com/s/dennis-van-der-stelt/event-driven-microservices-in-vertical-slices/69097) on
+  - Service Boundaries
+  - Microservices
+  - Event-Driven Architecture
+  - Service Composition 
 
 ## Service Composition in the UI
 
