@@ -54,6 +54,11 @@ export async function getDeliveryOptions(orderId) {
   return data.deliveryOptions;
 }
 
+export async function getShippingProducts(orderId) {
+  const data = await memoisedShipping(orderId);
+  return data.cartItems;
+}
+
 export async function saveShipping(orderId, deliveryOptionId) {
   await axios.post(`https://localhost:7126/buy/shipping/${orderId}`, {
     deliveryOptionId,
