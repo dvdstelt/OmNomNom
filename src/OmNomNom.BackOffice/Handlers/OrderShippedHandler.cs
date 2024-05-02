@@ -1,5 +1,5 @@
 ﻿using System.Net.Mail;
-using Microsoft.AspNetCore.Http;
+using ITOps.Shared.Integration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -7,15 +7,33 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Routing;
 using Shipping.Endpoint.Messages.Events;
 
 namespace OmNomNom.Website.Handlers;
 
-public class OrderShippedHandler(IServiceProvider serviceProvider, IRazorViewEngine viewEngine, ITempDataProvider tempDataProvider) : IHandleMessages<OrderShipped>
+public class OrderShippedHandler : IHandleMessages<OrderShipped>
 {
+    readonly IServiceProvider serviceProvider;
+    readonly IRazorViewEngine viewEngine;
+    readonly ITempDataProvider tempDataProvider;
+    readonly IEnumerable<IProvideOrderData> orderDataProviders;
+
+    public OrderShippedHandler(
+        IServiceProvider serviceProvider,
+        IRazorViewEngine viewEngine,
+        ITempDataProvider tempDataProvider,
+        IEnumerable<IProvideOrderData> orderDataProviders)
+    {
+        this.serviceProvider = serviceProvider;
+        this.viewEngine = viewEngine;
+        this.tempDataProvider = tempDataProvider;
+        this.orderDataProviders = orderDataProviders;
+    }
+
     public async Task Handle(OrderShipped message, IMessageHandlerContext context)
     {
+        orderDataProviders.ToList().ForEach(s => s.GetOrderInfo(message.OrderId));
+
         var httpContext = new DefaultHttpContext
         {
             RequestServices = serviceProvider

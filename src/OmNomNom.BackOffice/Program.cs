@@ -1,6 +1,6 @@
 using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
-using OmNomNom.Website.Helpers;
+using ITOps.Shared.Integration;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +11,7 @@ builder.Services.AddViewModelComposition(options =>
     options.EnableCompositionOverControllers();
 });
 
-var assemblies = ReflectionHelper.GetAssemblies(".Data.dll");
-var types = assemblies
-    .SelectMany(a => a.GetTypes())
-    .Where(t => typeof(IProvideCustomerData).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
+DataProviders.RegisterAll(builder.Services);
 
 builder.Host.UseNServiceBus(c =>
 {

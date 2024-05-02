@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace OmNomNom.Website.Helpers;
+namespace ITOps.Shared.Integration;
 
 public static class ReflectionHelper
 {
