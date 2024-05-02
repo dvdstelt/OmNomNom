@@ -32,7 +32,7 @@ export default function Shipping() {
 
   return (
     <div className={styles.shipping}>
-      <ProgressBar stage={Stages.Shipping} />
+      <ProgressBar stage={Stages.Shipping} orderId={orderId} />
       <h1>When do you need it?</h1>
       <div className={styles.columns}>
         <div>

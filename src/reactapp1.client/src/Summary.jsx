@@ -56,7 +56,7 @@ export default function Summary() {
 
   return (
     <div className={styles.summary}>
-      <ProgressBar stage={Stages.Summary} />
+      <ProgressBar stage={Stages.Summary} orderId={orderId} />
       <h1>Review your order</h1>
       <div className={styles.content}>
         <div className={styles.shippingPaymentAndItems}>
@@ -64,7 +64,7 @@ export default function Summary() {
             <div className={styles.shipping}>
               <span className={styles.inline}>
                 <h2>Shipping Address</h2>
-                <Link to={`/buy/shipping/${orderId}`}>change</Link>
+                <Link to={`/buy/address/${orderId}`}>change</Link>
               </span>
               {addressData ? (
                 <>
@@ -91,7 +91,7 @@ export default function Summary() {
               <div>
                 <span className={styles.inline}>
                   <h2>Billing Address</h2>
-                  <Link to={`/buy/shipping/${orderId}`}>change</Link>
+                  <Link to={`/buy/address/${orderId}`}>change</Link>
                 </span>
                 {addressData ? (
                   <div>

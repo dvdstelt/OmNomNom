@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "./ProgressBar.module.css";
 
 import cartIcon from "@/assets/cartitems.png";
@@ -9,7 +10,7 @@ export const Stages = Object.freeze({
   Summary: 4,
 });
 
-export default function ProgressBar({ stage }) {
+export default function ProgressBar({ stage, orderId }) {
   const progressWidth = (() => {
     switch (stage) {
       case Stages.Address:
@@ -38,21 +39,39 @@ export default function ProgressBar({ stage }) {
           stage >= Stages.Address ? styles.active : ""
         }`}
       >
-        <span>Address</span>
+        <span>
+          {stage > Stages.Address ? (
+            <Link to={`/buy/address/${orderId}`}>Address</Link>
+          ) : (
+            "Address"
+          )}
+        </span>
       </div>
       <div
         className={`${styles.shipping} ${
           stage >= Stages.Shipping ? styles.active : ""
         }`}
       >
-        <span>Shipping</span>
+        <span>
+          {stage > Stages.Shipping ? (
+            <Link to={`/buy/shipping/${orderId}`}>Shipping</Link>
+          ) : (
+            "Shipping"
+          )}
+        </span>
       </div>
       <div
         className={`${styles.payment} ${
           stage >= Stages.Payment ? styles.active : ""
         }`}
       >
-        <span>Payment</span>
+        <span>
+          {stage > Stages.Payment ? (
+            <Link to={`/buy/payment/${orderId}`}>Payment</Link>
+          ) : (
+            "Payment"
+          )}
+        </span>
       </div>
       <div
         className={`${styles.summary} ${
