@@ -13,7 +13,7 @@ export default function DeliveryOptions({
   });
 
   function optionsLoaded(loadedOptions) {
-    setSelectionId((existing) => existing ?? loadedOptions[0].deliveryOptionId);
+    setSelectionId((existing) => existing || loadedOptions[0].deliveryOptionId);
   }
 
   return (
