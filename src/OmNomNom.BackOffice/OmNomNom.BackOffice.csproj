@@ -33,8 +33,4 @@
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Helpers\" />
-    </ItemGroup>
-
 </Project>
