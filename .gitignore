@@ -350,3 +350,7 @@ MigrationBackup/
 
 # Rider
 */.idea/*
+
+# Custom
+*/.db/*
+*/.learningtransport/*
