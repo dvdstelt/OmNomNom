@@ -1,15 +1,17 @@
-import { getProductShippingDetails } from "../productService";
 import { useLoadData } from "@/misc";
+import { getLocation } from "../siteService";
+import { useLocalStorage } from "../misc";
 
 export default function ShippingDetails({ id, className }) {
-  const { data: model } = useLoadData(getProductShippingDetails, id);
+  const [locationId] = useLocalStorage("locationId");
+  const { data: location } = useLoadData(getLocation, locationId);
 
   return (
-    model && (
+    location && (
       <div className={className}>
-        {model.shipsToLocation
-          ? `This item ships to ${model.shippingLocation}`
-          : `This item does not ship to ${model.shippingLocation}`}
+        {true //model.shipsToLocation
+          ? `This item ships to ${location.town}, ${location.country}`
+          : `This item does not ship to ${location.town}, ${location.country}`}
       </div>
     )
   );

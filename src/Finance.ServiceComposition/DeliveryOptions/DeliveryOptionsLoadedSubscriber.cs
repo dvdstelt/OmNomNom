@@ -18,7 +18,7 @@ public class DeliveryOptionsLoadedSubscriber(FinanceDbContext dbContext) : IComp
 
             foreach (var deliveryOption in @event.DeliveryOptions)
             {
-                var matchingOption  = results.Single(s => s.DeliveryOptionId == deliveryOption.Key);
+                var matchingOption = results.Single(s => s.Id.DeliveryOptionId == deliveryOption.Key && s.Id.LocationId == @event.LocationId);
                 deliveryOption.Value.Price = matchingOption.Price;
             }
             

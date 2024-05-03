@@ -48,12 +48,12 @@ public static class SeedData
     {
         return new List<DeliveryOption>
         {
-            new() { DeliveryOptionId = StandardId, LocationId = DennisId, Price = 2 },
-            new() { DeliveryOptionId = ExpeditedId, LocationId = DennisId, Price = 6 },
-            new() { DeliveryOptionId = PriorityId, LocationId = DennisId, Price = 14 },
-            new() { DeliveryOptionId = StandardId, LocationId = PhilId, Price = 13.24m },
-            new() { DeliveryOptionId = ExpeditedId, LocationId = PhilId, Price = 63.20m },
-            new() { DeliveryOptionId = PriorityId, LocationId = PhilId, Price = 116 },
+            new() { Id = new() { DeliveryOptionId = StandardId, LocationId = DennisId }, Price = 2 },
+            new() { Id = new() { DeliveryOptionId = ExpeditedId, LocationId = DennisId }, Price = 6 },
+            new() { Id = new() { DeliveryOptionId = PriorityId, LocationId = DennisId }, Price = 14 },
+            new() { Id = new() { DeliveryOptionId = StandardId, LocationId = PhilId }, Price = 13.24m },
+            new() { Id = new() { DeliveryOptionId = ExpeditedId, LocationId = PhilId }, Price = 63.20m },
+            new() { Id = new() { DeliveryOptionId = PriorityId, LocationId = PhilId }, Price = 116 },
         };
     }
 }

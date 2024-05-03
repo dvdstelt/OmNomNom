@@ -56,13 +56,6 @@ export async function getProductPriceDetails(id) {
   return { price: model.price, discount: model.discount };
 }
 
-export function getProductShippingDetails(id) {
-  return {
-    shippingLocation: "Haifa, Israel", //model.shippingLocation,
-    shipsToLocation: true, //model.shipsToLocation,
-  };
-}
-
 export async function addProductToCart(orderId, productDetails) {
   const { data } = await axios.post(
     `https://localhost:7126/cart/addproduct/${orderId}`,

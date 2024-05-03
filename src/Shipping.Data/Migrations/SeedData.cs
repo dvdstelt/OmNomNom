@@ -25,8 +25,8 @@ public static class SeedData
     {
         return
         [
-            new() { Id = DennisId, Name = "Dennis", Town = "Rotterdam", ZipCode = "3077 AA" },
-            new() { Id = PhilId, Name = "Phil", Town = "Perth", ZipCode = "6000"}
+            new() { Id = DennisId, Name = "Dennis", Town = "Rotterdam", ZipCode = "3077 AA", Country = "The Netherlands" },
+            new() { Id = PhilId, Name = "Phil", Town = "Perth", ZipCode = "6000", Country = "Australia" }
         ];
     }
 }
