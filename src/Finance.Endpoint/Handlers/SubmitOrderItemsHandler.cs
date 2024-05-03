@@ -22,6 +22,7 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
             };
         }
         order.Items = new();
+        order.LocationId = message.LocationId;
         
         foreach (var item in message.Items)
         {

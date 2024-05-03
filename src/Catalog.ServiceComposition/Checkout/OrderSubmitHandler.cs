@@ -13,9 +13,12 @@ public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cach
     {
         var data = await request.Bind<ShoppingCart>();
         var order = await cacheHelper.GetOrder(data.OrderId);
-        
-        var message = new SubmitOrderItems();
-        message.OrderId = data.OrderId;
+
+        var message = new SubmitOrderItems
+        {
+            OrderId = data.OrderId,
+            LocationId = data.Model.LocationId
+        };
         foreach (var item in order.Products)
         {
             message.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity });
@@ -27,5 +30,11 @@ public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cach
     class ShoppingCart
     {
         [FromRoute] public Guid OrderId { get; set; }
+        [FromBody] public ShoppingCartModel Model { get; set; }
+    }
+
+    class ShoppingCartModel
+    {
+        public Guid LocationId { get; set; }
     }
 }
