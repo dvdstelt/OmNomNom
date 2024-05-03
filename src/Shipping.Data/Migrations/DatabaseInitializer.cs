@@ -10,9 +10,11 @@ public static class DatabaseInitializer
         if (context == null) throw new ArgumentNullException(nameof(context));
 
         var deliveryOptions = context.GetCollection<DeliveryOption>();
-        if (deliveryOptions.Count() > 0)
-            return;
+        if (deliveryOptions.Count() == 0)
+            deliveryOptions.InsertBulk(SeedData.DeliveryOptions());
 
-        deliveryOptions.InsertBulk(SeedData.DeliveryOptions());
+        var locations = context.GetCollection<Location>();
+        if (locations.Count() == 0)
+            locations.InsertBulk(SeedData.Locations());
     }
 }

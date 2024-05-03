@@ -3,6 +3,7 @@
 public class Order
 {
     public Guid OrderId { get; set; }
+    public Guid LocationId { get; set; }
     public List<OrderItem> Items { get; set; } = [];
     public Address BillingAddress { get; set; }
     public Guid DeliveryOptionId { get; set; }

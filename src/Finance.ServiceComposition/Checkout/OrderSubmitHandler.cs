@@ -17,18 +17,19 @@ public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cach
     public async Task Handle(HttpRequest request)
     {
         var submitted = await request.Bind<ShoppingCart>();
-        
-        request.Body.Position = 0;
-        using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true );
-        var body = await reader.ReadToEndAsync();
-        var shoppingCartItems = JsonSerializer.Deserialize<List<ShoppingCartItem>>(body, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-        
-        var cacheOrder = new Order();
-        cacheOrder.OrderId = submitted.OrderId;
-        
-        var message = new SubmitOrderItems();
-        message.OrderId = submitted.OrderId;
-        foreach (var item in shoppingCartItems)
+
+        var cacheOrder = new Order
+        {
+            OrderId = submitted.OrderId,
+            LocationId = submitted.Model.LocationId
+        };
+
+        var message = new SubmitOrderItems
+        {
+            OrderId = submitted.OrderId,
+            LocationId = submitted.Model.LocationId
+        };
+        foreach (var item in submitted.Model.Items)
         {
             message.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity });
             cacheOrder.Items.Add(new Data.Models.OrderItem()
@@ -50,9 +51,8 @@ public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cach
 
     class ShoppingCartModel
     {
-        public Guid OrderId { get; set; }
-        // public string AString { get; set; }
-        // public Dictionary<int, ShoppingCartItem> Items { get; set; }
+        public Guid LocationId { get; set; }
+        public ShoppingCartItem[] Items { get; set; }
     }
 
     class ShoppingCartItem

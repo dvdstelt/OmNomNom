@@ -17,4 +17,13 @@ public static class SeedData
             new() { DeliveryOptionId = PriorityId, Name = "Priority shipping", Description = "Next business day" },
         };
     }
+
+    public static IEnumerable<Location> Locations()
+    {
+        return
+        [
+            new() { Id = Guid.Parse("767bbf72-4f0d-4e05-8ed7-45cadcb603ee"), Name = "Dennis", Town = "Rotterdam", ZipCode = "3077 AA" },
+            new() { Id = Guid.Parse("7e993977-f958-494b-bbc2-de4db6380d4b"), Name = "Phil", Town = "Perth", ZipCode = "6000"}
+        ];
+    }
 }

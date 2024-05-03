@@ -3,6 +3,7 @@
 public class SubmitOrderItems
 {
     public Guid OrderId { get; set; }
+    public Guid LocationId { get; set; }
     public List<OrderItem> Items { get; set; } = new();
 }
 
