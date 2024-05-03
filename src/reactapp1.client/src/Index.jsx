@@ -38,11 +38,19 @@ export default function Index() {
                 selectedCategories.includes(product.category)
             )
             .map((product) => (
-              <Link key={product.id} to={`/product/${product.id}`}>
+              <Link
+                key={product.productId}
+                to={`/product/${product.productId}`}
+              >
                 <CarouselItem
-                  id={product.id}
+                  id={product.productId}
+                  imageUrl={product.imageUrl}
                   name={product.name}
                   price={product.price}
+                  rating={{
+                    stars: product.stars,
+                    reviewCount: product.reviewCount,
+                  }}
                 />
               </Link>
             ))}

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>OmNomNom.Website</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NServiceBus" Version="9.0.0" />
+      <PackageReference Include="NServiceBus.Extensions.Hosting" Version="3.0.0" />
+      <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Home\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Cart\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\address.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\payment.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\shipping.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Buy\summary.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Cart\index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Home\index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Catalog.Data\Catalog.Data.csproj" />
+      <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+      <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\" />
+    </ItemGroup>
+
+</Project>

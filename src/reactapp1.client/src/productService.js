@@ -31,9 +31,14 @@ export async function getProductName(id) {
   return model.name;
 }
 
+export async function getProductDescription(id) {
+  const model = await memoisedProduct(id);
+  return model.description;
+}
+
 export async function getProductImage(id) {
   const model = await memoisedProduct(id);
-  return model.image;
+  return model.imageUrl;
 }
 
 export async function getProductRating(id) {
@@ -48,7 +53,7 @@ export async function getProductStockDetails(id) {
 
 export async function getProductPriceDetails(id) {
   const model = await memoisedProduct(id);
-  return { price: model.price, savings: model.savings };
+  return { price: model.price, discount: model.discount };
 }
 
 export function getProductShippingDetails(id) {

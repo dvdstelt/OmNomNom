@@ -1,17 +1,16 @@
 import Price from "../misc/Price";
 import { useLoadData } from "../misc";
 import { getCartTotal } from "../orderService";
-import { useNavigate } from "react-router-dom";
+import { subscribeToCart } from "../productService";
+import { useState } from "react";
 
 import styles from "./CartAccept.module.css";
 
-export default function CartAccept({ id, className }) {
-  const { data: total } = useLoadData(getCartTotal, id);
-  const navigate = useNavigate();
+export default function CartAccept({ id, className, proceed, discard }) {
+  const [refreshTrigger, setRefreshTrigger] = useState(crypto.randomUUID());
+  const { data: total } = useLoadData(getCartTotal, id, { refreshTrigger });
 
-  function proceed() {
-    navigate(`/buy/address/${id}`);
-  }
+  subscribeToCart(() => setRefreshTrigger(crypto.randomUUID()));
 
   return (
     <div className={`${styles.cartAccept} ${className ?? ""}`}>
@@ -21,11 +20,11 @@ export default function CartAccept({ id, className }) {
           <Price price={total} />
         </span>
       </div>
-      <div>
-        <input id="gift" type="checkbox" />
-        <label htmlFor="gift">This list contains a gift</label>
-      </div>
       <button onClick={proceed}>Proceed to Checkout</button>
+      <div className={styles.centre}>--OR--</div>
+      <button className={styles.discard} onClick={discard}>
+        Discard Cart
+      </button>
     </div>
   );
 }

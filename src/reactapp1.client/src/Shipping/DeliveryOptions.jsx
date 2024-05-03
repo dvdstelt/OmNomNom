@@ -1,24 +1,35 @@
+import { useLoadData } from "../misc";
+import { getDeliveryOptions } from "../orderService";
+
 import styles from "./DeliveryOptions.module.css";
 
 export default function DeliveryOptions({
-  options,
+  orderId,
   selectionId,
   setSelectionId,
 }) {
+  const { data: options } = useLoadData(getDeliveryOptions, orderId, {
+    callback: optionsLoaded,
+  });
+
+  function optionsLoaded(loadedOptions) {
+    setSelectionId((existing) => existing || loadedOptions[0].deliveryOptionId);
+  }
+
   return (
     <div>
       {(options ?? []).map((option) => (
-        <div key={option.id} className={styles.option}>
+        <div key={option.deliveryOptionId} className={styles.option}>
           <div className={styles.selection}>
             <input
-              id={option.id}
+              id={option.deliveryOptionId}
               type="radio"
               name="deliveryOption"
-              value={option.id}
-              checked={selectionId === option.id}
-              onChange={() => setSelectionId(option.id)}
+              value={option.deliveryOptionId}
+              checked={selectionId === option.deliveryOptionId}
+              onChange={() => setSelectionId(option.deliveryOptionId)}
             />
-            <label htmlFor={option.id}>{option.name}</label>
+            <label htmlFor={option.deliveryOptionId}>{option.name}</label>
           </div>
           <div className={styles.priceAndDescription}>
             <span>

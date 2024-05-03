@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import ProductImage from "../Product/ProductImage";
 import { useLoadData } from "../misc";
 import Price from "../misc/Price";
@@ -5,16 +6,29 @@ import { getCartItems } from "../orderService";
 
 import styles from "./Items.module.css";
 
-export default function Items({ orderId, includeImages = false }) {
-  const { data: items } = useLoadData(getCartItems, orderId);
+export default function Items({
+  orderId,
+  overrideItems,
+  includeImages = false,
+  showChange = false,
+}) {
+  const { data: items } = useLoadData(
+    overrideItems ? () => overrideItems : getCartItems,
+    orderId,
+    { refreshTrigger: overrideItems }
+  );
 
   return (
     <div className={styles.items}>
       {(items ?? []).map((item) => (
-        <div className={styles.itemContainer}>
+        <div key={item.productId} className={styles.itemContainer}>
           {includeImages && (
             <div className={styles.imageContainer}>
-              <ProductImage id={item.productId} className={styles.image} />
+              <ProductImage
+                id={item.productId}
+                imageUrl={item.imageUrl}
+                className={styles.image}
+              />
             </div>
           )}
           <div key={item.productId} className={styles.item}>
@@ -25,6 +39,7 @@ export default function Items({ orderId, includeImages = false }) {
               </span>
               <span>-</span>
               <span>{`Quantity: ${item.quantity}`}</span>
+              {showChange && <Link to={`/cart/${orderId}`}>change</Link>}
             </div>
           </div>
         </div>

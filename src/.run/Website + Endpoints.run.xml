@@ -1,0 +1,10 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Website + Endpoints" type="CompoundRunConfigurationType">
+    <toRun name="Catalog.Endpoint" type="DotNetProject" />
+    <toRun name="Finance.Endpoint" type="DotNetProject" />
+    <toRun name="PaymentInfo.Endpoint" type="DotNetProject" />
+    <toRun name="Shipping.Endpoint" type="DotNetProject" />
+    <toRun name="Website" type="CompoundRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
