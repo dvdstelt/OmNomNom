@@ -23,12 +23,12 @@ public class DeliveryOptionsHandler(ShippingDbContext dbContext, CacheHelper cac
         
         // Get all available delivery options
         var deliveryOptions = deliveryOptionsCollection.Query().ToList();
-        var selectedDeliveryOption =
-            orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault()?.DeliveryOptionId;
+        var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
+        var selectedDeliveryOption = order?.DeliveryOptionId;
         if (selectedDeliveryOption == null)
         {
             // See if there's something in cache
-            var order = await cacheHelper.GetOrder(orderId);
+            order = await cacheHelper.GetOrder(orderId);
             if (order.DeliveryOptionId != Guid.Empty)
                 selectedDeliveryOption = order.DeliveryOptionId;
         }
@@ -38,7 +38,8 @@ public class DeliveryOptionsHandler(ShippingDbContext dbContext, CacheHelper cac
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new DeliveryOptionsLoaded()
         {
-            DeliveryOptions = optionsModel
+            DeliveryOptions = optionsModel,
+            LocationId = order.LocationId
         });
 
         var vm = request.GetComposedResponseModel();
