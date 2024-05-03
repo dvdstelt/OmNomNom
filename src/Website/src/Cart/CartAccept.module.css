@@ -1,0 +1,42 @@
+.cartAccept {
+  background: var(--neutral-light);
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.cartAccept > div {
+  width: max-content;
+}
+
+.cartAccept > button {
+  width: max-content;
+}
+
+.cartAccept .subtotal {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5em;
+  font-weight: bold;
+}
+
+.cartAccept .subtotal .price {
+  color: red;
+}
+
+.cartAccept .centre {
+  align-self: center;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+.cartAccept button.discard {
+  width: 100%;
+  background-color: var(--neutral-mid);
+}
+
+.cartAccept button.discard:hover {
+  background-color: var(--neutral-mid-dark);
+  color: white;
+}

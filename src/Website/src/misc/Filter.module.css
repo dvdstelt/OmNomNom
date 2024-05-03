@@ -1,0 +1,12 @@
+.filter {
+  border: 1px solid var(--neutral-mid);
+  border-left: none;
+  border-right: none;
+  padding: 0.25em 0;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 0.25em;
+  font-size: 0.9em;
+}
