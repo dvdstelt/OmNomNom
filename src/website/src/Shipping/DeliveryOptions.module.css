@@ -1,0 +1,16 @@
+.option {
+  margin-bottom: 0.25em;
+}
+
+.selection input {
+  width: 2em;
+}
+
+.selection label {
+  color: green;
+  font-weight: bold;
+}
+
+.priceAndDescription {
+  margin-left: 2em;
+}
