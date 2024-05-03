@@ -30,9 +30,4 @@ var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
 Console.Title = hostEnvironment.ApplicationName;
 
-var ms = host.Services.GetService<IMessageSession>();
-var @event = new OrderShipped();
-@event.OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e");
-await ms.Publish(@event);
-
 await host.RunAsync();
