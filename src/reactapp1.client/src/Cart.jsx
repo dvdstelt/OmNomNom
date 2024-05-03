@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Items from "./Cart/Items";
 import CartAccept from "./Cart/CartAccept";
 import { useContext, useEffect, useState } from "react";
-import { useLoadData } from "./misc";
+import { useLoadData, useLocalStorage } from "./misc";
 import { getCartItems } from "./orderService";
 import axios from "axios";
 import { OrderIdContext } from "./App";
@@ -16,6 +16,7 @@ export default function Cart() {
     refreshTrigger,
   });
   const { setCurrentOrderId } = useContext(OrderIdContext);
+  const [locationId] = useLocalStorage("locationId");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +24,10 @@ export default function Cart() {
   }, []);
 
   async function saveAndContinue() {
-    await axios.post(`https://localhost:7126/cart/${orderId}`, items);
+    await axios.post(`https://localhost:7126/cart/${orderId}`, {
+      locationId,
+      items,
+    });
     navigate(`/buy/address/${orderId}`);
   }
 
