@@ -35,6 +35,7 @@ public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsH
         await context.RaiseEvent(new DeliverySummaryLoaded()
         {
             DeliveryOptionId = deliveryOption.DeliveryOptionId,
+            LocationId = order.LocationId,
             DeliveryOption = delivery
         });
 

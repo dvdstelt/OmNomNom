@@ -41,13 +41,19 @@ public static class SeedData
         };
     }
 
+    static readonly Guid DennisId = Guid.Parse("767bbf72-4f0d-4e05-8ed7-45cadcb603ee");
+    static readonly Guid PhilId = Guid.Parse("7e993977-f958-494b-bbc2-de4db6380d4b");
+
     public static IEnumerable<DeliveryOption> DeliveryOptions()
     {
         return new List<DeliveryOption>
         {
-            new() { DeliveryOptionId = StandardId, Price = 2 },
-            new() { DeliveryOptionId = ExpeditedId, Price = 6 },
-            new() { DeliveryOptionId = PriorityId, Price = 14 },
+            new() { DeliveryOptionId = StandardId, LocationId = DennisId, Price = 2 },
+            new() { DeliveryOptionId = ExpeditedId, LocationId = DennisId, Price = 6 },
+            new() { DeliveryOptionId = PriorityId, LocationId = DennisId, Price = 14 },
+            new() { DeliveryOptionId = StandardId, LocationId = PhilId, Price = 13.24m },
+            new() { DeliveryOptionId = ExpeditedId, LocationId = PhilId, Price = 63.20m },
+            new() { DeliveryOptionId = PriorityId, LocationId = PhilId, Price = 116 },
         };
     }
 }

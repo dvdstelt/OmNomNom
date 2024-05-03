@@ -15,7 +15,7 @@ public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : IComp
         {
             var deliveryOptionCollection = dbContext.Database.GetCollection<DeliveryOption>();
             var deliveryOption = deliveryOptionCollection.Query()
-                .Where(s => s.DeliveryOptionId == @event.DeliveryOptionId).Single();
+                .Where(s => s.DeliveryOptionId == @event.DeliveryOptionId && s.LocationId == @event.LocationId).Single();
 
             @event.DeliveryOption.Price = deliveryOption.Price;
 
