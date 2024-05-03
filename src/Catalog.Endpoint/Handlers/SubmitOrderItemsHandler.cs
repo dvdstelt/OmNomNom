@@ -13,7 +13,8 @@ public class SubmitOrderItemsHandler(CatalogDbContext dbContext) : IHandleMessag
 
         var order = new Order
         {
-            OrderId = message.OrderId
+            OrderId = message.OrderId,
+            LocationId = message.LocationId,
         };
         foreach (var item in message.Items)
         {

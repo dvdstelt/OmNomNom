@@ -5,7 +5,7 @@ namespace Catalog.Data.Models;
 public class Order
 {
     public Guid OrderId { get; set; }
-
+    public Guid LocationId { get; set; }
     public List<OrderItem> Products { get; set; } = [];
 }
 
