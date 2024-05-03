@@ -1,0 +1,18 @@
+.cartIndicator {
+  position: relative;
+}
+
+.cartIndicator > * {
+  position: absolute;
+}
+
+.cartIndicator .icon {
+  right: 0;
+  height: 80%;
+}
+
+.cartIndicator .itemCount {
+  right: 1.5em;
+  font-weight: bold;
+  color: var(--amazon-orange-dark);
+}
