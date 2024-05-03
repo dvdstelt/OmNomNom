@@ -1,8 +1,0 @@
-.stockDetails {
-  display: flex;
-  flex-direction: column;
-}
-
-.stockDetails .lowStock {
-  color: red;
-}
