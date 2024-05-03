@@ -1,0 +1,53 @@
+.payment {
+  width: 90%;
+  max-width: 80em;
+}
+
+.payment h2 {
+  padding: 0.25em;
+  border-bottom: 2px dashed var(--neutral-mid);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  background-color: var(--amazon-orange-light);
+  border: 1px solid var(--amazon-orange);
+}
+
+.cards > div {
+  display: flex;
+  align-items: flex-start;
+}
+
+.cards > div > input {
+  margin: 0.75em;
+  flex: 0;
+}
+
+.cards > div > div {
+  flex: 1;
+}
+
+.moreOptions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardIcons {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 0.25em;
+}
+
+.cardIcons img {
+  height: 2em;
+}
+
+.buttonGroup {
+  margin-top: 1em;
+  display: flex;
+  width: 100%;
+  justify-content: end;
+}

@@ -1,0 +1,56 @@
+.items {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.items th {
+  text-align: left;
+}
+
+.items td {
+  vertical-align: top;
+}
+
+.items th,
+.items td {
+  border-bottom: 2px dashed var(--neutral-mid);
+}
+
+.item {
+  display: flex;
+  gap: 0.5em;
+}
+
+.item .imageContainer {
+  width: 15em;
+  height: 10em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--neutral-light);
+}
+
+.item .image {
+  height: 10em;
+}
+
+.price {
+  color: red;
+}
+
+.quantity {
+  display: flex;
+  gap: 0.25em;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.quantity button {
+  padding: 0.25em;
+  line-height: 0.25em;
+  height: 1.5em;
+  width: 1.5em;
+  border-radius: 0.25em;
+  border-color: var(--neutral-mid);
+  background-color: var(--neutral-light);
+}
