@@ -50,4 +50,26 @@ public static class SeedData
             new() { DeliveryOptionId = PriorityId, Price = 14 },
         };
     }
+
+    public static Order Orders()
+    {
+        return new Order()
+        {
+            OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e"),
+            DeliveryOptionId = ExpeditedId,
+            BillingAddress = new()
+            {
+                FullName = "Dennis van der Stelt",
+                Street = "Van Zandvlietplein 1",
+                ZipCode = "3077 AA",
+                Town = "Rotterdam",
+                Country = "The Netherlands"
+            },
+            Items =
+            [
+                new() { ProductId = MoersleutelId, Price = 12m, Quantity = 2 },
+                new() { ProductId = SusanId, Price = 9m, Quantity = 1 }
+            ]
+        };
+    }
 }

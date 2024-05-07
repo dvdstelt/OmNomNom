@@ -17,5 +17,8 @@ public static class DatabaseInitializer
 
         var deliveryOptions = context.GetCollection<DeliveryOption>();
         deliveryOptions.InsertBulk(SeedData.DeliveryOptions());
+
+        var orderCollection = context.GetCollection<Order>();
+        orderCollection.Insert(SeedData.Orders());
     }
 }

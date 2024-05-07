@@ -20,5 +20,8 @@ public static class DatabaseInitializer
 
         var inventorySnapshots = context.GetCollection<InventorySnapshot>();
         inventorySnapshots.InsertBulk(SeedData.InventorySnapshots());
+
+        var ordersCollection = context.GetCollection<Order>();
+        ordersCollection.Insert(SeedData.Orders());
     }
 }

@@ -76,4 +76,17 @@ public class SeedData
             new() { ProductId = BlueBerryMuffinId, EstimatedInStock = 40 },
         };
     }
+
+    public static Order Orders()
+    {
+        return new Order
+        {
+            OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e"),
+            Products =
+            [
+                new() { Quantity = 2, ProductId = MoersleutelId },
+                new() { Quantity = 1, ProductId = SusanId }
+            ]
+        };
+    }
 }
