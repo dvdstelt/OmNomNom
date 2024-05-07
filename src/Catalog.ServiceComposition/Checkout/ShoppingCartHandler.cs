@@ -2,6 +2,7 @@
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Products;
+using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -17,11 +18,9 @@ public class ShoppingCartHandler(CatalogDbContext dbContext) : ICompositionReque
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
 
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
+        var order = dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault();
 
-        var productsCollection = dbContext.Database.GetCollection<Product>();
-        var products = productsCollection.Query().ToList();
+        var products = dbContext.GetAll<Product>().ToList();
         var orderedProducts = ShoppingCart.Mapper.MapToDictionary(order, products);
 
         var context = request.GetCompositionContext();

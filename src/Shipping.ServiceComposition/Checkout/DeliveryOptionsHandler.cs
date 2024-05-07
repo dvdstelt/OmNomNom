@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ITOps.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
@@ -17,16 +18,15 @@ public class DeliveryOptionsHandler(ShippingDbContext dbContext, CacheHelper cac
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
-
-        var deliveryOptionsCollection = dbContext.Database.GetCollection<DeliveryOption>();
-        var orderCollection = dbContext.Database.GetCollection<Order>();
         
         // Get all available delivery options
-        var deliveryOptions = deliveryOptionsCollection.Query().ToList();
+        var deliveryOptions = dbContext.GetAll<DeliveryOption>();
+        // Try to obtain previously selected delivery option from database
         var selectedDeliveryOption =
-            orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault()?.DeliveryOptionId;
+            dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault()?.DeliveryOptionId;
         if (selectedDeliveryOption == null)
         {
+            // If there's nothing in database, message wasn't processed
             // See if there's something in cache
             var order = await cacheHelper.GetOrder(orderId);
             if (order.DeliveryOptionId != Guid.Empty)
