@@ -19,8 +19,7 @@ class ProductsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsS
         publisher.Subscribe<ProductsLoaded>((@event, request) =>
         {
             var productIds = @event.Products.Keys.ToList();
-            var productsCollection = dbContext.Database.GetCollection<Product>();
-            var resultSet = productsCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
+            var resultSet = dbContext.Where<Product>(s => productIds.Contains(s.ProductId)).ToList();
 
             foreach (var product in @event.Products)
             {

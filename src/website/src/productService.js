@@ -1,20 +1,6 @@
 import axios from "axios";
 import memoizeOne from "memoize-one";
 
-// const model = {
-//   id: 42,
-//   title: "Corpulet Cabbage of Confusion",
-//   stars: 4,
-//   reviewCount: 42,
-//   productImage:
-//     "https://www.freshpoint.com/wp-content/uploads/2020/02/Freshpoint-green-cabbage.jpg",
-//   stockCount: 7,
-//   price: 42,
-//   savings: 13.37,
-//   shippingLocation: "Haifa, Israel",
-//   shipsToLocation: true,
-// };
-
 async function getProduct(id) {
   const { data } = await axios.get(`https://localhost:7126/product/${id}`);
   return data.product;
@@ -58,7 +44,7 @@ export async function getProductPriceDetails(id) {
 
 export function getProductShippingDetails(id) {
   return {
-    shippingLocation: "Haifa, Israel", //model.shippingLocation,
+    shippingLocation: "Rotterdam, The Netherlands", //model.shippingLocation,
     shipsToLocation: true, //model.shipsToLocation,
   };
 }

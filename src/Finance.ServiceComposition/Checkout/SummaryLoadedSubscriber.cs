@@ -23,7 +23,7 @@ public class SummaryLoadedSubscriber(FinanceDbContext dbContext, CacheHelper cac
             {
                 order = await cacheHelper.GetOrder(orderId);
             }
-            
+
             var totalPrice = 0m;
 
             foreach (var product in @event.Products)
@@ -34,7 +34,7 @@ public class SummaryLoadedSubscriber(FinanceDbContext dbContext, CacheHelper cac
             }
 
             var vm = request.GetComposedResponseModel();
-            vm.TotalPrice += totalPrice;
+            DynamicHelper.TrySetTotalPrice(vm, totalPrice);
         });
     }
 }

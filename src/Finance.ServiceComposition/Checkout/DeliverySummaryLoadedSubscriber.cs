@@ -1,5 +1,6 @@
 ﻿using Finance.Data;
 using Finance.Data.Models;
+using Finance.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using Shipping.ServiceComposition.Events;
@@ -20,7 +21,7 @@ public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : IComp
             @event.DeliveryOption.Price = deliveryOption.Price;
 
             var vm = request.GetComposedResponseModel();
-            vm.TotalPrice += deliveryOption.Price;
+            DynamicHelper.TrySetTotalPrice(vm, deliveryOption.Price);
 
             return Task.CompletedTask;
         });

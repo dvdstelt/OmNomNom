@@ -17,4 +17,22 @@ public static class SeedData
             new() { DeliveryOptionId = PriorityId, Name = "Priority shipping", Description = "Next business day" },
         };
     }
+
+    public static Order Orders()
+    {
+        return new Order()
+        {
+            OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e"),
+            DeliveryOptionId = ExpeditedId,
+            CustomerId = Guid.NewGuid(),
+            Address = new Address()
+            {
+                FullName = "Dennis van der Stelt",
+                Street = "Van Zandvlietplein 1",
+                ZipCode = "3077 AA",
+                Town = "Rotterdam",
+                Country = "The Netherlands"
+            }
+        };
+    }
 }

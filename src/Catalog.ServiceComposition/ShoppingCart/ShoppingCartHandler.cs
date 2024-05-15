@@ -2,6 +2,7 @@
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Helpers;
+using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -20,9 +21,8 @@ public class ShoppingCartHandler(CacheHelper cacheHelper, CatalogDbContext dbCon
 
         var order = await cacheHelper.GetOrder(orderId);
 
-        var productsCollection = dbContext.Database.GetCollection<Product>();
         var productIds = order.Products.Select(s => s.ProductId).ToList();
-        var products = productsCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
+        var products = dbContext.Where<Product>(s => productIds.Contains(s.ProductId)).ToList();
         var orderedProducts = Mapper.MapToDictionary(order, products);
 
         var context = request.GetCompositionContext();

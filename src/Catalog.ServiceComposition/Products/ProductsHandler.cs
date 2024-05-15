@@ -14,13 +14,9 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
     [HttpGet("/products")]
     public async Task Handle(HttpRequest request)
     {
-        var productCollection = dbContext.Database.GetCollection<Product>();
-        var products = productCollection.Query().ToList();
-
-        var inventoryCollection = dbContext.Database.GetCollection<InventorySnapshot>();
-        var inventory = inventoryCollection.Query().ToList();
-
-        var productsModel = Mapper.MapToDictionary(products, inventory);
+        var products = dbContext.GetAll<Product>();
+        var inventory = dbContext.GetAll<InventorySnapshot>();
+        var productsModel = Mapper.MapToDictionary(products, inventory.ToList());
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductsLoaded()

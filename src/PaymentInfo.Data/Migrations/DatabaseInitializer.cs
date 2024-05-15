@@ -14,6 +14,9 @@ public class DatabaseInitializer
             return;
 
         creditCards.InsertBulk(SeedData.Products());
+
+        var orderCollection = context.GetCollection<Order>();
+        orderCollection.Insert(SeedData.Orders());
     }
 
 }

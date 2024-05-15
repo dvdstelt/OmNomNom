@@ -15,10 +15,19 @@ public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionR
         var orderId = productToAdd.orderId;
         var productId = productToAdd.Detail.Id;
 
-        if (productToAdd.orderId == Guid.Empty)
+        if (orderId == Guid.Empty)
             orderId = Guid.NewGuid();
 
         var order = await cacheHelper.GetOrder(orderId);
+        UpsertProduct(order, productId, productToAdd);
+        await cacheHelper.StoreOrder(order);
+
+        var vm = request.GetComposedResponseModel();
+        vm.OrderId = orderId;
+    }
+
+    private static void UpsertProduct(Order order, Guid productId, ProductModel productToAdd)
+    {
         var existingOrderItem = order.Products.SingleOrDefault(p => p.ProductId == productId);
         if (existingOrderItem != null)
         {
@@ -31,11 +40,6 @@ public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionR
             var orderItem = new OrderItem() { ProductId = productId, Quantity = productToAdd.Detail.Quantity };
             order.Products.Add(orderItem);
         }
-
-        await cacheHelper.StoreOrder(order);
-
-        var vm = request.GetComposedResponseModel();
-        vm.OrderId = orderId;
     }
 
     class ProductModel
