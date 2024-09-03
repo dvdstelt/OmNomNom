@@ -62,7 +62,7 @@ public class OrderShippedHandler(
         mailMessage.IsBodyHtml = true;
         mailMessage.Subject = "Thanks for ordering with OmNomNom";
 
-        var client = new SmtpClient("127.0.0.1", 25);
+        var client = new SmtpClient("localhost", 25);
         await client.SendMailAsync(mailMessage, context.CancellationToken);
     }
 
