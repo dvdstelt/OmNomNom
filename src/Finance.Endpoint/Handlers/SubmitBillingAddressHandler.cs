@@ -6,8 +6,6 @@ namespace Finance.Endpoint.Handlers;
 
 public class SubmitBillingAddressHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitBillingAddress>
 {
-    readonly FinanceDbContext dbContext = dbContext;
-
     public Task Handle(SubmitBillingAddress message, IMessageHandlerContext context)
     {
         var orderCollection = dbContext.Database.GetCollection<Order>();
