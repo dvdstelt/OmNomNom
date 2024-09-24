@@ -9,7 +9,8 @@ The demo will be used in the presentation `Implementing the planet's largest e-c
 The next presentation will be at:
 
 - ~**[Techorama Belgium](https://techorama.be/speakers/session/implementing-the-planets-largest-ecommerce-site-using-service-boundaries/)** (May 8, 2024)~
-- **[DevDays Warsaw](https://developerdays.eu/)** (22-23 Oct)
+- ~**[WerkenMet.NET usergroup meetup](https://werkenmet.net/)**~ (Sept 12, 2024)
+- **[DevDays Warsaw](https://developerdays.eu/)** (Oct 22-23, 2024)
 
 ## Consultancy on Service Boundaries
 
