@@ -20,14 +20,23 @@ public class OrderShippedHandler(
 {
     public async Task Handle(OrderShipped message, IMessageHandlerContext context)
     {
-        var requestUri = $"https://localhost:7126/email/summary/{message.OrderId}";
+        var content = await GetOrderViaHttp(message.OrderId, context.CancellationToken);
 
-        var httpClient = new HttpClient();
-        HttpResponseMessage response = await httpClient.GetAsync(requestUri, context.CancellationToken);
-        response.EnsureSuccessStatusCode();
-        string body = await response.Content.ReadAsStringAsync(context.CancellationToken);
-        var content = JObject.Parse(body);
+        var htmlBody = await CreateHtmlFromRazorView(content);
 
+        var mailMessage = new MailMessage();
+        mailMessage.To.Add("dennis@bloggingabout.net");
+        mailMessage.From = new MailAddress("noreply@omnomnom.dev");
+        mailMessage.Body = htmlBody;
+        mailMessage.IsBodyHtml = true;
+        mailMessage.Subject = "Thanks for ordering with OmNomNom";
+
+        var client = new SmtpClient("localhost", 25);
+        await client.SendMailAsync(mailMessage, context.CancellationToken);
+    }
+
+    private async Task<string> CreateHtmlFromRazorView(JObject content)
+    {
         var httpContext = new DefaultHttpContext
         {
             RequestServices = serviceProvider
@@ -43,7 +52,7 @@ public class OrderShippedHandler(
                 metadataProvider: new EmptyModelMetadataProvider(),
                 modelState: new ModelStateDictionary())
             {
-                Model = content // new CustomerModel() { Fullname = "Dennis van der Stelt"}
+                Model = content
             },
             new TempDataDictionary(
                 actionContext.HttpContext,
@@ -54,16 +63,19 @@ public class OrderShippedHandler(
         await view.RenderAsync(viewContext);
 
         var htmlBody = output.ToString();
+        return htmlBody;
+    }
 
-        var mailMessage = new MailMessage();
-        mailMessage.To.Add("dennis@bloggingabout.net");
-        mailMessage.From = new MailAddress("noreply@omnomnom.dev");
-        mailMessage.Body = htmlBody;
-        mailMessage.IsBodyHtml = true;
-        mailMessage.Subject = "Thanks for ordering with OmNomNom";
+    private static async Task<JObject> GetOrderViaHttp(Guid orderId, CancellationToken cancellationToken)
+    {
+        var requestUri = $"https://localhost:7126/email/summary/{orderId}";
 
-        var client = new SmtpClient("localhost", 25);
-        await client.SendMailAsync(mailMessage, context.CancellationToken);
+        var httpClient = new HttpClient();
+        HttpResponseMessage response = await httpClient.GetAsync(requestUri, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+        var content = JObject.Parse(body);
+        return content;
     }
 
     private IView FindView(ActionContext actionContext, string viewName)
@@ -87,9 +99,4 @@ public class OrderShippedHandler(
 
         throw new InvalidOperationException(errorMessage);
     }
-}
-
-public class CustomerModel
-{
-    public string Fullname { get; set; }
 }
