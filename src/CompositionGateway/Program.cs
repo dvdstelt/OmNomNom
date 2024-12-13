@@ -46,4 +46,6 @@ app.UseCors();
 app.UseHttpsRedirection();
 app.MapCompositionHandlers();
 
+Console.Title = "Composition Gateway";
+
 app.Run();
