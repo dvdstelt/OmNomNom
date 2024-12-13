@@ -14,7 +14,8 @@
       },
       {
         "Path": "website\\website.esproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "localhost (Chrome)"
       }
     ]
   },
@@ -33,7 +34,8 @@
       },
       {
         "Path": "website\\website.esproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "localhost (Chrome)"
       },
       {
         "Path": "Catalog.Endpoint\\Catalog.Endpoint.csproj",
