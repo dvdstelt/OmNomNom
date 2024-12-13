@@ -1,0 +1,60 @@
+[
+  {
+    "Name": "Website",
+    "Projects": [
+      {
+        "Path": "OmNomNom.BackOffice\\OmNomNom.BackOffice.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "CompositionGateway\\CompositionGateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "website\\website.esproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Website + Endpoints",
+    "Projects": [
+      {
+        "Path": "OmNomNom.BackOffice\\OmNomNom.BackOffice.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "CompositionGateway\\CompositionGateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "website\\website.esproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Catalog.Endpoint\\Catalog.Endpoint.csproj",
+        "Action": "Start",
+        "DebugTarget": "Catalog.Endpoint"
+      },
+      {
+        "Path": "Finance.Endpoint\\Finance.Endpoint.csproj",
+        "Action": "Start",
+        "DebugTarget": "Finance.Endpoint"
+      },
+      {
+        "Path": "Shipping.Endpoint\\Shipping.Endpoint.csproj",
+        "Action": "Start",
+        "DebugTarget": "Shipping.Endpoint"
+      },
+      {
+        "Path": "PaymentInfo.Endpoint\\PaymentInfo.Endpoint.csproj",
+        "Action": "Start",
+        "DebugTarget": "PaymentInfo.Endpoint"
+      }
+    ]
+  }
+]
