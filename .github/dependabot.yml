@@ -11,7 +11,7 @@ updates:
     interval: daily
   open-pull-requests-limit: 1000
 - package-ecosystem: "npm"
-  directory: "/"
+  directory: "/src/website/"
   schedule:
     interval: daily
   open-pull-requests-limit: 1000
