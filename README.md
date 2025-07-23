@@ -11,6 +11,7 @@ The next presentation will be at:
 - ~**[Techorama Belgium](https://techorama.be/speakers/session/implementing-the-planets-largest-ecommerce-site-using-service-boundaries/)** (May 8, 2024)~
 - ~**[WerkenMet.NET usergroup meetup](https://werkenmet.net/)**~ (Sept 12, 2024)
 - ~**[DevDays Warsaw](https://developerdays.eu/)**~ (Oct 22-23, 2024)
+- [Techorama Netherlands](https://techorama.nl/agenda/session/implementing-the-planets-largest-ecommerce-site-in-vertical-slices/) (Oct 28, 2025)
 
 ## Consultancy on Service Boundaries
 
