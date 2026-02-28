@@ -1,0 +1,30 @@
+name: Renovate
+
+on:
+  schedule:
+    - cron: '14 3,9,15,21 * * *'
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Dry run (don''t create PRs)'
+        type: boolean
+        default: false
+      debugMode:
+        description: 'Enable debug logging'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: renovatebot/github-action@v46.1.2
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_DRY_RUN: ${{ inputs.dryRun == true && 'full' || '' }}
+          LOG_LEVEL: ${{ inputs.debugMode == true && 'debug' || 'info' }}
