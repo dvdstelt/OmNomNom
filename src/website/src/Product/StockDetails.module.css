@@ -1,8 +1,9 @@
 .stockDetails {
   display: flex;
   flex-direction: column;
+  font-size: 0.9em;
 }
 
 .stockDetails .lowStock {
-  color: red;
+  color: #e05a5a;
 }
