@@ -36,4 +36,6 @@ app.UseRouting();
 app.MapControllers();
 app.MapCompositionHandlers();
 
+Console.Title = "BackOffice Server";
+
 app.Run();
