@@ -13,10 +13,12 @@ export default function CarouselItem({ id, imageUrl, name, price, rating }) {
           className={styles.productImage}
         />
       </div>
-      <div>{name}</div>
-      <ProductRating id={id} rating={rating} />
-      <div className={styles.price}>
-        <Price price={price} />
+      <div className={styles.info}>
+        <div className={styles.name}>{name}</div>
+        <ProductRating id={id} rating={rating} />
+        <div className={styles.price}>
+          <Price price={price} />
+        </div>
       </div>
     </div>
   );

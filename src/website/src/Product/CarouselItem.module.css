@@ -1,24 +1,61 @@
 .carouselItem {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--neutral-light);
-  width: 15em;
-  padding: 0.25em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.carouselItem:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: var(--border-mid);
 }
 
 .carouselItem .imageContainer {
   width: 100%;
-  background-color: var(--neutral-light);
+  aspect-ratio: 1;
+  background-color: var(--bg-raised);
   display: flex;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .carouselItem .productImage {
-  height: 10em;
-  width: fit-content;
-  align-self: center;
+  height: 75%;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.carouselItem:hover .productImage {
+  transform: scale(1.05);
+}
+
+.carouselItem .info {
+  padding: 0.9em 0.85em 0.85em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  flex: 1;
+}
+
+.carouselItem .name {
+  font-size: 0.9em;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.35;
 }
 
 .carouselItem .price {
-  font-size: 1.3em;
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--price);
+  margin-top: auto;
+  padding-top: 0.4em;
 }
