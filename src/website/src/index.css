@@ -8,35 +8,35 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Backgrounds */
-  --bg: #0e0c0a;
-  --bg-surface: #181410;
-  --bg-raised: #211c17;
-  --bg-overlay: #2b251f;
+  --bg: #f5f0eb;
+  --bg-surface: #ffffff;
+  --bg-raised: #ede8e2;
+  --bg-overlay: #e4ddd6;
 
   /* Brand */
-  --amber: #d4732e;
-  --amber-light: #e8894a;
-  --amber-dark: #b85e22;
-  --amber-muted: rgba(212, 115, 46, 0.1);
-  --amber-border: rgba(212, 115, 46, 0.3);
+  --amber: #c05c18;
+  --amber-light: #d4732e;
+  --amber-dark: #a04a10;
+  --amber-muted: rgba(192, 92, 24, 0.08);
+  --amber-border: rgba(192, 92, 24, 0.25);
 
   /* Text */
-  --text: #ede6dc;
-  --text-secondary: #9b8c7c;
-  --text-muted: #5c5048;
+  --text: #1c1714;
+  --text-secondary: #6b5c50;
+  --text-muted: #a8998c;
 
   /* Borders */
-  --border: rgba(237, 230, 220, 0.07);
-  --border-mid: rgba(237, 230, 220, 0.14);
-  --border-strong: rgba(237, 230, 220, 0.25);
+  --border: rgba(28, 23, 20, 0.09);
+  --border-mid: rgba(28, 23, 20, 0.15);
+  --border-strong: rgba(28, 23, 20, 0.28);
 
   /* Price color */
-  --price: #e8894a;
+  --price: #b04a0e;
 
   /* Shadows */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.14);
 
   /* Radius */
   --radius-sm: 5px;
@@ -44,12 +44,12 @@
   --radius-lg: 16px;
 
   /* Legacy compatibility - existing CSS modules use these */
-  --neutral-light: #211c17;
-  --neutral-mid: rgba(237, 230, 220, 0.12);
-  --neutral-mid-dark: rgba(237, 230, 220, 0.25);
-  --amazon-orange: #d4732e;
-  --amazon-orange-dark: #b85e22;
-  --amazon-orange-light: rgba(212, 115, 46, 0.08);
+  --neutral-light: #ede8e2;
+  --neutral-mid: rgba(28, 23, 20, 0.08);
+  --neutral-mid-dark: rgba(28, 23, 20, 0.18);
+  --amazon-orange: #c05c18;
+  --amazon-orange-dark: #a04a10;
+  --amazon-orange-light: rgba(192, 92, 24, 0.07);
 
   color: var(--text);
   background-color: var(--bg);
