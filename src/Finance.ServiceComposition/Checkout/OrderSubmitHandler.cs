@@ -58,7 +58,6 @@ public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cach
     class ShoppingCartItem
     {
         public Guid ProductId { get; set; }
-        public decimal Price { get; set; }
         public int Quantity { get; set; }
     }
 
