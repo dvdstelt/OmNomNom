@@ -6,37 +6,50 @@ Each service boundary owns a specific slice of the business domain and its data.
 
 Responsible for the product catalogue and inventory.
 
-**Products:** name, description, image, category
-**Inventory:** stock levels tracked as a series of deltas (positive = added, negative = reserved)
-**Orders:** which items were ordered and in what quantity
+| Entity | Fields owned |
+|---|---|
+| Product | `ProductId`, `Name`, `Description`, `ImageUrl`, `Category` |
+| InventoryDelta | `ProductId`, `Delta`, `Timestamp` |
+| Order | `OrderId` |
+| OrderItem | `ProductId`, `Quantity` |
 
 ## Finance
 
 Responsible for pricing and billing.
 
-**Products:** price and discount per product
-**Orders:** billing address, selected delivery option, ordered items with their prices
-**Delivery options:** price per delivery option (Standard $2, Expedited $6, Priority $14)
+| Entity | Fields owned |
+|---|---|
+| Product | `ProductId`, `Price`, `Discount` |
+| PriceHistory | `PriceId`, `ProductId`, `Price`, `Discount`, `ValidFrom` |
+| Order | `OrderId`, `BillingAddress`, `DeliveryOptionId` |
+| OrderItem | `ProductId`, `Quantity`, `Price` (snapshot at order time) |
+| DeliveryOption | `DeliveryOptionId`, `Price` |
 
 ## Shipping
 
 Responsible for logistics and fulfilment.
 
-**Orders:** shipping address, selected delivery option
-**Delivery options:** name and description per option (e.g. "Standard shipping - 7-10 business days")
+| Entity | Fields owned |
+|---|---|
+| Order | `OrderId`, `CustomerId`, `Address`, `DeliveryOptionId` |
+| DeliveryOption | `DeliveryOptionId`, `Name`, `Description` |
 
 ## PaymentInfo
 
 Responsible for payment instruments.
 
-**Credit cards:** card holder, card type, last digits, expiry, currency, payment provider token
-**Orders:** which credit card was used for an order
+| Entity | Fields owned |
+|---|---|
+| CreditCard | `CreditCardId`, `CardHolder`, `CardType`, `LastDigits`, `Expiry`, `Currency`, `ProviderToken` |
+| Order | `OrderId`, `CreditCardId` |
 
 ## Marketing
 
 Responsible for product reputation data.
 
-**Products:** star rating and review count
+| Entity | Fields owned |
+|---|---|
+| Product | `ProductId`, `StarRating`, `ReviewCount` |
 
 ---
 
