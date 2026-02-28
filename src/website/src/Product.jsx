@@ -42,7 +42,9 @@ export default function Product() {
       <h1>{productName}</h1>
       <ProductRating id={productId} long={true} />
       <div className={styles.imageAndDetails}>
-        <ProductImage id={productId} className={styles.productImage} />
+        <div className={styles.imageWrapper}>
+          <ProductImage id={productId} className={styles.productImage} />
+        </div>
         <div className={styles.productDetailsAndInfo}>
           <div className={styles.productDetails}>
             <div className={styles.descriptionAndStock}>

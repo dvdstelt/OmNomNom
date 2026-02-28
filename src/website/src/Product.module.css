@@ -1,32 +1,52 @@
 .product {
-  width: 90%;
+  width: 95%;
   max-width: 80em;
+}
+
+.product h1 {
+  margin: 0 0 0.15em;
 }
 
 .imageAndDetails {
   display: flex;
-  /* min-width: 30em; */
-  /* width: fit-content; */
+  gap: 2em;
+  margin-top: 1em;
 }
 
 .imageAndDetails .productImage {
-  height: 10em;
+  height: 16em;
+  object-fit: contain;
+}
+
+.imageWrapper {
+  flex: 0 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+  min-width: 20em;
 }
 
 .imageAndDetails .productDetailsAndInfo {
   display: flex;
   flex: 1;
   flex-direction: column;
-  border: 1px solid gray;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
 .imageAndDetails .productDetails {
   display: flex;
   flex: 1;
   justify-content: space-between;
-  align-items: baseline;
-  height: 10em;
+  align-items: flex-start;
   gap: 2em;
+  padding: 1.25em;
 }
 
 .imageAndDetails .productDetails .priceDetails {
@@ -40,24 +60,24 @@
 .imageAndDetails .productDetails .descriptionAndStock {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1em;
-  height: 100%;
-}
-
-.imageAndDetails .productDetails > div {
-  padding: 0.25em;
+  gap: 0.75em;
+  flex: 1;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+  line-height: 1.6;
 }
 
 .productDetailsAndInfo .buttonGroup {
   display: flex;
-  flex-direction: row-reverse;
-  padding: 0.25em;
+  justify-content: flex-end;
+  padding: 1em 1.25em;
+  border-top: 1px solid var(--border);
 }
 
 .productDetailsAndInfo .shippingInfo {
-  border-top: 1px solid gray;
-  padding: 0 0.25em;
+  border-top: 1px solid var(--border);
+  padding: 0.6em 1.25em;
   font-size: 0.8em;
   text-align: right;
+  color: var(--text-muted);
 }
