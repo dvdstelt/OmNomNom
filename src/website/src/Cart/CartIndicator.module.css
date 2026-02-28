@@ -1,5 +1,7 @@
 .cartIndicator {
   position: relative;
+  width: 3em;
+  height: 3em;
 }
 
 .cartIndicator > * {
@@ -9,10 +11,22 @@
 .cartIndicator .icon {
   right: 0;
   height: 80%;
+  top: 10%;
+  opacity: 0.9;
 }
 
 .cartIndicator .itemCount {
-  right: 1.5em;
-  font-weight: bold;
-  color: var(--amazon-orange-dark);
+  right: -0.3em;
+  top: -0.1em;
+  font-weight: 600;
+  font-size: 0.75em;
+  color: #fff;
+  background: var(--amber);
+  border-radius: 999px;
+  min-width: 1.4em;
+  height: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.3em;
 }

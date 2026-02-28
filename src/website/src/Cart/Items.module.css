@@ -5,52 +5,76 @@
 
 .items th {
   text-align: left;
+  font-size: 0.75em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding-bottom: 0.75em;
 }
 
 .items td {
   vertical-align: top;
+  padding: 0.75em 0;
 }
 
 .items th,
 .items td {
-  border-bottom: 2px dashed var(--neutral-mid);
+  border-bottom: 1px solid var(--border);
 }
 
 .item {
   display: flex;
-  gap: 0.5em;
+  gap: 1em;
 }
 
 .item .imageContainer {
-  width: 15em;
-  height: 10em;
+  width: 8em;
+  height: 8em;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--neutral-light);
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 .item .image {
-  height: 10em;
+  height: 7em;
+  object-fit: contain;
 }
 
 .price {
-  color: red;
+  color: var(--price);
+  font-weight: 500;
 }
 
 .quantity {
   display: flex;
-  gap: 0.25em;
+  gap: 0.4em;
   align-items: center;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .quantity button {
-  padding: 0.25em;
-  line-height: 0.25em;
-  height: 1.5em;
-  width: 1.5em;
-  border-radius: 0.25em;
-  border-color: var(--neutral-mid);
-  background-color: var(--neutral-light);
+  padding: 0;
+  line-height: 1;
+  height: 1.6em;
+  width: 1.6em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-mid);
+  background-color: var(--bg-raised);
+  color: var(--text);
+  font-size: 1em;
+  text-transform: none;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity button:hover {
+  border-color: var(--amber);
+  background-color: var(--bg-overlay);
+  box-shadow: none;
 }

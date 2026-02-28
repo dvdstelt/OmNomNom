@@ -1,12 +1,16 @@
 .cart {
-  width: 90%;
+  width: 95%;
   max-width: 80em;
+}
+
+.cart h1 {
+  margin: 0 0 1em;
 }
 
 .cart .contents {
   display: flex;
-  align-items: baseline;
-  gap: 1em;
+  align-items: flex-start;
+  gap: 1.5em;
 }
 
 .cart .contents .items {

@@ -1,9 +1,12 @@
 .cartAccept {
-  background: var(--neutral-light);
-  padding: 0.5em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25em;
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.75em;
+  min-width: 16em;
 }
 
 .cartAccept > div {
@@ -11,32 +14,39 @@
 }
 
 .cartAccept > button {
-  width: max-content;
+  width: 100%;
 }
 
 .cartAccept .subtotal {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   gap: 0.5em;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 0.95em;
 }
 
 .cartAccept .subtotal .price {
-  color: red;
+  color: var(--price);
+  font-size: 1.1em;
+  font-weight: 600;
 }
 
 .cartAccept .centre {
   align-self: center;
   font-size: 0.75em;
-  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .cartAccept button.discard {
   width: 100%;
-  background-color: var(--neutral-mid);
+  background-color: transparent;
+  border: 1px solid var(--border-mid);
+  color: var(--text-secondary);
 }
 
 .cartAccept button.discard:hover {
-  background-color: var(--neutral-mid-dark);
-  color: white;
+  background-color: var(--bg-raised);
+  border-color: var(--border-strong);
+  color: var(--text);
+  box-shadow: none;
 }
