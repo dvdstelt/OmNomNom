@@ -19,11 +19,15 @@ public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper)
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
 
-        var order = dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault();
+        // Prefer the cache: it always reflects the current cart state. The DB may hold a stale
+        // order from a previous checkout attempt with the same orderId, written asynchronously
+        // by the SubmitOrderItems handler before the current cart was fully assembled.
+        var order = await cacheHelper.GetOrder(orderId);
 
-        if (order == null)
+        if (order.Products.Count == 0)
         {
-            order = await cacheHelper.GetOrder(orderId);
+            order = dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault()
+                    ?? new Order { OrderId = orderId };
         }
 
         var productsModel = MapToDictionary(order.Products);
