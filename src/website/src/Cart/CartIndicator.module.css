@@ -12,7 +12,8 @@
   right: 0;
   height: 80%;
   top: 10%;
-  opacity: 0.9;
+  opacity: 0.85;
+  filter: brightness(0) invert(1);
 }
 
 .cartIndicator .itemCount {
