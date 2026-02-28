@@ -1,29 +1,42 @@
 .payment {
-  width: 90%;
-  max-width: 80em;
+  width: 95%;
+  max-width: 60em;
 }
 
 .payment h2 {
-  padding: 0.25em;
-  border-bottom: 2px dashed var(--neutral-mid);
+  padding: 0 0 0.5em;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1em;
 }
 
 .cards {
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
-  background-color: var(--amazon-orange-light);
-  border: 1px solid var(--amazon-orange);
+  gap: 0.75em;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75em;
 }
 
 .cards > div {
   display: flex;
   align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.25em;
+  transition: border-color 0.15s ease;
+}
+
+.cards > div:has(input:checked) {
+  border-color: var(--amber-border);
+  background: var(--amber-muted);
 }
 
 .cards > div > input {
   margin: 0.75em;
   flex: 0;
+  accent-color: var(--amber);
 }
 
 .cards > div > div {
@@ -33,6 +46,9 @@
 .moreOptions {
   display: flex;
   justify-content: space-between;
+  margin-top: 0.5em;
+  font-size: 0.88em;
+  color: var(--text-secondary);
 }
 
 .cardIcons {
@@ -43,11 +59,12 @@
 
 .cardIcons img {
   height: 2em;
+  opacity: 0.7;
 }
 
 .buttonGroup {
-  margin-top: 1em;
+  margin-top: 1.5em;
   display: flex;
   width: 100%;
-  justify-content: end;
+  justify-content: flex-end;
 }

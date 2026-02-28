@@ -1,16 +1,43 @@
 .option {
-  margin-bottom: 0.25em;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.option:has(input:checked) {
+  border-color: var(--amber-border);
+  background: var(--amber-muted);
+}
+
+.selection {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .selection input {
-  width: 2em;
+  width: 1.1em;
+  height: 1.1em;
+  accent-color: var(--amber);
+  flex-shrink: 0;
 }
 
 .selection label {
-  color: green;
-  font-weight: bold;
+  color: var(--text);
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .priceAndDescription {
-  margin-left: 2em;
+  margin-left: 1.6em;
+  margin-top: 0.2em;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+}
+
+.priceAndDescription .price {
+  color: var(--price);
+  font-weight: 500;
 }

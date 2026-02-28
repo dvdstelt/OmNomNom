@@ -1,11 +1,11 @@
 .summary {
-  width: 90%;
+  width: 95%;
   max-width: 80em;
 }
 
 .summary .content {
   display: flex;
-  gap: 0.75em;
+  gap: 1em;
   width: 100%;
 }
 
@@ -16,12 +16,18 @@
 }
 
 .shippingPaymentAndItems {
-  gap: 0.75em;
+  gap: 1em;
 }
 
 .summary .content h2 {
-  margin: 0;
+  margin: 0 0 0.5em;
   font-size: 1em;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78em;
+  color: var(--text-secondary);
 }
 
 .summary .content .priceDetails {
@@ -32,8 +38,10 @@
 .shippingAndPayment,
 .items,
 .priceDetails {
-  background: var(--neutral-light);
-  padding: 0.5em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1em;
 }
 
 .items {
@@ -42,7 +50,9 @@
 
 .priceDetails button {
   width: 100%;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.75em;
+  padding: 0.85em;
+  font-size: 0.9em;
 }
 
 .priceDetails > div {
@@ -50,13 +60,18 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 1em;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  padding: 0.2em 0;
 }
 
 .priceDetails .orderTotal {
-  color: red;
-  font-size: 1.3em;
-  font-weight: bold;
-  margin-top: 1em;
+  color: var(--price);
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-top: 0.75em;
+  padding-top: 0.75em;
+  border-top: 1px solid var(--border);
 }
 
 .spaceAbove {
@@ -67,6 +82,15 @@
   display: flex;
   align-items: baseline;
   gap: 0.5em;
+}
+
+.inline a {
+  font-size: 0.8em;
+  color: var(--amber);
+}
+
+.inline a:hover {
+  color: var(--amber-light);
 }
 
 .shippingAndPayment {
@@ -85,5 +109,12 @@
 }
 
 .paymentAndBilling img {
-  height: 1em;
+  height: 1.2em;
+  opacity: 0.7;
+}
+
+.addressText {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }

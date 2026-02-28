@@ -1,24 +1,26 @@
 .progressBar {
   width: calc(100% - 2em);
-  border-top: 2px solid var(--neutral-mid);
-  height: 2px;
+  border-top: 1px solid var(--border-mid);
+  height: 1px;
   position: relative;
   margin: 1em;
-  margin-bottom: 3em;
+  margin-bottom: 3.5em;
 }
 
 .progressBar .progress {
   position: absolute;
-  border-top: 2px solid var(--amazon-orange-dark);
+  border-top: 2px solid var(--amber);
   height: 2px;
-  top: -2px;
+  top: -1px;
+  transition: width 0.4s ease;
 }
 
 .progressBar .cartIcon {
   position: absolute;
-  width: 3em;
-  bottom: -0.5em;
+  width: 2.4em;
+  bottom: -0.4em;
   margin-left: -1em;
+  filter: invert(58%) sepia(55%) saturate(600%) hue-rotate(345deg) brightness(95%);
 }
 
 .progressBar > div {
@@ -30,13 +32,16 @@
 .progressBar > div > span {
   position: relative;
   left: -50%;
-  top: 0.5em;
-  font-weight: bold;
-  color: var(--neutral-mid);
+  top: 0.6em;
+  font-weight: 500;
+  font-size: 0.78em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .progressBar > div.active > span {
-  color: var(--amazon-orange-dark);
+  color: var(--amber);
 }
 
 .progressBar > div.active > span > a {

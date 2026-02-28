@@ -1,26 +1,31 @@
 .shipping {
-  width: 90%;
-  max-width: 80em;
+  width: 95%;
+  max-width: 70em;
 }
 
 .shipping h2 {
-  padding: 0.25em;
-  border-bottom: 2px dashed var(--neutral-mid);
+  padding: 0 0 0.5em;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1em;
 }
 
 .shipping .columns {
   width: 100%;
   display: flex;
-  gap: 3em;
+  gap: 2em;
 }
 
 .shipping .columns > div {
   flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25em;
 }
 
 .buttonGroup {
-  margin-top: 1em;
+  margin-top: 1.5em;
   display: flex;
   width: 100%;
-  justify-content: end;
+  justify-content: flex-end;
 }

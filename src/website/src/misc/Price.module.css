@@ -4,17 +4,20 @@
 }
 
 .symbol {
-  font-size: 0.7em;
+  font-size: 0.65em;
   position: relative;
-  top: 0.25rem;
+  top: 0.2rem;
+  font-weight: 500;
 }
 
 .whole {
   font-size: 1.2em;
+  font-weight: 600;
 }
 
 .fraction {
-  font-size: 0.7em;
+  font-size: 0.65em;
   position: relative;
-  top: 0.25rem;
+  top: 0.2rem;
+  font-weight: 500;
 }

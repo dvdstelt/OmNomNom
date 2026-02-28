@@ -1,16 +1,17 @@
 .address {
-  width: 90%;
-  max-width: 80em;
+  width: 95%;
+  max-width: 60em;
 }
 
 .address h2 {
-  padding: 0.25em;
-  border-bottom: 2px dashed var(--neutral-mid);
+  padding: 0 0 0.5em;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1em;
 }
 
 .buttonGroup {
-  margin-top: 1em;
+  margin-top: 1.5em;
   display: flex;
   width: 100%;
-  justify-content: end;
+  justify-content: flex-end;
 }

@@ -2,22 +2,33 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 0.25em;
+  margin-bottom: 0.6em;
 }
 
 .textField label {
   font-size: 0.8em;
-  font-weight: bold;
+  font-weight: 500;
   width: 10em;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
 }
 
 .textField input {
-  padding: 0.25em;
+  padding: 0.5em 0.75em;
   outline: none;
-  min-width: 30em;
+  min-width: 22em;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.95em;
+  transition: border-color 0.15s ease;
 }
 
 .textField input:focus {
-  border-color: var(--amazon-orange);
-  border-style: solid;
+  border-color: var(--amber);
+}
+
+.textField input::placeholder {
+  color: var(--text-muted);
 }

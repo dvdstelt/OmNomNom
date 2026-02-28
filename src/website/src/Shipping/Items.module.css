@@ -1,40 +1,58 @@
 .items {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.75em;
 }
 
 .itemContainer {
   display: flex;
-  gap: 0.75em;
+  gap: 1em;
+  padding: 0.5em 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.itemContainer:last-child {
+  border-bottom: none;
 }
 
 .imageContainer {
-  width: 7.5em;
+  width: 6em;
   height: 5em;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--bg-raised);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 .image {
-  height: 5em;
+  height: 4.5em;
+  object-fit: contain;
 }
 
 .item {
   display: flex;
   flex-direction: column;
+  gap: 0.2em;
+  justify-content: center;
 }
 
 .item label {
-  font-weight: bold;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.95em;
 }
 
 .item .itemDetails {
   display: flex;
-  gap: 0.3em;
+  gap: 0.4em;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  align-items: center;
 }
 
 .item .price {
-  color: red;
+  color: var(--price);
+  font-weight: 500;
 }
