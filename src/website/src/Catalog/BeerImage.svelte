@@ -6,5 +6,5 @@
   {#if category}
     <span class="beer-type-badge">{category}</span>
   {/if}
-  <img class="beer-product-img" src={imageUrl} alt={name} />
+  <img class="beer-product-img" src="/products/{imageUrl}" alt={name} />
 </div>

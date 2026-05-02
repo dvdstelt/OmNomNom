@@ -8,7 +8,7 @@
 <div class="cart-item" data-product-id={item.productId}>
   <div class="cart-item-image">
     {#if item.imageUrl}
-      <img class="beer-product-img" src={item.imageUrl} alt={item.name} />
+      <img class="beer-product-img" src="/products/{item.imageUrl}" alt={item.name} />
     {/if}
   </div>
   <div class="cart-item-details">
