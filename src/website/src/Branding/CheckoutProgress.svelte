@@ -1,15 +1,14 @@
 <script>
-  let { stage = 'cart' } = $props();
+  let { stage = 'cart', orderId = '' } = $props();
 
   const steps = [
-    { id: 'cart', label: 'Cart', href: (orderId) => `/cart/${orderId}` },
-    { id: 'address', label: 'Address', href: (orderId) => `/buy/address/${orderId}` },
-    { id: 'shipping', label: 'Shipping', href: (orderId) => `/buy/shipping/${orderId}` },
-    { id: 'payment', label: 'Payment', href: (orderId) => `/buy/payment/${orderId}` },
-    { id: 'summary', label: 'Review', href: (orderId) => `/buy/summary/${orderId}` }
+    { id: 'cart', label: 'Cart', href: (id) => `/cart/${id}` },
+    { id: 'address', label: 'Address', href: (id) => `/buy/address/${id}` },
+    { id: 'shipping', label: 'Shipping', href: (id) => `/buy/shipping/${id}` },
+    { id: 'payment', label: 'Payment', href: (id) => `/buy/payment/${id}` },
+    { id: 'summary', label: 'Review', href: (id) => `/buy/summary/${id}` }
   ];
 
-  let { orderId = '' } = $props();
   let currentIndex = $derived(steps.findIndex((s) => s.id === stage));
 </script>
 

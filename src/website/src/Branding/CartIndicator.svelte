@@ -1,8 +1,11 @@
 <script>
   import { cartItemCount } from '$lib/stores/cart.js';
+  import { orderId } from '$lib/stores/orderId.js';
+
+  let href = $derived($orderId ? `/cart/${$orderId}` : '/');
 </script>
 
-<a href="/cart" class="cart-link" aria-label="View cart">
+<a {href} class="cart-link" aria-label="View cart">
   <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <circle cx="9" cy="21" r="1" />
     <circle cx="20" cy="21" r="1" />
