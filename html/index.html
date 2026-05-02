@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Craft Beer Store</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <main class="page-container">
+    <h1 class="page-title">Discover Craft Beers</h1>
+    <p class="page-subtitle">Hand-picked selections for the discerning palate</p>
+
+    <div class="filters-row">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" data-type="All">All Beers</button>
+        <button class="filter-btn" data-type="IPA">IPA</button>
+        <button class="filter-btn" data-type="Sour">Sour</button>
+        <button class="filter-btn" data-type="Stout">Stout</button>
+      </div>
+      <div class="filter-dropdowns">
+        <select class="filter-select" id="filter-brewery">
+          <option value="All">All Breweries</option>
+        </select>
+        <select class="filter-select" id="filter-country">
+          <option value="All">All Countries</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="beer-grid" id="beer-grid"></div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderHeader(true);
+
+    const grid = document.getElementById('beer-grid');
+    const filterBar = document.getElementById('filter-bar');
+    const brewerySelect = document.getElementById('filter-brewery');
+    const countrySelect = document.getElementById('filter-country');
+
+    let currentType = 'All';
+    let currentBrewery = 'All';
+    let currentCountry = 'All';
+
+    // Populate dropdown options
+    getBreweries().forEach(b => {
+      brewerySelect.innerHTML += `<option value="${b}">${b}</option>`;
+    });
+    getCountries().forEach(c => {
+      countrySelect.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+
+    function filterBeers() {
+      let beers = BEERS;
+      if (currentType !== 'All') beers = beers.filter(b => b.type === currentType);
+      if (currentBrewery !== 'All') beers = beers.filter(b => b.brewery === currentBrewery);
+      if (currentCountry !== 'All') beers = beers.filter(b => b.country === currentCountry);
+      grid.innerHTML = beers.length
+        ? beers.map((beer, i) => renderBeerCard(beer, i)).join('')
+        : '<p style="color: var(--color-text-muted); grid-column: 1/-1; text-align: center; padding: 48px 0;">No beers match your filters.</p>';
+    }
+
+    filterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentType = btn.dataset.type;
+      filterBeers();
+    });
+
+    brewerySelect.addEventListener('change', () => {
+      currentBrewery = brewerySelect.value;
+      filterBeers();
+    });
+
+    countrySelect.addEventListener('change', () => {
+      currentCountry = countrySelect.value;
+      filterBeers();
+    });
+
+    filterBeers();
+  </script>
+</body>
+</html>

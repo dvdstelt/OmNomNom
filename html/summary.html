@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Order Summary</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+  <div id="progress-bar" class="progress-bar-container"></div>
+
+  <main class="page-container" style="max-width: 800px;">
+    <h1 class="page-title" style="margin-bottom:24px">Review Your Order</h1>
+
+    <div id="summary-content"></div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCheckoutHeader();
+    renderProgressBar('summary');
+
+    function renderSummary() {
+      const items = Cart.getItems();
+      const shipping = Checkout.getShippingAddress();
+      const shippingOption = Checkout.getShippingOption();
+      const payment = Checkout.getPaymentMethod();
+      const subtotal = Cart.getSubtotal();
+      const tax = Cart.getTax();
+      const shippingCost = Checkout.getShippingCost();
+      const discount = Checkout.getDiscount();
+      const total = Checkout.getTotal();
+      const voucher = Checkout.getVoucher();
+
+      let html = '';
+
+      // Shipping address
+      html += `
+        <div class="summary-section">
+          <h3>Shipping Address <a href="address.html">Change</a></h3>
+          <div class="summary-detail">
+            ${shipping ? `${shipping.name}<br>${shipping.street}<br>${shipping.city}, ${shipping.state} ${shipping.zip}` : 'No address provided'}
+          </div>
+        </div>`;
+
+      // Shipping method
+      html += `
+        <div class="summary-section">
+          <h3>Delivery Method <a href="shipping.html">Change</a></h3>
+          <div class="summary-detail">
+            ${shippingOption ? `${shippingOption.name} &mdash; Arrives ${getDeliveryDates(shippingOption)}<br>${formatPrice(shippingOption.price)}` : 'No shipping selected'}
+          </div>
+        </div>`;
+
+      // Payment
+      html += `
+        <div class="summary-section">
+          <h3>Payment <a href="payment.html">Change</a></h3>
+          <div class="summary-detail">
+            ${payment ? `${payment.brand} ending in ${payment.last4}<br>Expires ${payment.expiry}` : 'No payment method'}
+          </div>
+        </div>`;
+
+      // Items
+      html += `<div class="summary-section summary-items">
+        <h3>Items (${Cart.getItemCount()}) <a href="cart.html">Edit</a></h3>`;
+      items.forEach(item => {
+        const beer = getBeerById(item.beerId);
+        html += renderCartItemRow(item, beer, false);
+      });
+      html += '</div>';
+
+      // Totals
+      html += `
+        <div class="summary-totals">
+          <div class="sidebar-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+          ${discount > 0 ? `<div class="sidebar-row sidebar-discount"><span>Voucher (${voucher.code})</span><span>-${formatPrice(discount)}</span></div>` : ''}
+          <div class="sidebar-row"><span>Shipping</span><span>${formatPrice(shippingCost)}</span></div>
+          <div class="sidebar-row"><span>Est. Tax</span><span>${formatPrice(tax)}</span></div>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-row sidebar-total"><span>Order Total</span><span>${formatPrice(total)}</span></div>
+        </div>`;
+
+      // Place order
+      html += `
+        <div class="place-order-section">
+          <button class="btn-primary full-width" onclick="placeOrder()" style="font-size:18px;padding:18px 32px">Place Your Order</button>
+          <p>By placing your order, you agree to OmNomNom's terms and conditions.</p>
+        </div>`;
+
+      document.getElementById('summary-content').innerHTML = html;
+    }
+
+    function placeOrder() {
+      Checkout.clearAll();
+      showToast('Order placed successfully!');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    }
+
+    renderSummary();
+  </script>
+</body>
+</html>

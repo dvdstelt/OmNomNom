@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Shopping Cart</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+  <div id="progress-bar" class="progress-bar-container"></div>
+
+  <main class="page-container">
+    <div class="checkout-layout">
+      <div class="checkout-main" id="cart-content"></div>
+      <div id="order-sidebar"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCheckoutHeader();
+    renderProgressBar('cart');
+
+    function renderCartPage() {
+      const items = Cart.getItems();
+      const content = document.getElementById('cart-content');
+
+      if (items.length === 0) {
+        content.innerHTML = `
+          <div class="cart-empty">
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any beers yet.</p>
+            <a href="index.html" class="btn-primary">Browse Beers</a>
+          </div>`;
+        document.getElementById('order-sidebar').innerHTML = '';
+        return;
+      }
+
+      let html = '<h1 class="page-title" style="margin-bottom:24px">Shopping Cart</h1>';
+      html += '<div class="cart-items">';
+      items.forEach(item => {
+        const beer = getBeerById(item.beerId);
+        html += renderCartItemRow(item, beer, true);
+      });
+      html += '</div>';
+
+      const voucher = Checkout.getVoucher();
+      html += `
+        <div class="voucher-section">
+          ${voucher ? `
+            <div class="voucher-applied">
+              <div class="voucher-applied-info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <span><strong>${voucher.code}</strong> &mdash; ${voucher.label}</span>
+              </div>
+              <button class="voucher-remove" onclick="removeVoucher()">Remove</button>
+            </div>
+          ` : `
+            <div class="voucher-input-row">
+              <input type="text" id="voucher-code" class="voucher-input" placeholder="Enter voucher code">
+              <button class="voucher-apply-btn" onclick="applyVoucher()">Apply</button>
+            </div>
+            <div class="voucher-message" id="voucher-message"></div>
+          `}
+        </div>`;
+
+      html += `
+        <div class="btn-group">
+          <a href="index.html" class="btn-secondary">Continue Shopping</a>
+          <a href="address.html" class="btn-primary">Proceed to Checkout</a>
+        </div>`;
+
+      content.innerHTML = html;
+      renderOrderSidebar();
+    }
+
+    function changeQty(beerId, delta) {
+      const items = Cart.getItems();
+      const item = items.find(i => i.beerId === beerId);
+      if (item) {
+        Cart.updateQuantity(beerId, item.quantity + delta);
+        renderCartPage();
+      }
+    }
+
+    function removeFromCart(beerId) {
+      Cart.removeItem(beerId);
+      renderCartPage();
+    }
+
+    function applyVoucher() {
+      const input = document.getElementById('voucher-code');
+      const msg = document.getElementById('voucher-message');
+      const code = input.value.trim();
+      if (!code) return;
+
+      const result = Checkout.applyVoucher(code);
+      if (result.success) {
+        renderCartPage();
+      } else {
+        msg.textContent = result.message;
+        msg.classList.add('voucher-error');
+        input.classList.add('voucher-input-error');
+        setTimeout(() => {
+          input.classList.remove('voucher-input-error');
+        }, 600);
+      }
+    }
+
+    function removeVoucher() {
+      Checkout.removeVoucher();
+      renderCartPage();
+    }
+
+    renderCartPage();
+  </script>
+</body>
+</html>

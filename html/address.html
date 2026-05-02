@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Shipping Address</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+  <div id="progress-bar" class="progress-bar-container"></div>
+
+  <main class="page-container">
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <h1 class="page-title" style="margin-bottom:24px">Shipping &amp; Billing</h1>
+
+        <div class="form-section">
+          <h2>Shipping Address</h2>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="ship-name">Full Name</label>
+              <input type="text" id="ship-name" placeholder="John Doe">
+            </div>
+            <div class="form-group full-width">
+              <label for="ship-street">Street Address</label>
+              <input type="text" id="ship-street" placeholder="123 Main St, Apt 4">
+            </div>
+            <div class="form-group">
+              <label for="ship-city">City</label>
+              <input type="text" id="ship-city" placeholder="Portland">
+            </div>
+            <div class="form-group">
+              <label for="ship-state">State</label>
+              <input type="text" id="ship-state" placeholder="OR">
+            </div>
+            <div class="form-group">
+              <label for="ship-zip">ZIP Code</label>
+              <input type="text" id="ship-zip" placeholder="97201">
+            </div>
+            <div class="form-group">
+              <label for="ship-country">Country</label>
+              <select id="ship-country">
+                <option value="US">United States</option>
+                <option value="CA">Canada</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="checkbox-group">
+            <input type="checkbox" id="same-billing" checked>
+            <label for="same-billing">Billing address is the same as shipping</label>
+          </div>
+
+          <div id="billing-form" style="display:none">
+            <h3>Billing Address</h3>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="bill-name">Full Name</label>
+                <input type="text" id="bill-name" placeholder="John Doe">
+              </div>
+              <div class="form-group full-width">
+                <label for="bill-street">Street Address</label>
+                <input type="text" id="bill-street" placeholder="123 Main St, Apt 4">
+              </div>
+              <div class="form-group">
+                <label for="bill-city">City</label>
+                <input type="text" id="bill-city" placeholder="Portland">
+              </div>
+              <div class="form-group">
+                <label for="bill-state">State</label>
+                <input type="text" id="bill-state" placeholder="OR">
+              </div>
+              <div class="form-group">
+                <label for="bill-zip">ZIP Code</label>
+                <input type="text" id="bill-zip" placeholder="97201">
+              </div>
+              <div class="form-group">
+                <label for="bill-country">Country</label>
+                <select id="bill-country">
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <a href="cart.html" class="btn-secondary">Back to Cart</a>
+          <button class="btn-primary" onclick="saveAndContinue()">Continue to Shipping</button>
+        </div>
+      </div>
+      <div id="order-sidebar"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCheckoutHeader();
+    renderProgressBar('address');
+    renderOrderSidebar();
+
+    // Toggle billing form
+    const sameBilling = document.getElementById('same-billing');
+    const billingForm = document.getElementById('billing-form');
+    sameBilling.addEventListener('change', () => {
+      billingForm.style.display = sameBilling.checked ? 'none' : 'block';
+    });
+
+    // Pre-fill from saved data
+    const savedShipping = Checkout.getShippingAddress();
+    if (savedShipping) {
+      document.getElementById('ship-name').value = savedShipping.name || '';
+      document.getElementById('ship-street').value = savedShipping.street || '';
+      document.getElementById('ship-city').value = savedShipping.city || '';
+      document.getElementById('ship-state').value = savedShipping.state || '';
+      document.getElementById('ship-zip').value = savedShipping.zip || '';
+      document.getElementById('ship-country').value = savedShipping.country || 'US';
+    }
+
+    const savedBilling = Checkout.getBillingAddress();
+    if (savedBilling && savedBilling.name) {
+      sameBilling.checked = false;
+      billingForm.style.display = 'block';
+      document.getElementById('bill-name').value = savedBilling.name || '';
+      document.getElementById('bill-street').value = savedBilling.street || '';
+      document.getElementById('bill-city').value = savedBilling.city || '';
+      document.getElementById('bill-state').value = savedBilling.state || '';
+      document.getElementById('bill-zip').value = savedBilling.zip || '';
+      document.getElementById('bill-country').value = savedBilling.country || 'US';
+    }
+
+    function saveAndContinue() {
+      const shipping = {
+        name: document.getElementById('ship-name').value,
+        street: document.getElementById('ship-street').value,
+        city: document.getElementById('ship-city').value,
+        state: document.getElementById('ship-state').value,
+        zip: document.getElementById('ship-zip').value,
+        country: document.getElementById('ship-country').value
+      };
+      Checkout.saveShippingAddress(shipping);
+
+      if (sameBilling.checked) {
+        Checkout.saveBillingAddress(shipping);
+      } else {
+        Checkout.saveBillingAddress({
+          name: document.getElementById('bill-name').value,
+          street: document.getElementById('bill-street').value,
+          city: document.getElementById('bill-city').value,
+          state: document.getElementById('bill-state').value,
+          zip: document.getElementById('bill-zip').value,
+          country: document.getElementById('bill-country').value
+        });
+      }
+
+      window.location.href = 'shipping.html';
+    }
+  </script>
+</body>
+</html>
