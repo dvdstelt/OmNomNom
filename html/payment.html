@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Payment</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+  <div id="progress-bar" class="progress-bar-container"></div>
+
+  <main class="page-container">
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <h1 class="page-title" style="margin-bottom:24px">Payment Method</h1>
+
+        <div class="form-section">
+          <h2>Select Payment</h2>
+          <div class="payment-options">
+            <div class="payment-option selected" data-method="saved" onclick="selectPayment('saved')">
+              <input type="radio" name="payment" checked>
+              <div class="payment-card-info">
+                <div class="payment-card-brand">Visa</div>
+                <div class="payment-card-number">**** **** **** 4242</div>
+                <div class="payment-card-expiry">Expires 12/27</div>
+              </div>
+            </div>
+            <div class="payment-option" data-method="new" onclick="selectPayment('new')">
+              <input type="radio" name="payment">
+              <div class="payment-card-info">
+                <div class="payment-card-brand">Add a new credit card</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="new-card-form" id="new-card-form">
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="card-name">Name on Card</label>
+                <input type="text" id="card-name" placeholder="John Doe">
+              </div>
+              <div class="form-group full-width">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+              </div>
+              <div class="form-group">
+                <label for="card-expiry">Expiry Date</label>
+                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label for="card-cvv">CVV</label>
+                <input type="text" id="card-cvv" placeholder="123" maxlength="4">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <a href="shipping.html" class="btn-secondary">Back to Shipping</a>
+          <button class="btn-primary" onclick="saveAndContinue()">Review Order</button>
+        </div>
+      </div>
+      <div id="order-sidebar"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCheckoutHeader();
+    renderProgressBar('payment');
+    renderOrderSidebar();
+
+    let selectedMethod = 'saved';
+
+    function selectPayment(method) {
+      selectedMethod = method;
+      document.querySelectorAll('.payment-option').forEach(el => {
+        const isSelected = el.dataset.method === method;
+        el.classList.toggle('selected', isSelected);
+        el.querySelector('input[type="radio"]').checked = isSelected;
+      });
+      document.getElementById('new-card-form').classList.toggle('visible', method === 'new');
+    }
+
+    function saveAndContinue() {
+      if (selectedMethod === 'saved') {
+        Checkout.savePaymentMethod({ type: 'saved', brand: 'Visa', last4: '4242', expiry: '12/27' });
+      } else {
+        const num = document.getElementById('card-number').value;
+        const last4 = num.replace(/\s/g, '').slice(-4) || '0000';
+        Checkout.savePaymentMethod({
+          type: 'new',
+          brand: 'Credit Card',
+          last4: last4,
+          expiry: document.getElementById('card-expiry').value,
+          name: document.getElementById('card-name').value
+        });
+      }
+      window.location.href = 'summary.html';
+    }
+
+    // Restore saved selection
+    const savedPayment = Checkout.getPaymentMethod();
+    if (savedPayment && savedPayment.type === 'new') {
+      selectPayment('new');
+    }
+  </script>
+</body>
+</html>

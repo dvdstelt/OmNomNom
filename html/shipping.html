@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Shipping Options</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+  <div id="progress-bar" class="progress-bar-container"></div>
+
+  <main class="page-container">
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <h1 class="page-title" style="margin-bottom:24px">Choose Shipping</h1>
+
+        <div class="form-section">
+          <h2>Delivery Speed</h2>
+          <div class="shipping-options" id="shipping-options"></div>
+        </div>
+
+        <div class="btn-group">
+          <a href="address.html" class="btn-secondary">Back to Address</a>
+          <button class="btn-primary" id="continue-btn" onclick="saveAndContinue()">Continue to Payment</button>
+        </div>
+      </div>
+      <div id="order-sidebar"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderCheckoutHeader();
+    renderProgressBar('shipping');
+
+    const saved = Checkout.getShippingOption();
+    let selectedOption = saved ? saved.id : null;
+
+    function renderShippingOptions() {
+      const container = document.getElementById('shipping-options');
+      container.innerHTML = SHIPPING_OPTIONS.map(opt => {
+        const dates = getDeliveryDates(opt);
+        const isSelected = selectedOption === opt.id;
+        return `
+          <div class="shipping-option ${isSelected ? 'selected' : ''}" data-id="${opt.id}" onclick="selectOption('${opt.id}')">
+            <input type="radio" name="shipping" ${isSelected ? 'checked' : ''}>
+            <div class="shipping-option-info">
+              <div class="shipping-option-name">${opt.name}</div>
+              <div class="shipping-option-delivery">Arrives ${dates}</div>
+            </div>
+            <div class="shipping-option-price">${formatPrice(opt.price)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderOrderSidebar();
+    }
+
+    function selectOption(id) {
+      selectedOption = id;
+      const opt = SHIPPING_OPTIONS.find(o => o.id === id);
+      Checkout.saveShippingOption(opt);
+      renderShippingOptions();
+    }
+
+    function saveAndContinue() {
+      if (!selectedOption) {
+        showToast('Please select a shipping option');
+        return;
+      }
+      window.location.href = 'payment.html';
+    }
+
+    renderShippingOptions();
+  </script>
+</body>
+</html>

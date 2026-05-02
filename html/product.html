@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmNomNom - Product Details</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <main class="page-container">
+    <div id="product-content"></div>
+    <div class="related-section" id="related-section"></div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 OmNomNom Craft Beer Co. All rights reserved. Must be 21+ to purchase.
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    renderHeader(true);
+
+    const params = new URLSearchParams(window.location.search);
+    const beerId = params.get('id');
+    const beer = getBeerById(beerId);
+    let quantity = 1;
+
+    function renderProduct() {
+      if (!beer) {
+        document.getElementById('product-content').innerHTML = `
+          <div class="cart-empty">
+            <h2>Beer not found</h2>
+            <p>Looks like this beer doesn't exist.</p>
+            <a href="index.html" class="btn-primary">Back to Shop</a>
+          </div>`;
+        return;
+      }
+
+      document.title = `OmNomNom - ${beer.name}`;
+      const savings = getSavingsPercent(beer.price, beer.discountedPrice);
+
+      const colors = getBeerCanColors(beer.type);
+      document.getElementById('product-content').innerHTML = `
+        <div class="product-layout">
+          <div class="product-image-main" style="background: ${colors.bg}">
+            <span class="beer-type-badge">${beer.type}</span>
+            ${beer.image
+              ? `<img class="beer-product-img" src="${beer.image}" alt="${beer.name}">`
+              : `<div class="beer-can" style="background: ${colors.can}">
+                  <div class="beer-can-label">${beer.name}</div>
+                  <div class="beer-can-abv">${beer.abv}% ABV</div>
+                </div>`}
+          </div>
+          <div class="product-details">
+            <h1>${beer.name}</h1>
+            <div class="product-brewery">${getCountryFlag(beer.country)} ${beer.brewery} &middot; ${beer.country}</div>
+            <div class="product-type">${beer.subtype || beer.type} &middot; ${beer.volume}</div>
+            ${renderStars(beer.rating, beer.reviews, beer.untappd)}
+            <div class="product-pricing">
+              <span class="beer-price">${formatPrice(beer.discountedPrice)}</span>
+              ${savings > 0 ? `<span class="beer-original-price">${formatPrice(beer.price)}</span>
+              <span class="product-savings">Save ${savings}%</span>` : ''}
+            </div>
+            <p class="product-description">${beer.description}</p>
+            <div class="tasting-notes">
+              <h3>Tasting Notes</h3>
+              <p>${beer.tastingNotes}</p>
+            </div>
+            <div class="product-stock ${beer.stock <= 5 ? 'low-stock' : 'in-stock'}">
+              ${beer.stock <= 5 ? `Only ${beer.stock} left in stock - order soon!` : `In Stock (${beer.stock} available)`}
+            </div>
+            <div class="add-to-cart-row">
+              <div class="qty-selector">
+                <button onclick="updateQty(-1)">-</button>
+                <div class="qty-display" id="qty-display">1</div>
+                <button onclick="updateQty(1)">+</button>
+              </div>
+              <button class="btn-add-to-cart" onclick="addToCart()">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Related beers
+      const related = getRelatedBeers(beer.id);
+      if (related.length > 0) {
+        document.getElementById('related-section').innerHTML = `
+          <h2 class="section-title">You Might Also Like</h2>
+          <div class="related-grid">
+            ${related.map((b, i) => renderBeerCard(b, i)).join('')}
+          </div>
+        `;
+      }
+    }
+
+    function updateQty(delta) {
+      quantity = Math.max(1, Math.min(quantity + delta, beer.stock));
+      document.getElementById('qty-display').textContent = quantity;
+    }
+
+    function addToCart() {
+      const btn = document.querySelector('.btn-add-to-cart');
+      if (btn.classList.contains('btn-added')) return;
+
+      Cart.addItem(beer.id, quantity);
+
+      const originalText = btn.textContent;
+      btn.classList.add('btn-added');
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="20" height="20" class="check-icon"><polyline points="20 6 9 17 4 12"/></svg> Added!`;
+
+      setTimeout(() => {
+        btn.classList.remove('btn-added');
+        btn.textContent = originalText;
+      }, 1800);
+    }
+
+    renderProduct();
+  </script>
+</body>
+</html>
