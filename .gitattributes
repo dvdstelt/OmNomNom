@@ -1,0 +1,23 @@
+# Default: auto-detect text files and normalize line endings to LF on commit.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Explicit binary types (prevent any normalization)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.pdf   binary
+*.zip   binary
+*.gz    binary
+*.7z    binary
+*.dll   binary
+*.exe   binary
+*.pdb   binary
+*.snk   binary
