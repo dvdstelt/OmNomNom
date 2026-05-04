@@ -9,6 +9,7 @@
   import CheckoutProgress from '../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../Catalog/CartItemList.svelte';
   import OrderTotal from '../../../Finance/OrderTotal.svelte';
+  import { effectivePrice } from '../../../Finance/effectivePrice.js';
 
   let items = $state([]);
   let totalCartPrice = $state(0);
@@ -30,23 +31,24 @@
 
   onMount(load);
 
+  function recalcTotal() {
+    totalCartPrice = items.reduce(
+      (sum, it) => sum + effectivePrice(it) * it.quantity,
+      0
+    );
+  }
+
   function changeQuantity(productId, newQuantity) {
     if (newQuantity <= 0) return removeItem(productId);
     items = items.map((it) =>
       it.productId === productId ? { ...it, quantity: newQuantity } : it
     );
-    totalCartPrice = items.reduce(
-      (sum, it) => sum + (it.discount > 0 ? it.discount : it.price) * it.quantity,
-      0
-    );
+    recalcTotal();
   }
 
   function removeItem(productId) {
     items = items.filter((it) => it.productId !== productId);
-    totalCartPrice = items.reduce(
-      (sum, it) => sum + (it.discount > 0 ? it.discount : it.price) * it.quantity,
-      0
-    );
+    recalcTotal();
   }
 
   async function saveAndContinue() {
