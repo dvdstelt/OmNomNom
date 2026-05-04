@@ -7,23 +7,27 @@
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import DeliveryOptions from '../../../../Shipping/DeliveryOptions.svelte';
   import CartItemList from '../../../../Catalog/CartItemList.svelte';
-  import OrderTotal from '../../../../Finance/OrderTotal.svelte';
+  import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   let deliveryOptions = $state([]);
   let cartItems = $state([]);
-  let totalCartPrice = $state(0);
   let selectedDeliveryOptionId = $state(null);
   let loading = $state(true);
   let saving = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
+  // Live-update the sidebar's Shipping line as the user picks a
+  // delivery option, instead of waiting for a round-trip.
+  let selectedDeliveryPrice = $derived(
+    deliveryOptions.find((o) => o.deliveryOptionId === selectedDeliveryOptionId)?.price ?? 0
+  );
+
   onMount(async () => {
     try {
       const data = await gateway.getShipping(routeOrderId);
       deliveryOptions = data?.deliveryOptions ?? [];
       cartItems = data?.cartItems ?? [];
-      totalCartPrice = data?.totalCartPrice ?? 0;
       selectedDeliveryOptionId =
         data?.selectedDeliveryOption ?? deliveryOptions[0]?.deliveryOptionId ?? null;
     } finally {
@@ -78,13 +82,7 @@
       {/if}
     </div>
     {#if cartItems.length > 0}
-      <aside>
-        <div class="sidebar-card">
-          <h3 class="sidebar-title">Order Summary</h3>
-          <OrderTotal label="Items" amount={totalCartPrice} />
-          <OrderTotal label="Order Total" amount={totalCartPrice} emphasized />
-        </div>
-      </aside>
+      <OrderSummaryCard items={cartItems} shippingPrice={selectedDeliveryPrice} />
     {/if}
   </div>
 </main>

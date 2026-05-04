@@ -8,11 +8,9 @@
 
   import CheckoutProgress from '../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../Catalog/CartItemList.svelte';
-  import OrderTotal from '../../../Finance/OrderTotal.svelte';
-  import { effectivePrice } from '../../../Finance/effectivePrice.js';
+  import OrderSummaryCard from '../../../Finance/OrderSummaryCard.svelte';
 
   let items = $state([]);
-  let totalCartPrice = $state(0);
   let loading = $state(true);
 
   let routeOrderId = $derived(page.params.orderId);
@@ -22,7 +20,6 @@
     try {
       const data = await gateway.getCart(routeOrderId);
       items = data?.cartItems ?? [];
-      totalCartPrice = data?.totalCartPrice ?? 0;
       await refreshCartCount(routeOrderId);
     } finally {
       loading = false;
@@ -31,24 +28,15 @@
 
   onMount(load);
 
-  function recalcTotal() {
-    totalCartPrice = items.reduce(
-      (sum, it) => sum + effectivePrice(it) * it.quantity,
-      0
-    );
-  }
-
   function changeQuantity(productId, newQuantity) {
     if (newQuantity <= 0) return removeItem(productId);
     items = items.map((it) =>
       it.productId === productId ? { ...it, quantity: newQuantity } : it
     );
-    recalcTotal();
   }
 
   function removeItem(productId) {
     items = items.filter((it) => it.productId !== productId);
-    recalcTotal();
   }
 
   async function saveAndContinue() {
@@ -93,13 +81,7 @@
         {/if}
       </div>
       {#if items.length > 0}
-        <aside>
-          <div class="sidebar-card">
-            <h3 class="sidebar-title">Order Summary</h3>
-            <OrderTotal label="Items" amount={totalCartPrice} />
-            <OrderTotal label="Order Total" amount={totalCartPrice} emphasized />
-          </div>
-        </aside>
+        <OrderSummaryCard {items} />
       {/if}
     </div>
   {/if}
