@@ -8,6 +8,7 @@
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../../Catalog/CartItemList.svelte';
   import OrderTotal from '../../../../Finance/OrderTotal.svelte';
+  import { discountAmount } from '../../../../Finance/effectivePrice.js';
   import CreditCardSummary from '../../../../PaymentInfo/CreditCardSummary.svelte';
 
   let summary = $state(null);
@@ -19,8 +20,14 @@
 
   let products = $derived(Object.values(summary?.products ?? {}));
   let shippingPrice = $derived(summary?.deliveryOption?.price ?? 0);
+  // Items subtotal at list price; the savings get broken out on their
+  // own line below so the customer sees what they would have paid and
+  // what the promotion took off.
   let itemsSubtotal = $derived(
     products.reduce((sum, p) => sum + (p.price ?? 0) * (p.quantity ?? 0), 0)
+  );
+  let discountTotal = $derived(
+    products.reduce((sum, p) => sum + discountAmount(p) * (p.quantity ?? 0), 0)
   );
   let billingSameAsShipping = $derived(
     address &&
@@ -119,8 +126,15 @@
         <div class="sidebar-card">
           <h3 class="sidebar-title">Order Summary</h3>
           <OrderTotal label="Items" amount={itemsSubtotal} />
+          {#if discountTotal > 0}
+            <OrderTotal label="Discount" amount={-discountTotal} discount />
+          {/if}
           <OrderTotal label="Shipping" amount={shippingPrice} />
-          <OrderTotal label="Order Total" amount={summary.totalPrice ?? itemsSubtotal + shippingPrice} emphasized />
+          <OrderTotal
+            label="Order Total"
+            amount={summary.totalPrice ?? itemsSubtotal - discountTotal + shippingPrice}
+            emphasized
+          />
           <button
             type="button"
             class="btn-primary"
