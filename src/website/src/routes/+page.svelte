@@ -7,6 +7,7 @@
   import StockBadge from '../Catalog/StockBadge.svelte';
   import ProductRating from '../Marketing/ProductRating.svelte';
   import Price from '../Finance/Price.svelte';
+  import SaveBadge from '../Finance/SaveBadge.svelte';
 
   let products = $state([]);
   let loading = $state(true);
@@ -58,7 +59,9 @@
             name={product.name}
             imageUrl={product.imageUrl}
             category={product.category}
-          />
+          >
+            <SaveBadge price={product.price} discount={product.discount} />
+          </BeerImage>
           <div class="beer-info">
             <BeerName name={product.name} />
             <ProductRating stars={product.stars} reviewCount={product.reviewCount} />
