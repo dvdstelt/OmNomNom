@@ -6,7 +6,7 @@
   } from './effectivePrice.js';
 
   let { price = 0, discount = 0 } = $props();
-  let showDiscount = $derived(hasDiscount(price, discount));
+  let showDiscount = $derived(hasDiscount(discount));
   let format = (value) => '$' + Number(value ?? 0).toFixed(2);
 </script>
 

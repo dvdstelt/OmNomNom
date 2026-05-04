@@ -3,36 +3,36 @@
 // Branding) MUST go through here so the displayed unit price, the row
 // subtotal, and the cart total can never disagree.
 //
-// A discount applies only when it is strictly between 0 and the list
-// price. A discount of 0 means "no promotion"; a discount equal to or
-// greater than the price would be a data error, and silently using it
-// would inflate the cart total. In both cases we fall back to the list
-// price.
+// `discount` is a percentage off the list price (e.g. discount=25 means
+// "25% off"). Values outside (0, 100) are treated as no discount so a
+// data error can't produce a negative or inverted total. This mirrors
+// Finance.Data.Models.ProductPricing on the backend; if you change one
+// rule, change the other.
 
-export function hasDiscount(price, discount) {
-  return discount > 0 && discount < price;
+const MAX_DISCOUNT_PERCENT = 100;
+
+export function hasDiscount(discount) {
+  return discount > 0 && discount < MAX_DISCOUNT_PERCENT;
 }
 
 function pair(item) {
   return [Number(item?.price ?? 0), Number(item?.discount ?? 0)];
 }
 
-export function effectivePrice(item) {
-  const [price, discount] = pair(item);
-  return hasDiscount(price, discount) ? discount : price;
-}
-
 // Dollar savings off the list price, or 0 when no valid discount applies.
 export function discountAmount(item) {
   const [price, discount] = pair(item);
-  return hasDiscount(price, discount) ? price - discount : 0;
+  return hasDiscount(discount) ? (price * discount) / 100 : 0;
 }
 
-// Savings as a rounded integer percentage (e.g. 25 for "Save 25%"),
-// or 0 when no valid discount applies.
+export function effectivePrice(item) {
+  const [price] = pair(item);
+  return price - discountAmount(item);
+}
+
+// The discount expressed as a rounded integer percentage (e.g. 25 for
+// "Save 25%"), or 0 when no valid discount applies.
 export function discountPercent(item) {
-  const [price, discount] = pair(item);
-  return hasDiscount(price, discount)
-    ? Math.round(((price - discount) / price) * 100)
-    : 0;
+  const [, discount] = pair(item);
+  return hasDiscount(discount) ? Math.round(discount) : 0;
 }
