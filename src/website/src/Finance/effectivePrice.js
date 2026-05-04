@@ -13,8 +13,26 @@ export function hasDiscount(price, discount) {
   return discount > 0 && discount < price;
 }
 
+function pair(item) {
+  return [Number(item?.price ?? 0), Number(item?.discount ?? 0)];
+}
+
 export function effectivePrice(item) {
-  const price = Number(item?.price ?? 0);
-  const discount = Number(item?.discount ?? 0);
+  const [price, discount] = pair(item);
   return hasDiscount(price, discount) ? discount : price;
+}
+
+// Dollar savings off the list price, or 0 when no valid discount applies.
+export function discountAmount(item) {
+  const [price, discount] = pair(item);
+  return hasDiscount(price, discount) ? price - discount : 0;
+}
+
+// Savings as a rounded integer percentage (e.g. 25 for "Save 25%"),
+// or 0 when no valid discount applies.
+export function discountPercent(item) {
+  const [price, discount] = pair(item);
+  return hasDiscount(price, discount)
+    ? Math.round(((price - discount) / price) * 100)
+    : 0;
 }
