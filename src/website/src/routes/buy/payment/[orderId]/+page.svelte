@@ -6,12 +6,15 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import CreditCardPicker from '../../../../PaymentInfo/CreditCardPicker.svelte';
+  import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   // Hard-coded customer for the demo, matching the React app.
   const CUSTOMER_ID = '01093176-1308-493a-8f67-da5d278e2375';
 
   let cards = $state([]);
   let selectedCardId = $state(null);
+  let cartItems = $state([]);
+  let shippingPrice = $state(0);
   let loading = $state(true);
   let saving = $state(false);
 
@@ -25,6 +28,8 @@
       ]);
       cards = cardsData?.creditCards ?? [];
       selectedCardId = paymentData?.creditCardId || cards[0]?.cardId || null;
+      cartItems = paymentData?.cartItems ?? [];
+      shippingPrice = paymentData?.deliveryOption?.price ?? 0;
     } finally {
       loading = false;
     }
@@ -69,5 +74,8 @@
         </div>
       {/if}
     </div>
+    {#if cartItems.length > 0}
+      <OrderSummaryCard items={cartItems} {shippingPrice} />
+    {/if}
   </div>
 </main>

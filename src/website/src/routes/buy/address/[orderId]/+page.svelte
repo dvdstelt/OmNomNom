@@ -6,6 +6,7 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import AddressFormFields from '../../../../Shipping/AddressFormFields.svelte';
+  import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   const blankAddress = {
     id: '',
@@ -19,6 +20,7 @@
   let shippingAddress = $state({ ...blankAddress });
   let billingAddress = $state({ ...blankAddress });
   let billingSameAsShipping = $state(true);
+  let cartItems = $state([]);
   let loading = $state(true);
   let saving = $state(false);
 
@@ -36,6 +38,7 @@
       if (data?.shippingAddress) shippingAddress = { ...blankAddress, ...data.shippingAddress };
       if (data?.billingAddress) billingAddress = { ...blankAddress, ...data.billingAddress };
       billingSameAsShipping = addressesMatch(shippingAddress, billingAddress);
+      cartItems = data?.cartItems ?? [];
     } finally {
       loading = false;
     }
@@ -96,5 +99,8 @@
         </div>
       {/if}
     </div>
+    {#if cartItems.length > 0}
+      <OrderSummaryCard items={cartItems} />
+    {/if}
   </div>
 </main>
