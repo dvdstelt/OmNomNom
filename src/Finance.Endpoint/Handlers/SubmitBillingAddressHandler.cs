@@ -1,26 +1,32 @@
-﻿using Finance.Data;
+using Finance.Data;
 using Finance.Data.Models;
 using Finance.Endpoint.Messages.Commands;
+using Microsoft.EntityFrameworkCore;
 
 namespace Finance.Endpoint.Handlers;
 
 public class SubmitBillingAddressHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitBillingAddress>
 {
-    public Task Handle(SubmitBillingAddress message, IMessageHandlerContext context)
+    public async Task Handle(SubmitBillingAddress message, IMessageHandlerContext context)
     {
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).SingleOrDefault() ?? new Order();
+        var order = await dbContext.Orders
+            .FirstOrDefaultAsync(s => s.OrderId == message.OrderId, context.CancellationToken);
 
-        order.OrderId = message.OrderId;
-        order.BillingAddress = new();
-        order.BillingAddress.FullName = message.FullName;
-        order.BillingAddress.Street = message.Street;
-        order.BillingAddress.ZipCode = message.ZipCode;
-        order.BillingAddress.Town = message.Town;
-        order.BillingAddress.Country = message.Country;
+        if (order == null)
+        {
+            order = new Order { OrderId = message.OrderId };
+            dbContext.Orders.Add(order);
+        }
 
-        orderCollection.Upsert(order);
+        order.BillingAddress = new Address
+        {
+            FullName = message.FullName,
+            Street = message.Street,
+            ZipCode = message.ZipCode,
+            Town = message.Town,
+            Country = message.Country
+        };
 
-        return Task.CompletedTask;
+        await dbContext.SaveChangesAsync(context.CancellationToken);
     }
 }

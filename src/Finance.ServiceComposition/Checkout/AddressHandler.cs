@@ -1,8 +1,9 @@
-﻿using Finance.Data;
+using Finance.Data;
 using Finance.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Checkout;
@@ -10,14 +11,14 @@ namespace Finance.ServiceComposition.Checkout;
 public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/address/{orderId}")]
-    public Task Handle(HttpRequest request)
+    public async Task Handle(HttpRequest request)
     {
         var vm = request.GetComposedResponseModel();
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
+        var order = await dbContext.Orders.FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
 
         // If there is no order yet, we retrieve the address from the previous order.
         Address address;
@@ -27,8 +28,6 @@ public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHa
             address = order.BillingAddress;
 
         vm.BillingAddress = address;
-
-        return Task.CompletedTask;
     }
 
     Address RetrieveAddressFromPreviousOrder(Guid orderId)

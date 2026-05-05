@@ -1,8 +1,9 @@
-﻿using Catalog.ServiceComposition.Events;
+using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Finance.Data.Models;
 using Finance.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Checkout;
@@ -15,9 +16,11 @@ public class SummaryLoadedSubscriber(FinanceDbContext dbContext, CacheHelper cac
         publisher.Subscribe<SummaryLoaded>(async (@event, request) =>
         {
             var orderId = @event.OrderId;
+            var ct = request.HttpContext.RequestAborted;
 
-            var orderCollection = dbContext.Database.GetCollection<Order>();
-            var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
+            var order = await dbContext.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
 
             if (order == null)
             {
