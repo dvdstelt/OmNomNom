@@ -1,11 +1,9 @@
-﻿using Catalog.Data;
-using Catalog.Data.Models;
+using Catalog.Data;
 using Catalog.ServiceComposition.Events;
-using Catalog.ServiceComposition.Products;
-using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
@@ -19,14 +17,17 @@ public class ShoppingCartHandler(CatalogDbContext dbContext) : ICompositionReque
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var order = dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault();
+        var order = await dbContext.Orders
+            .Include(o => o.Products)
+            .SingleOrDefaultAsync(s => s.OrderId == orderId, ct);
 
-        var products = dbContext.GetAll<Product>().ToList();
+        var products = await dbContext.Products.ToListAsync(ct);
         var orderedProducts = ShoppingCart.Mapper.MapToDictionary(order, products);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new CartLoaded()
+        await context.RaiseEvent(new CartLoaded
         {
             OrderedProducts = orderedProducts
         });

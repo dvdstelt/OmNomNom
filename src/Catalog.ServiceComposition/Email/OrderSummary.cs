@@ -1,9 +1,10 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Catalog.Data;
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Email;
@@ -14,18 +15,21 @@ public class OrderSummary(CatalogDbContext dbContext) : ICompositionRequestsHand
     public async Task Handle(HttpRequest request)
     {
         var orderData = await request.Bind<OrderData>();
+        var ct = request.HttpContext.RequestAborted;
 
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var productCollection = dbContext.Database.GetCollection<Product>();
+        var order = await dbContext.Orders
+            .Include(o => o.Products)
+            .SingleAsync(s => s.OrderId == orderData.OrderId, ct);
 
-        var order = orderCollection.Query().Where(s => s.OrderId == orderData.OrderId).Single();
         var productIds = order.Products.Select(s => s.ProductId).ToList();
-        var products = productCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
+        var products = await dbContext.Products
+            .Where(s => productIds.Contains(s.ProductId))
+            .ToListAsync(ct);
 
         var productsModel = MapToDictionary(order.Products, products);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new ProductsLoaded()
+        await context.RaiseEvent(new ProductsLoaded
         {
             Products = productsModel
         });

@@ -1,7 +1,8 @@
-﻿using Catalog.Data;
+using Catalog.Data;
 using Catalog.Data.Models;
 using Catalog.Endpoint.Messages.Commands;
 using Catalog.Endpoint.Messages.Events;
+using Microsoft.EntityFrameworkCore;
 using NServiceBus.Logging;
 
 namespace Catalog.Endpoint.Handlers;
@@ -14,36 +15,43 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
     {
         log.InfoFormat("{OrderId} - Finalizing order", message.OrderId);
 
-        // Let's verify if there's stock
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var inventoryDeltas = dbContext.Database.GetCollection<InventoryDelta>();
-
-        var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).Single();
+        var order = await dbContext.Orders
+            .Include(o => o.Products)
+            .SingleAsync(s => s.OrderId == message.OrderId, context.CancellationToken);
 
         // Verify for each product that is being ordered if there's enough in stock
-        var itemsNotFulfilled = new OrderItemsNotFulfilled();
-        itemsNotFulfilled.OrderId = message.OrderId;
+        var itemsNotFulfilled = new OrderItemsNotFulfilled
+        {
+            OrderId = message.OrderId
+        };
+
         foreach (var orderItem in order.Products)
         {
-            var stock = inventoryDeltas.Query().Where(s => s.ProductId == orderItem.ProductId).ToList();
-            if (stock.Sum(s => s.Delta) < orderItem.Quantity)
+            var inStock = await dbContext.InventoryDeltas
+                .Where(s => s.ProductId == orderItem.ProductId)
+                .SumAsync(s => s.Delta, context.CancellationToken);
+
+            if (inStock < orderItem.Quantity)
             {
-                itemsNotFulfilled.ItemsNotInStock.Add(new OrderItemsNotFulfilled.OrderItem()
+                itemsNotFulfilled.ItemsNotInStock.Add(new OrderItemsNotFulfilled.OrderItem
                 {
                     ProductId = orderItem.ProductId,
-                    QuantityInStock = stock.Sum(s => s.Delta),
+                    QuantityInStock = inStock,
                     QuantityWanted = orderItem.Quantity
                 });
             }
             else
             {
-                var delta = new InventoryDelta();
-                delta.Delta = orderItem.Quantity * -1;
-                delta.ProductId = orderItem.ProductId;
-                delta.TimeStamp = DateTime.UtcNow;
-                inventoryDeltas.Insert(delta);
+                dbContext.InventoryDeltas.Add(new InventoryDelta
+                {
+                    Delta = orderItem.Quantity * -1,
+                    ProductId = orderItem.ProductId,
+                    TimeStamp = DateTime.UtcNow
+                });
             }
         }
+
+        await dbContext.SaveChangesAsync(context.CancellationToken);
 
         if (itemsNotFulfilled.ItemsNotInStock.Count > 0)
         {
@@ -60,10 +68,10 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
 
         // We should figure out what could be ordered and what not, but don't want to make the
         // solution too difficult. Let's continue...
-        
-        var orderAccepted = new OrderAccepted() { OrderId = message.OrderId };
+
+        var orderAccepted = new OrderAccepted { OrderId = message.OrderId };
         await context.Publish(orderAccepted);
-        
+
         log.InfoFormat("{OrderId} - Order accepted", message.OrderId);
     }
 }
