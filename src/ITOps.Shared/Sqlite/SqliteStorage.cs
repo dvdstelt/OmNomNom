@@ -1,11 +1,11 @@
 namespace ITOps.Shared.Sqlite;
 
 // Shared connection-string builder for the per-service SQLite files.
-// Mirrors the path convention of ITOps.Shared.LiteDb.LiteDbContext: walk
-// up from the running assembly until we hit the .sln (so all services
-// land in the same `<repo>/src/.db/` folder), or stop at any directory
-// that already contains a `.db/` folder. Each service passes its own
-// short name (catalog, finance, etc.) so the files stay one-per-service.
+// Walks up from the running assembly until it hits the .sln (so all
+// services land in the same `<repo>/src/.db/` folder), or stops at any
+// directory that already contains a `.db/` folder. Each service passes
+// its own short name (catalog, finance, etc.) so the files stay
+// one-per-service.
 public static class SqliteStorage
 {
     const string DefaultDatabaseDirectory = ".db";
