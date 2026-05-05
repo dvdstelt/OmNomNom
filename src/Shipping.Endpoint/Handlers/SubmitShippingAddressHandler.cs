@@ -1,4 +1,5 @@
-﻿using Shipping.Data;
+using Microsoft.EntityFrameworkCore;
+using Shipping.Data;
 using Shipping.Data.Models;
 using Shipping.Endpoint.Messages.Commands;
 
@@ -6,21 +7,26 @@ namespace Shipping.Endpoint.Handlers;
 
 public class SubmitShippingAddressHandler(ShippingDbContext dbContext) : IHandleMessages<SubmitShippingAddress>
 {
-    public Task Handle(SubmitShippingAddress message, IMessageHandlerContext context)
+    public async Task Handle(SubmitShippingAddress message, IMessageHandlerContext context)
     {
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var order = orderCollection.Query().Where(s => s.OrderId == message.OrderId).SingleOrDefault() ?? new Order();
+        var order = await dbContext.Orders
+            .FirstOrDefaultAsync(s => s.OrderId == message.OrderId, context.CancellationToken);
 
-        order.OrderId = message.OrderId;
-        order.Address = new();
-        order.Address.FullName = message.FullName;
-        order.Address.Street = message.Street;
-        order.Address.ZipCode = message.ZipCode;
-        order.Address.Town = message.Town;
-        order.Address.Country = message.Country;
+        if (order == null)
+        {
+            order = new Order { OrderId = message.OrderId };
+            dbContext.Orders.Add(order);
+        }
 
-        orderCollection.Upsert(order);
+        order.Address = new Address
+        {
+            FullName = message.FullName,
+            Street = message.Street,
+            ZipCode = message.ZipCode,
+            Town = message.Town,
+            Country = message.Country
+        };
 
-        return Task.CompletedTask;
+        await dbContext.SaveChangesAsync(context.CancellationToken);
     }
 }
