@@ -1,20 +1,17 @@
-﻿using ITOps.Shared;
 using ITOps.Shared.EndpointConfiguration;
+using ITOps.Shared.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PaymentInfo.Data;
-using PaymentInfo.Data.Migrations;
+using PaymentInfo.Data.Seed;
 
 const string EndpointName = "PaymentInfo";
 
 HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
 
-// Configure LiteDb
-hostBuilder.Services.AddSingleton<PaymentInfoDbContext>(provider =>
-{
-    var dbOptions = new LiteDbOptions("paymentinfo", DatabaseInitializer.Initialize);
-    return new PaymentInfoDbContext(dbOptions);
-});
+hostBuilder.Services.AddDbContext<PaymentInfoDbContext>(options =>
+    options.UseSqlite(SqliteStorage.GetConnectionString("paymentinfo")));
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
@@ -24,5 +21,11 @@ hostBuilder.UseNServiceBus(endpointConfiguration);
 var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
 Console.Title = hostEnvironment.ApplicationName;
+
+using (var scope = host.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<PaymentInfoDbContext>();
+    await DatabaseInitializer.InitializeAsync(dbContext);
+}
 
 await host.RunAsync();

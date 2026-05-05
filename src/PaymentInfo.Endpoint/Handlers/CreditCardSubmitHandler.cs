@@ -1,4 +1,5 @@
-﻿using PaymentInfo.Data;
+using Microsoft.EntityFrameworkCore;
+using PaymentInfo.Data;
 using PaymentInfo.Data.Models;
 using PaymentInfo.Endpoint.Messages.Commands;
 using PaymentInfo.Endpoint.Messages.Events;
@@ -9,28 +10,33 @@ public class SubmitPaymentInfoHandler(PaymentInfoDbContext dbContext) : IHandleM
 {
     public async Task Handle(SubmitPaymentInfo message, IMessageHandlerContext context)
     {
-        var creditCardCollection = dbContext.Database.GetCollection<CreditCard>();
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var creditCard = creditCardCollection.Query()
-            .Where(s => s.CreditCardId == message.CreditCardId && s.CustomerId == message.CustomerId).Single();
-        
+        var ct = context.CancellationToken;
+
+        var creditCard = await dbContext.CreditCards
+            .FirstOrDefaultAsync(s =>
+                s.CreditCardId == message.CreditCardId && s.CustomerId == message.CustomerId, ct);
+
         if (creditCard == null)
         {
-            var alert = new FraudDetection()
+            await context.Publish(new FraudDetection
             {
                 CreditCardId = message.CreditCardId,
                 CustomerId = message.CustomerId,
                 OrderId = message.OrderId,
                 FraudMessage = "Customer and credit card could not be matched!"
-            };
-            await context.Publish(alert);
+            });
+            return;
         }
 
-        var order = new Order()
+        var order = await dbContext.Orders
+            .FirstOrDefaultAsync(s => s.OrderId == message.OrderId, ct);
+        if (order == null)
         {
-            OrderId = message.OrderId,
-            CreditCardId = message.CreditCardId
-        };
-        orderCollection.Upsert(order);
+            order = new Order { OrderId = message.OrderId };
+            dbContext.Orders.Add(order);
+        }
+        order.CreditCardId = message.CreditCardId;
+
+        await dbContext.SaveChangesAsync(ct);
     }
 }
