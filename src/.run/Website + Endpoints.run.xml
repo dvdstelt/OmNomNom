@@ -1,7 +1,7 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Website + Endpoints" type="CompoundRunConfigurationType">
-    <toRun name="CompositionGateway: http" type="LaunchSettings" />
-    <toRun name="OmNomNom.BackOffice: http" type="LaunchSettings" />
+    <toRun name="CompositionGateway: https" type="LaunchSettings" />
+    <toRun name="OmNomNom.BackOffice: https" type="LaunchSettings" />
     <toRun name="Catalog.Endpoint" type="DotNetProject" />
     <toRun name="Finance.Endpoint" type="DotNetProject" />
     <toRun name="PaymentInfo.Endpoint" type="DotNetProject" />

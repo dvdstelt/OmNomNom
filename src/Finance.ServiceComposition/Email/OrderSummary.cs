@@ -34,7 +34,7 @@ public class OrderSummary(FinanceDbContext dbContext) : ICompositionRequestsHand
         var vm = request.GetComposedResponseModel();
         vm.BillingAddress = order.BillingAddress;
         vm.DeliveryOption = deliveryOptionModel;
-        vm.TotalPrice = order.Items.Select(s => s.Price * s.Quantity).Sum() + deliveryOption.Price;
+        vm.TotalPrice = order.Items.Sum(s => s.EffectivePrice() * s.Quantity) + deliveryOption.Price;
     }
     
     class OrderData

@@ -30,7 +30,8 @@ public class SummaryLoadedSubscriber(FinanceDbContext dbContext, CacheHelper cac
             {
                 var matchingProduct = order.Items.Single(s => s.ProductId == product.Key);
                 product.Value.Price = matchingProduct.Price;
-                totalPrice += matchingProduct.Quantity * matchingProduct.Price;
+                product.Value.Discount = matchingProduct.Discount;
+                totalPrice += matchingProduct.EffectivePrice() * matchingProduct.Quantity;
             }
 
             var vm = request.GetComposedResponseModel();

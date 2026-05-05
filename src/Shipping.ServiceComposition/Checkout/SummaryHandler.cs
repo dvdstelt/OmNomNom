@@ -12,6 +12,7 @@ namespace Shipping.ServiceComposition.Checkout;
 
 public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsHandler
 {
+    [HttpGet("/buy/payment/{orderId}")]
     [HttpGet("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
     {

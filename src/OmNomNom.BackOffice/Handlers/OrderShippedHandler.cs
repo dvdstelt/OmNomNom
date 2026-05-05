@@ -13,6 +13,7 @@ using Shipping.Endpoint.Messages.Events;
 namespace OmNomNom.Website.Handlers;
 
 public class OrderShippedHandler(
+    IHttpClientFactory httpClientFactory,
     IServiceProvider serviceProvider,
     IRazorViewEngine viewEngine,
     ITempDataProvider tempDataProvider)
@@ -66,16 +67,15 @@ public class OrderShippedHandler(
         return htmlBody;
     }
 
-    private static async Task<JObject> GetOrderViaHttp(Guid orderId, CancellationToken cancellationToken)
+    private async Task<JObject> GetOrderViaHttp(Guid orderId, CancellationToken cancellationToken)
     {
-        var requestUri = $"https://localhost:7126/email/summary/{orderId}";
-
-        var httpClient = new HttpClient();
-        HttpResponseMessage response = await httpClient.GetAsync(requestUri, cancellationToken);
+        // Named client is registered in Program.cs with the gateway's
+        // BaseAddress and the dev-only certificate handling.
+        var httpClient = httpClientFactory.CreateClient("composition-gateway");
+        var response = await httpClient.GetAsync($"/email/summary/{orderId}", cancellationToken);
         response.EnsureSuccessStatusCode();
-        string body = await response.Content.ReadAsStringAsync(cancellationToken);
-        var content = JObject.Parse(body);
-        return content;
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        return JObject.Parse(body);
     }
 
     private IView FindView(ActionContext actionContext, string viewName)

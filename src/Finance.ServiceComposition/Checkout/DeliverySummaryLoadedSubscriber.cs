@@ -9,6 +9,7 @@ namespace Finance.ServiceComposition.Checkout;
 
 public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
+    [HttpGet("/buy/payment/{orderId}")]
     [HttpGet("/buy/summary/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

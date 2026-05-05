@@ -28,7 +28,13 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
             // NOTE: Never ever do this! Don't retrieve _current_ price after submitting the order.
             // Instead, use attached PriceId. But that isn't implemented yet.
             var product = productCollection.Query().Where(s => s.ProductId == item.ProductId).Single();
-            order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, Price = product.Price});
+            order.Items.Add(new OrderItem()
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                Price = product.Price,
+                Discount = product.Discount
+            });
         }
         orderCollection.Upsert(order);
 

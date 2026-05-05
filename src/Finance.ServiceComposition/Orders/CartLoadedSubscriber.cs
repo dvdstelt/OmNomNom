@@ -10,7 +10,9 @@ namespace Finance.ServiceComposition.Orders;
 public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
     [HttpGet("/cart/{orderId}")]
+    [HttpGet("/buy/address/{orderId}")]
     [HttpGet("/buy/shipping/{orderId}")]
+    [HttpGet("/buy/payment/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
         publisher.Subscribe<CartLoaded>((@event, request) =>
@@ -25,9 +27,7 @@ public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEven
                 product.Value.Price = matchingProduct.Price;
                 product.Value.Discount = matchingProduct.Discount;
 
-                var itemPrice = matchingProduct.Price * (int)product.Value.Quantity;
-                var discount = itemPrice / 100 * matchingProduct.Discount;
-                totalPrice += itemPrice - discount;
+                totalPrice += matchingProduct.EffectivePrice() * (int)product.Value.Quantity;
             }
 
             var vm = request.GetComposedResponseModel();

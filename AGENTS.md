@@ -36,8 +36,8 @@ There are no automated tests in this repository.
 ```bash
 cd src/website
 npm install
-npm run dev   # Vite dev server on port 5173
-npm run lint
+npm run dev   # Vite dev server on port 5173 (SvelteKit)
+npm run build
 ```
 
 ## Architecture
@@ -74,4 +74,8 @@ Each endpoint uses its own embedded **LiteDB** database configured via `appsetti
 
 ### Frontend
 
-React + Vite SPA (`src/website`) calls the `CompositionGateway` directly. CORS is configured in the gateway for `localhost:5173`. Axios is used for HTTP calls via `productService.js` and `orderService.js`.
+SvelteKit SPA (`src/website`, `@sveltejs/adapter-static`) calls the `CompositionGateway` directly. CORS is configured in the gateway for `localhost:5173`.
+
+The frontend mirrors the backend's service-boundary decomposition: each top-level folder under `src/website/src/` other than `lib/`, `routes/`, and `static/` is owned by one service boundary (`Branding`, `Catalog`, `Marketing`, `Finance`, `Shipping`, `PaymentInfo`). The components inside those folders are **microviews** — small `.svelte` files that consume only the JSON slice their service contributed to the composed gateway response. Microviews never fetch; the Branding page that owns the route makes one `gateway.*` call per navigation and passes slices down as props.
+
+Branding owns site chrome (layout, header, footer, cart indicator, filter bar, checkout progress bar) and the `routes/` files that compose microviews into pages. The global stylesheet is `src/Branding/styles/global.css` (ported from `html/css/styles.css`).

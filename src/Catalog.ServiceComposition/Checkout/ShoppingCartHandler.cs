@@ -12,7 +12,9 @@ namespace Catalog.ServiceComposition.Checkout;
 
 public class ShoppingCartHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
+    [HttpGet("/buy/address/{orderId}")]
     [HttpGet("/buy/shipping/{orderId}")]
+    [HttpGet("/buy/payment/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
