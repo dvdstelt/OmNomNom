@@ -1,8 +1,7 @@
-﻿using Catalog.ServiceComposition.Events;
-using ITOps.Shared;
+using Catalog.ServiceComposition.Events;
 using Marketing.Data;
-using Marketing.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Marketing.ServiceComposition.Products;
@@ -12,15 +11,13 @@ class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvents
     [HttpGet("/product/{productId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductLoaded>((@event, request) =>
+        publisher.Subscribe<ProductLoaded>(async (@event, request) =>
         {
-            var productCollection = dbContext.Database.GetCollection<Product>();
-            var product = productCollection.Query().Where(s => s.ProductId == @event.ProductId).Single();
+            var product = await dbContext.Products
+                .SingleAsync(s => s.ProductId == @event.ProductId, request.HttpContext.RequestAborted);
 
             @event.Product.Stars = product.Stars;
             @event.Product.ReviewCount = product.ReviewCount;
-
-            return Task.CompletedTask;
         });
     }
 }
