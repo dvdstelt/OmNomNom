@@ -6,6 +6,7 @@ public static class SeedData
 {
     static readonly Guid FremontId = Guid.Parse("9ea20ee6-d6bd-4654-80fb-3dd7e52792f9");
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
+    static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173");
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
 
@@ -30,6 +31,7 @@ public static class SeedData
             // PriceId can be random, as it's only used in orders and we don't seed orders
             new() { ProductId = FremontId, Price = 35, Discount = 0 },
             new() { ProductId = MoersleutelId, Price = 12, Discount = 0 },
+            new() { ProductId = BarcodeBlackYellowId, Price = 32m, Discount = 0 },
             new() { ProductId = WhiteDogId, Price = 6, Discount = 0 },
             new() { ProductId = AbraxasId, Price = 40m, Discount = 0 },
             new() { ProductId = BourbonCountyId, Price = 25m, Discount = 0 },
