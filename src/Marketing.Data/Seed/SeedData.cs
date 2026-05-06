@@ -1,4 +1,4 @@
-﻿using Marketing.Data.Models;
+using Marketing.Data.Models;
 
 namespace Marketing.Data.Seed;
 
@@ -21,20 +21,70 @@ public static class SeedData
 
     public static IEnumerable<Product> Products()
     {
+        // OrderCount = all-time orders. Trending = same as OrderCount on
+        // a fresh seed since every seeded activity row is by construction
+        // within the 30-day window; the recompute will keep them in sync
+        // as the demo runs and seeded events age past the cutoff.
         return new List<Product>
         {
-            new Product() { ProductId = FremontId, Rating = 4.6, RatingCount = 1337 },
-            new Product() { ProductId = MoersleutelId, Rating = 4.4, RatingCount = 911 },
-            new Product() { ProductId = WhiteDogId, Rating = 4.1, RatingCount = 42 },
-            new Product() { ProductId = AbraxasId, Rating = 4.7, RatingCount = 458 },
-            new Product() { ProductId = BourbonCountyId, Rating = 4.4, RatingCount = 754 },
-            new Product() { ProductId = TwentyTwoId, Rating = 4.5, RatingCount = 473 },
-
-            new Product() { ProductId = SusanId, Rating = 4.5, RatingCount = 748 },
-            new Product() { ProductId = OudeGeuzeId, Rating = 4, RatingCount = 134 },
-            new Product() { ProductId = TiarnaId, Rating = 4.1, RatingCount = 642 },
-            new Product() { ProductId = BlueBerryMuffinId, Rating = 4.2, RatingCount = 846 },
-
+            new Product { ProductId = FremontId,         Rating = 4.6, RatingCount = 1337, OrderCount = 18, Trending = 12 },
+            new Product { ProductId = MoersleutelId,     Rating = 4.4, RatingCount = 911,  OrderCount = 22, Trending = 22 },
+            new Product { ProductId = WhiteDogId,        Rating = 4.1, RatingCount = 42,   OrderCount = 9,  Trending = 8  },
+            new Product { ProductId = AbraxasId,         Rating = 4.7, RatingCount = 458,  OrderCount = 14, Trending = 4  },
+            new Product { ProductId = BourbonCountyId,   Rating = 4.4, RatingCount = 754,  OrderCount = 31, Trending = 7  },
+            new Product { ProductId = TwentyTwoId,       Rating = 4.5, RatingCount = 473,  OrderCount = 12, Trending = 10 },
+            new Product { ProductId = SusanId,           Rating = 4.5, RatingCount = 748,  OrderCount = 27, Trending = 19 },
+            new Product { ProductId = OudeGeuzeId,       Rating = 4,   RatingCount = 134,  OrderCount = 6,  Trending = 6  },
+            new Product { ProductId = TiarnaId,          Rating = 4.1, RatingCount = 642,  OrderCount = 11, Trending = 3  },
+            new Product { ProductId = BlueBerryMuffinId, Rating = 4.2, RatingCount = 846,  OrderCount = 24, Trending = 16 },
         };
+    }
+
+    // OrderActivity rows mirror the seeded counters. Each product's
+    // Trending count maps to recent rows (within the 30-day window),
+    // and the OrderCount-minus-Trending difference maps to older rows
+    // outside the window. Once the periodic recompute runs, Trending
+    // converges on the count of in-window rows for that product.
+    public static IEnumerable<OrderActivity> OrderActivity()
+    {
+        var now = DateTime.UtcNow;
+        var recent = new[] { -1, -2, -4, -6, -9, -13, -18, -22, -26, -29 };
+        var oldEnough = new[] { -45, -60, -75, -90 };
+
+        IEnumerable<OrderActivity> Build(Guid productId, int trending, int total)
+        {
+            var rows = new List<OrderActivity>();
+            for (var i = 0; i < trending; i++)
+                rows.Add(new OrderActivity
+                {
+                    ProductId = productId,
+                    Quantity = 1,
+                    OccurredAt = now.AddDays(recent[i % recent.Length])
+                });
+            for (var i = 0; i < total - trending; i++)
+                rows.Add(new OrderActivity
+                {
+                    ProductId = productId,
+                    Quantity = 1,
+                    OccurredAt = now.AddDays(oldEnough[i % oldEnough.Length])
+                });
+            return rows;
+        }
+
+        var perProduct = new (Guid, int Trending, int Total)[]
+        {
+            (FremontId,         12, 18),
+            (MoersleutelId,     22, 22),
+            (WhiteDogId,         8, 9),
+            (AbraxasId,          4, 14),
+            (BourbonCountyId,    7, 31),
+            (TwentyTwoId,       10, 12),
+            (SusanId,           19, 27),
+            (OudeGeuzeId,        6, 6),
+            (TiarnaId,           3, 11),
+            (BlueBerryMuffinId, 16, 24),
+        };
+
+        return perProduct.SelectMany(p => Build(p.Item1, p.Trending, p.Total));
     }
 }
