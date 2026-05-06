@@ -78,10 +78,16 @@
         </div>
 
         <div class="form-section">
-          <label>
-            <input type="checkbox" bind:checked={billingSameAsShipping} />
-            Billing address is the same as shipping address
-          </label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="same-billing"
+              bind:checked={billingSameAsShipping}
+            />
+            <label for="same-billing">
+              Billing address is the same as shipping address
+            </label>
+          </div>
         </div>
 
         {#if !billingSameAsShipping}
