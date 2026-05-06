@@ -1153,6 +1153,22 @@ img {
   margin-top: 6px;
 }
 
+/* Scope `<Price>` down to the cart-item size so the discounted price
+   matches the HTML reference (15px) instead of inheriting the global
+   22px from `.beer-price`. The struck-through original price drops
+   proportionally. */
+.cart-item-price .beer-pricing {
+  margin-top: 0;
+}
+
+.cart-item-price .beer-price {
+  font-size: 15px;
+}
+
+.cart-item-price .beer-original-price {
+  font-size: 12px;
+}
+
 .cart-item-controls {
   display: flex;
   align-items: center;
