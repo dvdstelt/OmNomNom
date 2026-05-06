@@ -1,21 +1,26 @@
 <script>
   // Top-of-page filter strip. Type buttons are always rendered; the
-  // brewery and country dropdowns appear only when the consumer
-  // passes non-empty arrays for them, so existing call sites that
-  // only filter by type stay unchanged.
+  // brewery, country, and sort dropdowns appear only when the
+  // consumer opts in, so existing call sites that only filter by
+  // type stay unchanged.
 
   let {
     categories = [],
     breweries = [],
     countries = [],
+    sortOptions = [],            // [{ value, label }, ...]
     selected = $bindable('All'),
     selectedBrewery = $bindable('All'),
     selectedCountry = $bindable('All'),
+    selectedSort = $bindable('default'),
     onChange = () => {}
   } = $props();
 
   const allLabel = 'All';
   let buttons = $derived([allLabel, ...categories]);
+  let hasDropdowns = $derived(
+    breweries.length > 0 || countries.length > 0 || sortOptions.length > 0
+  );
 
   function pickType(value) {
     selected = value;
@@ -37,7 +42,7 @@
     {/each}
   </div>
 
-  {#if breweries.length > 0 || countries.length > 0}
+  {#if hasDropdowns}
     <div class="filter-dropdowns">
       {#if breweries.length > 0}
         <select class="filter-select" bind:value={selectedBrewery}>
@@ -52,6 +57,13 @@
           <option value="All">All Countries</option>
           {#each countries as country}
             <option value={country}>{country}</option>
+          {/each}
+        </select>
+      {/if}
+      {#if sortOptions.length > 0}
+        <select class="filter-select" bind:value={selectedSort}>
+          {#each sortOptions as option}
+            <option value={option.value}>{option.label}</option>
           {/each}
         </select>
       {/if}

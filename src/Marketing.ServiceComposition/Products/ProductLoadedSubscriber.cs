@@ -18,6 +18,8 @@ class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvents
 
             @event.Product.Rating = product.Rating;
             @event.Product.RatingCount = product.RatingCount;
+            @event.Product.OrderCount = product.OrderCount;
+            @event.Product.Trending = product.Trending;
         });
     }
 }

@@ -15,6 +15,14 @@
   let selectedCategory = $state('All');
   let selectedBrewery = $state('All');
   let selectedCountry = $state('All');
+  let selectedSort = $state('default');
+
+  const sortOptions = [
+    { value: 'default', label: 'Sort: Default' },
+    { value: 'rating', label: 'Top rated' },
+    { value: 'orderCount', label: 'Top sellers' },
+    { value: 'trending', label: 'Trending now' }
+  ];
 
   onMount(async () => {
     try {
@@ -35,7 +43,7 @@
     [...new Set(products.map((p) => p.country).filter(Boolean))].sort()
   );
 
-  let visible = $derived(
+  let filtered = $derived(
     products.filter(
       (p) =>
         (selectedCategory === 'All' || p.category === selectedCategory) &&
@@ -43,6 +51,21 @@
         (selectedCountry === 'All' || p.country === selectedCountry)
     )
   );
+
+  // Each sort key maps to a numeric reader; "default" preserves the
+  // gateway's order (no reorder).
+  const sortReaders = {
+    default: () => 0,
+    rating: (p) => p.rating ?? 0,
+    orderCount: (p) => p.orderCount ?? 0,
+    trending: (p) => p.trending ?? 0
+  };
+
+  let visible = $derived.by(() => {
+    if (selectedSort === 'default') return filtered;
+    const reader = sortReaders[selectedSort] ?? sortReaders.default;
+    return [...filtered].sort((a, b) => reader(b) - reader(a));
+  });
 </script>
 
 <svelte:head>
@@ -57,9 +80,11 @@
     {categories}
     {breweries}
     {countries}
+    {sortOptions}
     bind:selected={selectedCategory}
     bind:selectedBrewery
     bind:selectedCountry
+    bind:selectedSort
   />
 
   {#if loading}

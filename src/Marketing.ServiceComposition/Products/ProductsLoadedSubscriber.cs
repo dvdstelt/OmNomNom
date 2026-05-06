@@ -23,6 +23,8 @@ class ProductsLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvent
                 var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
                 product.Value.Rating = matchingProduct.Rating;
                 product.Value.RatingCount = matchingProduct.RatingCount;
+                product.Value.OrderCount = matchingProduct.OrderCount;
+                product.Value.Trending = matchingProduct.Trending;
             }
         });
     }
