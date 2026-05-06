@@ -1,7 +1,7 @@
-// Maps the country names used in the Catalog seed data to ISO-3166-1
-// alpha-2 codes for the flagcdn.com flag images. Returns null when the
-// country is unknown so the caller can render nothing rather than a
-// broken image.
+// Country-name → ISO 3166-1 alpha-2 mapping for the `flag-icons`
+// CSS classes. The library renders flags via `<span class="fi fi-XX">`
+// where XX is the lowercase code, so callers stay agnostic of the
+// underlying asset format.
 
 const ISO_BY_COUNTRY = {
   'United States': 'us',
@@ -9,12 +9,6 @@ const ISO_BY_COUNTRY = {
   'The Netherlands': 'nl'
 };
 
-export function countryFlagSrc(country) {
-  const code = ISO_BY_COUNTRY[country];
-  if (!code) return null;
-  return {
-    src: `https://flagcdn.com/w40/${code}.png`,
-    srcset: `https://flagcdn.com/w80/${code}.png 2x`,
-    alt: country
-  };
+export function countryIso(country) {
+  return ISO_BY_COUNTRY[country] ?? null;
 }
