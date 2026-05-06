@@ -8,7 +8,7 @@ public static class DatabaseInitializer
         MarketingDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         if (await dbContext.Products.AnyAsync(cancellationToken))
             return;

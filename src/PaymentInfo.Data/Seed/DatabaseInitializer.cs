@@ -8,7 +8,7 @@ public static class DatabaseInitializer
         PaymentInfoDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         if (await dbContext.CreditCards.AnyAsync(cancellationToken))
             return;
