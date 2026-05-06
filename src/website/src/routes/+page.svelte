@@ -13,6 +13,8 @@
   let products = $state([]);
   let loading = $state(true);
   let selectedCategory = $state('All');
+  let selectedBrewery = $state('All');
+  let selectedCountry = $state('All');
 
   onMount(async () => {
     try {
@@ -26,11 +28,20 @@
   let categories = $derived([
     ...new Set(products.map((p) => p.category).filter(Boolean))
   ]);
+  let breweries = $derived(
+    [...new Set(products.map((p) => p.brewery).filter(Boolean))].sort()
+  );
+  let countries = $derived(
+    [...new Set(products.map((p) => p.country).filter(Boolean))].sort()
+  );
 
   let visible = $derived(
-    selectedCategory === 'All'
-      ? products
-      : products.filter((p) => p.category === selectedCategory)
+    products.filter(
+      (p) =>
+        (selectedCategory === 'All' || p.category === selectedCategory) &&
+        (selectedBrewery === 'All' || p.brewery === selectedBrewery) &&
+        (selectedCountry === 'All' || p.country === selectedCountry)
+    )
   );
 </script>
 
@@ -42,7 +53,14 @@
   <h1 class="page-title">Discover Craft Beers</h1>
   <p class="page-subtitle">Hand-picked selections for the discerning palate</p>
 
-  <FilterBar {categories} bind:selected={selectedCategory} />
+  <FilterBar
+    {categories}
+    {breweries}
+    {countries}
+    bind:selected={selectedCategory}
+    bind:selectedBrewery
+    bind:selectedCountry
+  />
 
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
