@@ -4,6 +4,7 @@
   import FilterBar from '../Branding/FilterBar.svelte';
   import BeerImage from '../Catalog/BeerImage.svelte';
   import BeerName from '../Catalog/BeerName.svelte';
+  import BreweryLine from '../Catalog/BreweryLine.svelte';
   import StockBadge from '../Catalog/StockBadge.svelte';
   import ProductRating from '../Marketing/ProductRating.svelte';
   import Price from '../Finance/Price.svelte';
@@ -64,6 +65,7 @@
           </BeerImage>
           <div class="beer-info">
             <BeerName name={product.name} />
+            <BreweryLine brewery={product.brewery} country={product.country} />
             <ProductRating stars={product.stars} reviewCount={product.reviewCount} />
             <Price price={product.price} discount={product.discount} />
             <StockBadge inStock={product.inStock} />
