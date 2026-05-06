@@ -16,8 +16,8 @@ class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvents
             var product = await dbContext.Products
                 .SingleAsync(s => s.ProductId == @event.ProductId, request.HttpContext.RequestAborted);
 
-            @event.Product.Stars = product.Stars;
-            @event.Product.ReviewCount = product.ReviewCount;
+            @event.Product.Rating = product.Rating;
+            @event.Product.RatingCount = product.RatingCount;
         });
     }
 }

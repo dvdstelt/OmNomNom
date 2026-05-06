@@ -23,17 +23,17 @@ public static class SeedData
     {
         return new List<Product>
         {
-            new Product() { ProductId = FremontId, Stars = 4.6, ReviewCount = 1337 },
-            new Product() { ProductId = MoersleutelId, Stars = 4.4, ReviewCount = 911 },
-            new Product() { ProductId = WhiteDogId, Stars = 4.1, ReviewCount = 42 },
-            new Product() { ProductId = AbraxasId, Stars = 4.7, ReviewCount = 458 },
-            new Product() { ProductId = BourbonCountyId, Stars = 4.4, ReviewCount = 754 },
-            new Product() { ProductId = TwentyTwoId, Stars = 4.5, ReviewCount = 473 },
+            new Product() { ProductId = FremontId, Rating = 4.6, RatingCount = 1337 },
+            new Product() { ProductId = MoersleutelId, Rating = 4.4, RatingCount = 911 },
+            new Product() { ProductId = WhiteDogId, Rating = 4.1, RatingCount = 42 },
+            new Product() { ProductId = AbraxasId, Rating = 4.7, RatingCount = 458 },
+            new Product() { ProductId = BourbonCountyId, Rating = 4.4, RatingCount = 754 },
+            new Product() { ProductId = TwentyTwoId, Rating = 4.5, RatingCount = 473 },
 
-            new Product() { ProductId = SusanId, Stars = 4.5, ReviewCount = 748 },
-            new Product() { ProductId = OudeGeuzeId, Stars = 4, ReviewCount = 134 },
-            new Product() { ProductId = TiarnaId, Stars = 4.1, ReviewCount = 642 },
-            new Product() { ProductId = BlueBerryMuffinId, Stars = 4.2, ReviewCount = 846 },
+            new Product() { ProductId = SusanId, Rating = 4.5, RatingCount = 748 },
+            new Product() { ProductId = OudeGeuzeId, Rating = 4, RatingCount = 134 },
+            new Product() { ProductId = TiarnaId, Rating = 4.1, RatingCount = 642 },
+            new Product() { ProductId = BlueBerryMuffinId, Rating = 4.2, RatingCount = 846 },
 
         };
     }

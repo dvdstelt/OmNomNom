@@ -84,7 +84,7 @@
           <div class="beer-info">
             <BeerName name={product.name} />
             <BreweryLine brewery={product.brewery} country={product.country} />
-            <ProductRating stars={product.stars} reviewCount={product.reviewCount} />
+            <ProductRating rating={product.rating} ratingCount={product.ratingCount} />
             <Price price={product.price} discount={product.discount} />
             <StockBadge inStock={product.inStock} />
           </div>

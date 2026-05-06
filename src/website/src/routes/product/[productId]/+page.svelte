@@ -74,7 +74,7 @@
           country={product.country}
           variant="detail"
         />
-        <ProductRating stars={product.stars} reviewCount={product.reviewCount} />
+        <ProductRating rating={product.rating} ratingCount={product.ratingCount} />
         <PriceDetail price={product.price} discount={product.discount} />
         <ProductDescription description={product.description} />
         <StockBadge inStock={product.inStock} />
