@@ -7,23 +7,28 @@ using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Orders;
 
-public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
+// Companion to `CartSummaryHandler` on the Catalog side: receives
+// `CartSummaryLoaded`, attaches per-item Price/Discount from Finance's
+// Products view, and exposes the cart total. The shipping route uses
+// the heavier `CartLoadedSubscriber`/`CartLoaded` pair instead, because
+// it also renders product names/images.
+public class CartSummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
 {
-    [HttpGet("/cart/{orderId}")]
-    [HttpGet("/buy/shipping/{orderId}")]
+    [HttpGet("/buy/address/{orderId}")]
+    [HttpGet("/buy/payment/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<CartLoaded>(async (@event, request) =>
+        publisher.Subscribe<CartSummaryLoaded>(async (@event, request) =>
         {
             var productIds = @event.OrderedProducts.Keys.ToList();
             var resultSet = await dbContext.Products
-                .Where(s => productIds.Contains(s.ProductId))
+                .Where(p => productIds.Contains(p.ProductId))
                 .ToListAsync(request.HttpContext.RequestAborted);
 
             decimal totalPrice = 0;
             foreach (var product in @event.OrderedProducts)
             {
-                var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
+                var matchingProduct = resultSet.Single(p => p.ProductId == product.Key);
                 product.Value.Price = matchingProduct.Price;
                 product.Value.Discount = matchingProduct.Discount;
 
