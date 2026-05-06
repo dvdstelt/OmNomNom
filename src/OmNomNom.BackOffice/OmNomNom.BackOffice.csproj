@@ -25,10 +25,8 @@
       <_ContentIncludedByDefault Remove="Views\Buy\shipping.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Buy\summary.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Cart\index.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Views\Home\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
