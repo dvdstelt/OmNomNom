@@ -1,6 +1,6 @@
 ﻿using Finance.Data.Models;
 
-namespace Finance.Data.Migrations;
+namespace Finance.Data.Seed;
 
 public static class SeedData
 {

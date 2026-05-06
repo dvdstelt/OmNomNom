@@ -1,8 +1,7 @@
-﻿using Finance.Data;
-using Finance.Data.Migrations;
+using Finance.Data;
 using Finance.ServiceComposition.Helpers;
-using ITOps.Shared;
-using Microsoft.Extensions.Configuration;
+using ITOps.Shared.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
 
@@ -12,11 +11,8 @@ public class Startup : IViewModelCompositionOptionsCustomization
 {
     public void Customize(ViewModelCompositionOptions options)
     {
-        options.Services.AddSingleton<FinanceDbContext>(provider =>
-        {
-            var liteDbOptions = new LiteDbOptions("finance", DatabaseInitializer.Initialize);
-            return new FinanceDbContext(liteDbOptions);
-        });
+        options.Services.AddDbContext<FinanceDbContext>(opts =>
+            opts.UseSqlite(SqliteStorage.GetConnectionString("finance")));
         options.Services.AddSingleton<CacheHelper>();
     }
 }

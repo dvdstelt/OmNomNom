@@ -1,6 +1,6 @@
 ﻿using PaymentInfo.Data.Models;
 
-namespace PaymentInfo.Data.Migrations;
+namespace PaymentInfo.Data.Seed;
 
 public class SeedData
 {

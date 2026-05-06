@@ -8,7 +8,7 @@
   import CreditCardPicker from '../../../../PaymentInfo/CreditCardPicker.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
-  // Hard-coded customer for the demo, matching the React app.
+  // Hard-coded customer for the demo
   const CUSTOMER_ID = '01093176-1308-493a-8f67-da5d278e2375';
 
   let cards = $state([]);

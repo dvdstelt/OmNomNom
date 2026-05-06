@@ -1,7 +1,7 @@
-﻿using Catalog.Data;
-using Catalog.Data.Models;
+using Catalog.Data;
 using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
@@ -11,20 +11,19 @@ public class SummaryLoadedSubscriber(CatalogDbContext dbContext) : ICompositionE
     [HttpGet("buy/summary/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<SummaryLoaded>((@event, request) =>
+        publisher.Subscribe<SummaryLoaded>(async (@event, request) =>
         {
-            var productCollection = dbContext.Database.GetCollection<Product>();
             var productIds = @event.Products.Keys.ToList();
-            var products = productCollection.Query().Where(s => productIds.Contains(s.ProductId)).ToList();
+            var products = await dbContext.Products
+                .Where(s => productIds.Contains(s.ProductId))
+                .ToListAsync(request.HttpContext.RequestAborted);
 
             foreach (var productItem in @event.Products)
             {
-                var product = products.SingleOrDefault(product => product.ProductId == productItem.Key);
+                var product = products.SingleOrDefault(p => p.ProductId == productItem.Key);
                 productItem.Value.Name = product?.Name;
                 productItem.Value.ImageUrl = product?.ImageUrl;
             }
-
-            return Task.CompletedTask;
         });
     }
 }

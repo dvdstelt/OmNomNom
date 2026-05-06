@@ -1,9 +1,7 @@
-﻿using System.Security.Cryptography;
 using Catalog.ServiceComposition.Events;
-using ITOps.Shared;
 using Marketing.Data;
-using Marketing.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Marketing.ServiceComposition.Products;
@@ -13,19 +11,19 @@ class ProductsLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvent
     [HttpGet("/products")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductsLoaded>((@event, request) =>
+        publisher.Subscribe<ProductsLoaded>(async (@event, request) =>
         {
             var productIds = @event.Products.Keys.ToList();
-            var resultSet = dbContext.Where<Product>(s => productIds.Contains(s.ProductId)).ToList();
+            var resultSet = await dbContext.Products
+                .Where(s => productIds.Contains(s.ProductId))
+                .ToListAsync(request.HttpContext.RequestAborted);
 
             foreach (var product in @event.Products)
             {
-                var matchingProduct  = resultSet.Single(s => s.ProductId == product.Key);
+                var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
                 product.Value.Stars = matchingProduct.Stars;
                 product.Value.ReviewCount = matchingProduct.ReviewCount;
             }
-
-            return Task.CompletedTask;
         });
     }
 }

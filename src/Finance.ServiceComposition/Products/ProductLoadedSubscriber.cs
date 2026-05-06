@@ -1,9 +1,7 @@
-﻿using Catalog.ServiceComposition.Events;
+using Catalog.ServiceComposition.Events;
 using Finance.Data;
-using Finance.Data.Models;
-using ITOps.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
@@ -13,15 +11,13 @@ public class ProductLoadedSubscriber(FinanceDbContext dbContext) : ICompositionE
     [HttpGet("/product/{productId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<ProductLoaded>((@event, request) =>
+        publisher.Subscribe<ProductLoaded>(async (@event, request) =>
         {
-            var productCollection = dbContext.Database.GetCollection<Product>();
-            var product = productCollection.Query().Where(s => s.ProductId == @event.ProductId).Single();
+            var product = await dbContext.Products
+                .SingleAsync(s => s.ProductId == @event.ProductId, request.HttpContext.RequestAborted);
 
             @event.Product.Price = product.Price;
             @event.Product.Discount = product.Discount;
-
-            return Task.CompletedTask;
         });
     }
 }

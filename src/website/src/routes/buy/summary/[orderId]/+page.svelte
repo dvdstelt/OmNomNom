@@ -68,46 +68,64 @@
     <h1 class="page-title" style="margin-bottom:24px">Review your order</h1>
     <div class="checkout-layout">
       <div class="checkout-main">
-        <div class="form-section">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h2>Shipping Address</h2>
-            <a href="/buy/address/{routeOrderId}">change</a>
-          </div>
+        <div class="summary-section">
+          <h3>
+            Shipping & Billing Address
+            <a href="/buy/address/{routeOrderId}">Change</a>
+          </h3>
           {#if address?.shippingAddress}
-            <div>{address.shippingAddress.fullName}</div>
-            <div>{address.shippingAddress.street}</div>
-            <div>{address.shippingAddress.town}, {address.shippingAddress.country}</div>
-            <div>{address.shippingAddress.zipCode}</div>
+            <div class="summary-detail">
+              <div>{address.shippingAddress.fullName}</div>
+              <div>{address.shippingAddress.street}</div>
+              <div>
+                {address.shippingAddress.town}, {address.shippingAddress.country}
+              </div>
+              <div>{address.shippingAddress.zipCode}</div>
+              <div style="margin-top: 12px; font-style: italic;">
+                {#if billingSameAsShipping}
+                  Billing: same as shipping address
+                {:else if address?.billingAddress}
+                  Billing:
+                  {address.billingAddress.street},
+                  {address.billingAddress.town}, {address.billingAddress.country}
+                  ({address.billingAddress.zipCode})
+                {/if}
+              </div>
+            </div>
           {/if}
         </div>
 
-        <div class="form-section">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h2>Payment</h2>
-            <a href="/buy/payment/{routeOrderId}">change</a>
+        {#if summary.deliveryOption}
+          <div class="summary-section">
+            <h3>
+              Delivery Method
+              <a href="/buy/shipping/{routeOrderId}">Change</a>
+            </h3>
+            <div class="summary-detail">
+              <div>{summary.deliveryOption.deliveryOptionName}</div>
+              {#if summary.deliveryOption.deliveryOptionDescription}
+                <div>{summary.deliveryOption.deliveryOptionDescription}</div>
+              {/if}
+              <div>${Number(summary.deliveryOption.price ?? 0).toFixed(2)}</div>
+            </div>
           </div>
-          <CreditCardSummary
-            cardType={summary.creditCardType}
-            lastDigits={summary.creditCardLastDigits}
-          />
+        {/if}
+
+        <div class="summary-section">
+          <h3>
+            Payment
+            <a href="/buy/payment/{routeOrderId}">Change</a>
+          </h3>
+          <div class="summary-detail">
+            <CreditCardSummary
+              cardType={summary.creditCardType}
+              lastDigits={summary.creditCardLastDigits}
+            />
+          </div>
         </div>
 
-        <div class="form-section">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <h2>Billing Address</h2>
-            <a href="/buy/address/{routeOrderId}">change</a>
-          </div>
-          {#if billingSameAsShipping}
-            <div>Same as shipping address</div>
-          {:else if address?.billingAddress}
-            <div>{address.billingAddress.street}</div>
-            <div>{address.billingAddress.town}, {address.billingAddress.country}</div>
-            <div>{address.billingAddress.zipCode}</div>
-          {/if}
-        </div>
-
-        <div class="form-section">
-          <h2>Items</h2>
+        <div class="summary-section summary-items">
+          <h3>Items</h3>
           <CartItemList items={products} editable={false} />
         </div>
       </div>
@@ -117,15 +135,18 @@
         {shippingPrice}
         totalOverride={summary.totalPrice}
       >
-        <button
-          type="button"
-          class="btn-primary"
-          style="width: 100%;"
-          disabled={placing}
-          onclick={placeOrder}
-        >
-          {placing ? 'Placing order…' : 'Place your order'}
-        </button>
+        <div class="place-order-section">
+          <button
+            type="button"
+            class="btn-primary"
+            style="width: 100%;"
+            disabled={placing}
+            onclick={placeOrder}
+          >
+            {placing ? 'Placing order…' : 'Place your order'}
+          </button>
+          <p>By placing your order, you agree to OmNomNom's terms and conditions.</p>
+        </div>
       </OrderSummaryCard>
     </div>
   {/if}

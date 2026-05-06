@@ -1,11 +1,10 @@
-﻿using System.Dynamic;
-using Catalog.ServiceComposition.Events;
+using System.Dynamic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
-using Shipping.Data.Models;
 using Shipping.ServiceComposition.Events;
 
 namespace Shipping.ServiceComposition.Checkout;
@@ -20,13 +19,14 @@ public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsH
 
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var deliveryOptionsCollection = dbContext.Database.GetCollection<DeliveryOption>();
-        var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
-        var deliveryOptionId = order.DeliveryOptionId;
-        var deliveryOption = deliveryOptionsCollection.Query().Where(s => s.DeliveryOptionId == deliveryOptionId)
-            .Single();
+        var order = await dbContext.Orders.SingleAsync(s => s.OrderId == orderId, ct);
+        // The customer reaches /buy/payment after picking shipping, so
+        // DeliveryOptionId should be set; .Value matches the pre-SQLite
+        // assumption that this row is non-null at this point.
+        var deliveryOption = await dbContext.DeliveryOptions
+            .SingleAsync(s => s.DeliveryOptionId == order.DeliveryOptionId!.Value, ct);
 
         dynamic delivery = new ExpandoObject();
         delivery.DeliveryOptionName = deliveryOption.Name;

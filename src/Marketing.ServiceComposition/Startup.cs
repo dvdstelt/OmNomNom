@@ -1,6 +1,6 @@
-﻿using ITOps.Shared;
+using ITOps.Shared.Sqlite;
 using Marketing.Data;
-using Marketing.Data.Migrations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
 
@@ -10,11 +10,16 @@ public class Startup : IViewModelCompositionOptionsCustomization
 {
     public void Customize(ViewModelCompositionOptions options)
     {
-        options.Services.AddSingleton<MarketingDbContext>(provider =>
-        {
-            var dbOptions = new LiteDbOptions("shipping", DatabaseInitializer.Initialize);
-            return new MarketingDbContext(dbOptions);
-        });
+        // Marketing's database name is "marketing", not "shipping" — the
+        // pre-SQLite Startup pointed MarketingDbContext at "shipping",
+        // which made Marketing share the Shipping LiteDB file. Fixed
+        // here as part of the migration so each service genuinely owns
+        // its own SQLite file under src/.db/.
+        options.Services.AddDbContext<MarketingDbContext>(opts =>
+            opts.UseSqlite(SqliteStorage.GetConnectionString("marketing")));
 
+        // No separate Marketing.Endpoint, so the gateway has to run
+        // migrate + seed itself.
+        options.Services.AddHostedService<MarketingDatabaseInitializer>();
     }
 }

@@ -1,12 +1,12 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Catalog.Data;
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Helpers;
-using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
@@ -18,8 +18,11 @@ public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper)
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var order = dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault();
+        var order = await dbContext.Orders
+            .Include(o => o.Products)
+            .SingleOrDefaultAsync(s => s.OrderId == orderId, ct);
 
         if (order == null)
         {
@@ -29,7 +32,7 @@ public class SummaryHandler(CatalogDbContext dbContext, CacheHelper cacheHelper)
         var productsModel = MapToDictionary(order.Products);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new SummaryLoaded()
+        await context.RaiseEvent(new SummaryLoaded
         {
             OrderId = orderId,
             Products = productsModel

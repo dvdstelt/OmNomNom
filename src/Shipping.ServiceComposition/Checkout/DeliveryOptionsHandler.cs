@@ -1,10 +1,9 @@
-﻿using ITOps.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
-using Shipping.Data.Models;
 using Shipping.ServiceComposition.DeliveryOptions;
 using Shipping.ServiceComposition.Events;
 using Shipping.ServiceComposition.Helpers;
@@ -18,21 +17,26 @@ public class DeliveryOptionsHandler(ShippingDbContext dbContext, CacheHelper cac
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
-        
+        var ct = request.HttpContext.RequestAborted;
+
         // Get all available delivery options
-        var deliveryOptions = dbContext.GetAll<DeliveryOption>();
+        var deliveryOptions = await dbContext.DeliveryOptions.ToListAsync(ct);
+
         // Try to obtain previously selected delivery option from database
-        var selectedDeliveryOption =
-            dbContext.Where<Order>(s => s.OrderId == orderId).SingleOrDefault()?.DeliveryOptionId;
-        if (selectedDeliveryOption == null)
+        var selectedDeliveryOption = await dbContext.Orders
+            .Where(s => s.OrderId == orderId)
+            .Select(s => s.DeliveryOptionId)
+            .FirstOrDefaultAsync(ct);
+
+        if (selectedDeliveryOption == null || selectedDeliveryOption == Guid.Empty)
         {
-            // If there's nothing in database, message wasn't processed
-            // See if there's something in cache
+            // If there's nothing in database, message wasn't processed.
+            // See if there's something in cache.
             var order = await cacheHelper.GetOrder(orderId);
-            if (order.DeliveryOptionId != Guid.Empty)
+            if (order.DeliveryOptionId != null && order.DeliveryOptionId != Guid.Empty)
                 selectedDeliveryOption = order.DeliveryOptionId;
         }
-        
+
         var optionsModel = Mapper.MapToDictionary(deliveryOptions);
 
         var context = request.GetCompositionContext();

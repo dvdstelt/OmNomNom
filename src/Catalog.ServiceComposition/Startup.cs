@@ -1,11 +1,9 @@
-﻿using Catalog.Data;
-using Catalog.Data.Migrations;
+using Catalog.Data;
 using Catalog.ServiceComposition.Helpers;
-using ITOps.Shared;
-using Microsoft.Extensions.Configuration;
+using ITOps.Shared.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
-using NServiceBus;
 
 namespace Catalog.ServiceComposition;
 
@@ -13,11 +11,11 @@ public class Startup : IViewModelCompositionOptionsCustomization
 {
     public void Customize(ViewModelCompositionOptions options)
     {
-        options.Services.AddSingleton<CatalogDbContext>(provider =>
-        {
-            var dbOptions = new LiteDbOptions("catalog", DatabaseInitializer.Initialize);
-            return new CatalogDbContext(dbOptions);
-        });
+        // Read-only access from the gateway. Schema creation and seeding
+        // are owned by Catalog.Endpoint; this side just expects the
+        // database file to already exist when the first request lands.
+        options.Services.AddDbContext<CatalogDbContext>(opts =>
+            opts.UseSqlite(SqliteStorage.GetConnectionString("catalog")));
         options.Services.AddSingleton<CacheHelper>();
     }
 }

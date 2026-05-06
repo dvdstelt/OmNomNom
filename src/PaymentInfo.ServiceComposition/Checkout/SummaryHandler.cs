@@ -1,9 +1,8 @@
-﻿using System.Dynamic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using PaymentInfo.Data;
-using PaymentInfo.Data.Models;
 using PaymentInfo.ServiceComposition.Helpers;
 using ServiceComposer.AspNetCore;
 
@@ -16,20 +15,20 @@ public class SummaryHandler(PaymentInfoDbContext dbContext, CacheHelper cacheHel
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
         var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var orderCollection = dbContext.Database.GetCollection<Order>();
-        var creditCardCollection = dbContext.Database.GetCollection<Data.Models.CreditCard>();
-        var order = orderCollection.Query().Where(s => s.OrderId == orderId).SingleOrDefault();
+        var order = await dbContext.Orders
+            .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
         if (order == null)
         {
             order = await cacheHelper.GetOrder(orderId);
         }
 
-        var creditCard = creditCardCollection.Query().Where(s => s.CreditCardId == order.CreditCardId)
-            .SingleOrDefault();
+        var creditCard = await dbContext.CreditCards
+            .FirstOrDefaultAsync(s => s.CreditCardId == order.CreditCardId, ct);
 
         var vm = request.GetComposedResponseModel();
-        vm.CreditCardLastDigits = creditCard.LastDigits;
-        vm.CreditCardType = creditCard.CardType;
+        vm.CreditCardLastDigits = creditCard?.LastDigits;
+        vm.CreditCardType = creditCard?.CardType;
     }
 }

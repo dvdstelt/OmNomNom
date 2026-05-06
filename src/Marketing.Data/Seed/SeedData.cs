@@ -1,6 +1,6 @@
 ﻿using Marketing.Data.Models;
 
-namespace Marketing.Data.Migrations;
+namespace Marketing.Data.Seed;
 
 public static class SeedData
 {

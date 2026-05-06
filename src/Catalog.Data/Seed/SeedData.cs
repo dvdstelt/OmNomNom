@@ -1,6 +1,6 @@
 ﻿using Catalog.Data.Models;
 
-namespace Catalog.Data.Migrations;
+namespace Catalog.Data.Seed;
 
 public class SeedData
 {

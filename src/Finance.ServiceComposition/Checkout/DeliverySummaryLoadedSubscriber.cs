@@ -1,7 +1,7 @@
-﻿using Finance.Data;
-using Finance.Data.Models;
+using Finance.Data;
 using Finance.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.ServiceComposition.Events;
 
@@ -13,18 +13,15 @@ public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : IComp
     [HttpGet("/buy/summary/{orderId}")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
-        publisher.Subscribe<DeliverySummaryLoaded>((@event, request) =>
+        publisher.Subscribe<DeliverySummaryLoaded>(async (@event, request) =>
         {
-            var deliveryOptionCollection = dbContext.Database.GetCollection<DeliveryOption>();
-            var deliveryOption = deliveryOptionCollection.Query()
-                .Where(s => s.DeliveryOptionId == @event.DeliveryOptionId).Single();
+            var deliveryOption = await dbContext.DeliveryOptions
+                .SingleAsync(s => s.DeliveryOptionId == @event.DeliveryOptionId, request.HttpContext.RequestAborted);
 
             @event.DeliveryOption.Price = deliveryOption.Price;
 
             var vm = request.GetComposedResponseModel();
             DynamicHelper.TrySetTotalPrice(vm, deliveryOption.Price);
-
-            return Task.CompletedTask;
         });
     }
 }

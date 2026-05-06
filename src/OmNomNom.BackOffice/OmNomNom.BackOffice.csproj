@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <!-- Same NU1107 break as CompositionGateway: ServiceComposer caps
+           DependencyModel below 9, EF Core 10 (transitively via Catalog.Data)
+           wants 10. Pin the higher version explicitly. -->
+      <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.0" />
       <PackageReference Include="NServiceBus" Version="9.0.0" />
       <PackageReference Include="NServiceBus.Extensions.Hosting" Version="3.0.0" />
       <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
@@ -21,10 +25,8 @@
       <_ContentIncludedByDefault Remove="Views\Buy\shipping.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Buy\summary.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Cart\index.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Views\Home\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Shipping.Data.Models;
 
-namespace Shipping.Data.Migrations;
+namespace Shipping.Data.Seed;
 
 public static class SeedData
 {
