@@ -2,7 +2,9 @@
   // Top-of-page filter strip. Type buttons are always rendered; the
   // brewery, country, and sort dropdowns appear only when the
   // consumer opts in, so existing call sites that only filter by
-  // type stay unchanged.
+  // type stay unchanged. The sort control sits in its own group
+  // with a separator + label so it visually reads as a sort rather
+  // than another filter.
 
   let {
     categories = [],
@@ -18,9 +20,8 @@
 
   const allLabel = 'All';
   let buttons = $derived([allLabel, ...categories]);
-  let hasDropdowns = $derived(
-    breweries.length > 0 || countries.length > 0 || sortOptions.length > 0
-  );
+  let hasFilterDropdowns = $derived(breweries.length > 0 || countries.length > 0);
+  let hasSortDropdown = $derived(sortOptions.length > 0);
 
   function pickType(value) {
     selected = value;
@@ -42,30 +43,35 @@
     {/each}
   </div>
 
-  {#if hasDropdowns}
+  {#if hasFilterDropdowns || hasSortDropdown}
     <div class="filter-dropdowns">
-      {#if breweries.length > 0}
-        <select class="filter-select" bind:value={selectedBrewery}>
-          <option value="All">All Breweries</option>
-          {#each breweries as brewery}
-            <option value={brewery}>{brewery}</option>
-          {/each}
-        </select>
+      {#if hasFilterDropdowns}
+        {#if breweries.length > 0}
+          <select class="filter-select" bind:value={selectedBrewery}>
+            <option value="All">All Breweries</option>
+            {#each breweries as brewery}
+              <option value={brewery}>{brewery}</option>
+            {/each}
+          </select>
+        {/if}
+        {#if countries.length > 0}
+          <select class="filter-select" bind:value={selectedCountry}>
+            <option value="All">All Countries</option>
+            {#each countries as country}
+              <option value={country}>{country}</option>
+            {/each}
+          </select>
+        {/if}
       {/if}
-      {#if countries.length > 0}
-        <select class="filter-select" bind:value={selectedCountry}>
-          <option value="All">All Countries</option>
-          {#each countries as country}
-            <option value={country}>{country}</option>
-          {/each}
-        </select>
-      {/if}
-      {#if sortOptions.length > 0}
-        <select class="filter-select" bind:value={selectedSort}>
-          {#each sortOptions as option}
-            <option value={option.value}>{option.label}</option>
-          {/each}
-        </select>
+      {#if hasSortDropdown}
+        <div class="sort-group" class:has-filters={hasFilterDropdowns}>
+          <span class="sort-label">Sort by</span>
+          <select class="sort-select" bind:value={selectedSort}>
+            {#each sortOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
+        </div>
       {/if}
     </div>
   {/if}

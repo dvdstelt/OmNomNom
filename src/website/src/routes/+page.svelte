@@ -18,7 +18,7 @@
   let selectedSort = $state('default');
 
   const sortOptions = [
-    { value: 'default', label: 'Sort: Default' },
+    { value: 'default', label: 'Default' },
     { value: 'rating', label: 'Top rated' },
     { value: 'orderCount', label: 'Top sellers' },
     { value: 'trending', label: 'Trending now' }

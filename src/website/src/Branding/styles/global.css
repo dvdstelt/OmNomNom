@@ -469,6 +469,58 @@ img {
   box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
+/* Sort control: styled so the user immediately reads "this changes
+   the order, it doesn't filter what shows up". Left-side separator
+   only appears when there are filter dropdowns to its left, the
+   `Sort by` label cues intent, and the select itself uses an
+   up/down glyph instead of the filter chevron. */
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-group.has-filters {
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border-light);
+}
+
+.sort-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sort-select {
+  padding: 8px 36px 8px 14px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: 1px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='12' viewBox='0 0 10 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 1l3 3M5 1L2 4M5 1v10M5 11l-3-3M5 11l3-3' stroke='%237a6f62' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: all 0.25s;
+}
+
+.sort-select:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
 .filter-btn {
   padding: 10px 24px;
   border-radius: 100px;
