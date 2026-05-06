@@ -6,6 +6,7 @@ public static class SeedData
 {
     static readonly Guid FremontId = Guid.Parse("9ea20ee6-d6bd-4654-80fb-3dd7e52792f9");
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
+    static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173"); // 4.5
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
 
@@ -29,6 +30,7 @@ public static class SeedData
         {
             new Product { ProductId = FremontId,         Rating = 4.6, RatingCount = 1337, OrderCount = 18, Trending = 12 },
             new Product { ProductId = MoersleutelId,     Rating = 4.4, RatingCount = 911,  OrderCount = 22, Trending = 22 },
+            new Product { ProductId = BarcodeBlackYellowId, Rating = 4.5, RatingCount = 5204, OrderCount = 8,  Trending = 5  },
             new Product { ProductId = WhiteDogId,        Rating = 4.1, RatingCount = 42,   OrderCount = 9,  Trending = 8  },
             new Product { ProductId = AbraxasId,         Rating = 4.7, RatingCount = 458,  OrderCount = 14, Trending = 4  },
             new Product { ProductId = BourbonCountyId,   Rating = 4.4, RatingCount = 754,  OrderCount = 31, Trending = 7  },
@@ -75,6 +77,7 @@ public static class SeedData
         {
             (FremontId,         12, 18),
             (MoersleutelId,     22, 22),
+            (BarcodeBlackYellowId, 5, 8),
             (WhiteDogId,         8, 9),
             (AbraxasId,          4, 14),
             (BourbonCountyId,    7, 31),

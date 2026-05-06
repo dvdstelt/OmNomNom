@@ -7,6 +7,7 @@ public class SeedData
     // Stouts
     static readonly Guid FremontId = Guid.Parse("9ea20ee6-d6bd-4654-80fb-3dd7e52792f9");
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
+    static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173"); // 4.5
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
 
@@ -26,8 +27,9 @@ public class SeedData
         return new List<Product>
         {
             new Product() { Name = "11th Anniversary Stout (2020) - Fremont Brewing", Description = "11th Anniversary Stout (2020) van Fremont Brewing uit Washington, Verenigde Staten is een Exclusive Blend of Barrel-Aged Imperial Stouts van 12,2%.", ImageUrl = "fremontstout2020.png", Category = "Stout", Brewery = "Fremont Brewing", Country = "United States", ProductId =  FremontId},
-            new Product() { Name = "Copper & Wool - Moersleutel", Description = "This imperial stout is matured to perfection in Willet, Ruby Port and Carcavelos barrels. Infused with Coffee Collective's finest Colombian coffee to enhance and accentuate the fruity flavors of strong wines. Let yourself be carried away by the art of brewing.", ImageUrl = "moersleutel-copper-wool.png", Category = "Stout", Brewery = "Moersleutel", Country = "The Netherlands", ProductId = MoersleutelId },
-            new Product() { Name = "Cloud - White Dog Brewery", Description = "A stunner of a new IPA - New England / Hazy from the stills at White Dog Brewery. Batch #6, hopped with Citra T90 and Citra Cryo.", ImageUrl = "whitedog-cloud.png", Category = "IPA", Brewery = "White Dog Brewery", Country = "Belgium", ProductId = WhiteDogId },
+            new Product() { Name = "8720615261970 (Barcode Copper & Wool)", Description = "This imperial stout is matured to perfection in Willet, Ruby Port and Carcavelos barrels. Infused with Coffee Collective's finest Colombian coffee to enhance and accentuate the fruity flavors of strong wines. Let yourself be carried away by the art of brewing.", ImageUrl = "moersleutel-copper-wool.png", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = MoersleutelId },
+            new Product() { Name = "8719992492800 (Barcode Black & Yellow)", Description = "Blend of Cognac and Bourbon, Barrel Aged imperial stout. 14% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = BarcodeBlackYellowId },
+            new Product() { Name = "Cloud - White Dog Brewery", Description = "A stunner of a new IPA - New England / Hazy from the stills at White Dog Brewery. Batch #6, hopped with Citra T90 and Citra Cryo.", ImageUrl = "whitedog-cloud.png", Category = "IPA", Brewery = "White Dog Brewery", Country = "The Netherlands", ProductId = WhiteDogId },
             new Product() { Name = "Barrel-Aged Abraxas", Description = "It’s like a fudge-drizzled churro with a little bit of chili heat that slowly builds as you sip. Smooth vanilla cools things down on the finish, while bakery flavors from the cinnamon linger on the taste buds.", ImageUrl = "abraxas.png", Category = "Stout", Brewery = "Perennial Artisan Ales", Country = "United States", ProductId = AbraxasId },
             new Product() { Name = "Bourbon County Stout", Description = "Bourbon County Original Stout is aged in a mix of freshly emptied bourbon barrels from Buffalo Trace, Heaven Hill, Four Roses and Wild Turkey distilleries.", ImageUrl = "bourboncounty.png", Category = "Stout", Brewery = "Goose Island", Country = "United States", ProductId = BourbonCountyId },
             // Stout
@@ -47,6 +49,7 @@ public class SeedData
         {
             new() { ProductId = FremontId, Delta = 8, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = MoersleutelId, Delta = 6, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = BarcodeBlackYellowId, Delta = 4, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = WhiteDogId, Delta = 11, TimeStamp = DateTime.UtcNow, },
 
             new() { ProductId = AbraxasId, Delta = 4, TimeStamp = DateTime.UtcNow, },
@@ -66,6 +69,7 @@ public class SeedData
         {
             new() { ProductId = FremontId, EstimatedInStock = 10 },
             new() { ProductId = MoersleutelId, EstimatedInStock = 8 },
+            new() { ProductId = BarcodeBlackYellowId, EstimatedInStock = 4 },
             new() { ProductId = WhiteDogId, EstimatedInStock = 20 },
             new() { ProductId = AbraxasId, EstimatedInStock = 5 },
             new() { ProductId = BourbonCountyId, EstimatedInStock = 8 },

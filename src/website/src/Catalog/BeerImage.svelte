@@ -15,5 +15,7 @@
     <span class="beer-type-badge">{category}</span>
   {/if}
   {@render children?.()}
-  <img class="beer-product-img" src="/products/{imageUrl}" alt={name} />
+  {#if imageUrl}
+    <img class="beer-product-img" src="/products/{imageUrl}" alt={name} />
+  {/if}
 </div>
