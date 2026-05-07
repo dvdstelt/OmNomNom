@@ -8,6 +8,7 @@ public static class SeedData
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
     static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173"); // 4.5
     static readonly Guid ExtravagantChocolateId = Guid.Parse("d504d1d1-071e-44a2-b9d3-2574fae14ed9"); // 4.22
+    static readonly Guid Indulgence16Id = Guid.Parse("4a8b5587-f8a1-4ad9-a39d-e66d933cdea0"); // 4.52
     static readonly Guid Indulgence28Id = Guid.Parse("2080d73a-a726-4717-8f4b-7496a1957c37"); // 4.57
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4"); // 4.8
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
@@ -55,6 +56,7 @@ public static class SeedData
             new Product { ProductId = BlueBerryMuffinId, Rating = 4.2, RatingCount = 846,  OrderCount = 24, Trending = 16 },
 
             new Product { ProductId = ExtravagantChocolateId, Rating = 4.22, RatingCount = 3721,  OrderCount = 14, Trending = 6  },
+            new Product { ProductId = Indulgence16Id,         Rating = 4.52, RatingCount = 2925,  OrderCount = 8,  Trending = 6  },
             new Product { ProductId = Indulgence28Id,         Rating = 4.57, RatingCount = 1934,  OrderCount = 9,  Trending = 7  },
             new Product { ProductId = KbbsId,                 Rating = 4.8,  RatingCount = 460,   OrderCount = 3,  Trending = 2  },
             new Product { ProductId = SunflowersId,           Rating = 4.64, RatingCount = 589,   OrderCount = 5,  Trending = 4  },
@@ -113,6 +115,7 @@ public static class SeedData
             (BlueBerryMuffinId, 16, 24),
 
             (ExtravagantChocolateId,  6, 14),
+            (Indulgence16Id,          6,  8),
             (Indulgence28Id,          7,  9),
             (KbbsId,                  2,  3),
             (SunflowersId,            4,  5),

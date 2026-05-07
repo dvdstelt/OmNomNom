@@ -8,6 +8,7 @@ public static class SeedData
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
     static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173");
     static readonly Guid ExtravagantChocolateId = Guid.Parse("d504d1d1-071e-44a2-b9d3-2574fae14ed9");
+    static readonly Guid Indulgence16Id = Guid.Parse("4a8b5587-f8a1-4ad9-a39d-e66d933cdea0");
     static readonly Guid Indulgence28Id = Guid.Parse("2080d73a-a726-4717-8f4b-7496a1957c37");
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4");
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
@@ -56,6 +57,7 @@ public static class SeedData
             new() { ProductId = OudeGeuzeId, Price = 16m, Discount = 0 },
 
             new() { ProductId = ExtravagantChocolateId, Price = 9.50m, Discount = 0 },
+            new() { ProductId = Indulgence16Id, Price = 26.95m, Discount = 0 },
             new() { ProductId = Indulgence28Id, Price = 29.95m, Discount = 0 },
             new() { ProductId = KbbsId, Price = 474.95m, Discount = 0 },
             new() { ProductId = SunflowersId, Price = 67.50m, Discount = 0 },

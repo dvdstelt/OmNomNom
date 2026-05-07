@@ -9,6 +9,7 @@ public class SeedData
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
     static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173"); // 4.5
     static readonly Guid ExtravagantChocolateId = Guid.Parse("d504d1d1-071e-44a2-b9d3-2574fae14ed9"); // 4.22
+    static readonly Guid Indulgence16Id = Guid.Parse("4a8b5587-f8a1-4ad9-a39d-e66d933cdea0"); // 4.52
     static readonly Guid Indulgence28Id = Guid.Parse("2080d73a-a726-4717-8f4b-7496a1957c37"); // 4.57
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4"); // 4.8
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
@@ -56,22 +57,23 @@ public class SeedData
             new Product() { Name = "Susan", Description = "Susan (1891-1976) was our grandfather’s sister. In her honor, we offer this version of an American IPA brewed with hops from the Yakima Valley and Riwaka hops from New Zealand.", ImageUrl = "susan.png", Category = "IPA", Brewery = "Hill Farmstead Brewery", Country = "United States", ProductId = SusanId },
 
             // Stouts (Untappd-sourced)
-            new Product() { Name = "Extravagant Chocolate Stout", Description = "Heavy-bodied caramel stout showcasing the best in craft chocolate, with notes of red fruit, roasted chocolate, cream, and honey. 13% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = ExtravagantChocolateId },
-            new Product() { Name = "Indulgence 28", Description = "Dense, velvety stout with aromas of chocolate ganache, fudge, and roasted nuts. Aged for 21 months and 24 days in three bourbon casks (Sazerac Rye, Weller Wheated, Eagle Rare), creating layered notes of caramel, coconut, and bourbon cream with subtle oak. 14% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence28Id },
-            new Product() { Name = "Kentucky Brunch Brand Stout (2025)", Description = "A meticulously curated blend of the best of what our barrel room holds, featuring espresso and maple syrup aromatics with bourbon-soaked maple candy and chocolate brownie notes. 12.6% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = KbbsId },
+            new Product() { Name = "Extravagant Chocolate Stout", Description = "Heavy-bodied caramel stout showcasing the best in craft chocolate, with notes of red fruit, roasted chocolate, cream, and honey. 13% ABV.", ImageUrl = "extravagantchocolate.png", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = ExtravagantChocolateId },
+            new Product() { Name = "Indulgence 16", Description = "We've chosen the crème de la crème of bourbon barrels and combined four different and very rare barrels: Weller, Willet, Pappy Van Winkle and Woodford Reserve, to infuse our beer with unparalleled character. 14% ABV.", ImageUrl = "indulgance16.png", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence16Id },
+            new Product() { Name = "Indulgence 28", Description = "Dense, velvety stout with aromas of chocolate ganache, fudge, and roasted nuts. Aged for 21 months and 24 days in three bourbon casks (Sazerac Rye, Weller Wheated, Eagle Rare), creating layered notes of caramel, coconut, and bourbon cream with subtle oak. 14% ABV.", ImageUrl = "indulgance28.png", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence28Id },
+            new Product() { Name = "Kentucky Brunch Brand Stout (2025)", Description = "A meticulously curated blend of the best of what our barrel room holds, featuring espresso and maple syrup aromatics with bourbon-soaked maple candy and chocolate brownie notes. 12.6% ABV.", ImageUrl = "kentuckybrunch.png", Category = "Stout", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = KbbsId },
 
             // Pale Ales / IPAs (Untappd-sourced)
-            new Product() { Name = "Galaxy Dry Hopped Fort Point", Description = "This version of our signature American pale ale is dry hopped with the pungent Galaxy variety. Enticingly hazy and blonde in appearance with frothy carb, the nose erupts with strong citrus, passion fruit, and pineapple aromatics. 6.6% ABV.", ImageUrl = "", Category = "Pale Ale", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = GalaxyFortPointId },
-            new Product() { Name = "Mosaic Dry Hopped Fort Point", Description = "This variant on Fort Point features Mosaic in the dry hop. Pouring a cloudy, canary gold, Mosaic Fort Point emits a distinctively dank nose of pulpy, fresh squeezed orange, pungent passionfruit, ripe mango, and papaya. 6.6% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = MosaicFortPointId },
-            new Product() { Name = "Double Dry Hop Pseudo Sue", Description = "This double dry hopped pale ale showcases the Citra hop for a well balanced beer that is delicate in body with a mild bitterness in the finish. 5.8% ABV.", ImageUrl = "", Category = "Pale Ale", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = PseudoSueId },
-            new Product() { Name = "Chicken & Broccoli", Description = "An IPA brewed with hand selected Citra, and Motueka and Riwaka selected from our pals at Freestyle Hops. Tropical citrus, papaya, and some sweet orange dominate the profile. 7.5% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Other Half Brewing Co.", Country = "United States", ProductId = ChickenBroccoliId },
+            new Product() { Name = "Galaxy Dry Hopped Fort Point", Description = "This version of our signature American pale ale is dry hopped with the pungent Galaxy variety. Enticingly hazy and blonde in appearance with frothy carb, the nose erupts with strong citrus, passion fruit, and pineapple aromatics. 6.6% ABV.", ImageUrl = "galaxyfortpoint.png", Category = "Pale Ale", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = GalaxyFortPointId },
+            new Product() { Name = "Mosaic Dry Hopped Fort Point", Description = "This variant on Fort Point features Mosaic in the dry hop. Pouring a cloudy, canary gold, Mosaic Fort Point emits a distinctively dank nose of pulpy, fresh squeezed orange, pungent passionfruit, ripe mango, and papaya. 6.6% ABV.", ImageUrl = "mosaicfortpoint.png", Category = "IPA", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = MosaicFortPointId },
+            new Product() { Name = "Double Dry Hop Pseudo Sue", Description = "This double dry hopped pale ale showcases the Citra hop for a well balanced beer that is delicate in body with a mild bitterness in the finish. 5.8% ABV.", ImageUrl = "doubledryhoppseudo.png", Category = "Pale Ale", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = PseudoSueId },
+            new Product() { Name = "Chicken & Broccoli", Description = "An IPA brewed with hand selected Citra, and Motueka and Riwaka selected from our pals at Freestyle Hops. Tropical citrus, papaya, and some sweet orange dominate the profile. 7.5% ABV.", ImageUrl = "chickenbroccoli.png", Category = "IPA", Brewery = "Other Half Brewing Co.", Country = "United States", ProductId = ChickenBroccoliId },
 
             // Mead
-            new Product() { Name = "Sunflowers", Description = "Made from a curated blend of many different honey varieties, Sunflowers is the ultimate traditional. Complex with alluring and beguiling aromatics, Sunflowers pairs extraordinarily well with a cheese course, almond and hazelnut flavors, and rich, luscious desserts. 10% ABV.", ImageUrl = "", Category = "Mead", Brewery = "Schramm's Mead", Country = "United States", ProductId = SunflowersId },
-            new Product() { Name = "Blue Suede Shews", Description = "Orange Blossom Honey-wine with Wild Blueberries and Cashew. 14% ABV.", ImageUrl = "", Category = "Mead", Brewery = "Pips Meadery", Country = "United States", ProductId = BlueSuedeShewsId },
+            new Product() { Name = "Sunflowers", Description = "Made from a curated blend of many different honey varieties, Sunflowers is the ultimate traditional. Complex with alluring and beguiling aromatics, Sunflowers pairs extraordinarily well with a cheese course, almond and hazelnut flavors, and rich, luscious desserts. 10% ABV.", ImageUrl = "schrammsunflowers.png", Category = "Mead", Brewery = "Schramm's Mead", Country = "United States", ProductId = SunflowersId },
+            new Product() { Name = "Blue Suede Shews", Description = "Orange Blossom Honey-wine with Wild Blueberries and Cashew. 14% ABV.", ImageUrl = "bluesuedeshews.png", Category = "Mead", Brewery = "Pips Meadery", Country = "United States", ProductId = BlueSuedeShewsId },
 
             // Quadrupel
-            new Product() { Name = "La Trappe Quadrupel Oak Aged Batch #50", Description = "Aged for over two years in previously-used barrels (Wild Turkey Bourbon 55%, Cognac 26%, New Oak Medium Toast 19%) to celebrate the brewery's 140th anniversary. 12.5% ABV.", ImageUrl = "", Category = "Quadrupel", Brewery = "Bierbrouwerij De Koningshoeven", Country = "The Netherlands", ProductId = LaTrappeQuad50Id },
+            new Product() { Name = "La Trappe Quadrupel Oak Aged Batch #50", Description = "Aged for over two years in previously-used barrels (Wild Turkey Bourbon 55%, Cognac 26%, New Oak Medium Toast 19%) to celebrate the brewery's 140th anniversary. 12.5% ABV.", ImageUrl = "latrappeoakaged50.png", Category = "Quadrupel", Brewery = "Bierbrouwerij De Koningshoeven", Country = "The Netherlands", ProductId = LaTrappeQuad50Id },
         };
     }
 
@@ -93,6 +95,7 @@ public class SeedData
             new() { ProductId = BlueBerryMuffinId, Delta = 36, TimeStamp = DateTime.UtcNow, },
 
             new() { ProductId = ExtravagantChocolateId, Delta = 12, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = Indulgence16Id, Delta = 5, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = Indulgence28Id, Delta = 6, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = KbbsId, Delta = 2, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = SunflowersId, Delta = 8, TimeStamp = DateTime.UtcNow, },
@@ -122,6 +125,7 @@ public class SeedData
             new() { ProductId = BlueBerryMuffinId, EstimatedInStock = 40 },
 
             new() { ProductId = ExtravagantChocolateId, EstimatedInStock = 12 },
+            new() { ProductId = Indulgence16Id, EstimatedInStock = 5 },
             new() { ProductId = Indulgence28Id, EstimatedInStock = 6 },
             new() { ProductId = KbbsId, EstimatedInStock = 2 },
             new() { ProductId = SunflowersId, EstimatedInStock = 8 },
