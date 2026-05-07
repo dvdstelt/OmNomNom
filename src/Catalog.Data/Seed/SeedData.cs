@@ -8,19 +8,33 @@ public class SeedData
     static readonly Guid FremontId = Guid.Parse("9ea20ee6-d6bd-4654-80fb-3dd7e52792f9");
     static readonly Guid MoersleutelId = Guid.Parse("0275aa6d-fc48-4703-ac53-78a135c4a476");
     static readonly Guid BarcodeBlackYellowId = Guid.Parse("79f65fef-c186-41a2-80aa-f77bbd0ba173"); // 4.5
+    static readonly Guid ExtravagantChocolateId = Guid.Parse("d504d1d1-071e-44a2-b9d3-2574fae14ed9"); // 4.22
+    static readonly Guid Indulgence28Id = Guid.Parse("2080d73a-a726-4717-8f4b-7496a1957c37"); // 4.57
+    static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4"); // 4.8
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
 
 
-    // IPA
+    // IPA / Pale Ale
     static readonly Guid WhiteDogId = Guid.Parse("c646a449-05d7-45b3-9d6e-ec6438bc6f67");
     static readonly Guid TwentyTwoId = Guid.Parse("155793d1-71db-4d8f-9417-ecb917fb57a3"); //4.5
     static readonly Guid SusanId = Guid.Parse("2c29be7f-8210-4533-84c6-2afa0f5e9678"); //4.5
+    static readonly Guid GalaxyFortPointId = Guid.Parse("d9193f6e-e99c-4bc6-a1ed-e9ee7cc1ff00"); // 4.37
+    static readonly Guid MosaicFortPointId = Guid.Parse("25a008d8-0973-44c8-b39b-fc4436843f2e"); // 4.34
+    static readonly Guid PseudoSueId = Guid.Parse("c38d7784-78e7-4326-a910-046ab80e63cc"); // 4.3
+    static readonly Guid ChickenBroccoliId = Guid.Parse("976482a4-e6cd-4d2f-ae99-350d9af7c8d0"); // 4.22
 
     // Sours
     static readonly Guid OudeGeuzeId = Guid.Parse("6f9d5730-5195-44f0-968e-829afb69a2dc"); // 4
     static readonly Guid TiarnaId = Guid.Parse("9d081a68-2cd0-481a-8ee5-6e99dfa927f1"); //4.1
     static readonly Guid BlueBerryMuffinId = Guid.Parse("6bd65199-e702-4411-b71d-65c856d879f4"); //4.2
+
+    // Mead
+    static readonly Guid SunflowersId = Guid.Parse("0d397cfa-a38a-4696-9ddc-11b8a3501253"); // 4.64
+    static readonly Guid BlueSuedeShewsId = Guid.Parse("f1da7f8d-03bf-4b60-adde-1591caeb58e2"); // 4.84
+
+    // Quadrupel
+    static readonly Guid LaTrappeQuad50Id = Guid.Parse("4ebb9ed5-f7cf-4e61-bc01-33248c3f6a4d"); // 4.46
 
     public static IEnumerable<Product> Products()
     {
@@ -40,6 +54,24 @@ public class SeedData
             new Product() { Name = "Blueberry Muffin", Description = "What happens when you take our OG Blueberry Muffin recipe and smoothie-fy it?! Blueberry Muffin Fruit in the Can! We took the same tart beer you've come to know and love and made it thiccc with tons of fresh blueberry puree added post fermentation.", ImageUrl = "blueberrymuffin.png", Category = "Sour", Brewery = "The Veil Brewing", Country = "United States", ProductId = BlueBerryMuffinId },
             new Product() { Name = "Curiosity Twenty Two", Description = "At Tree House, we often brew following our moods, emotions, and fleeting moments of inspiration. This particular batch is inspired by a several things - a fresh lot of Amarillo hops, a renewed sense of focus for coaxing character out of our house yeast strain, and a wonderful piece of artwork by our friend Dean McKeever. Twenty Two pours a hazy orange in the glass and emits aromas of peach, apricot, and hints of papaya. The flavor follows suit, with peach being the predominant characteristic we experience. A firm orange rind bitterness balances things out. The Curiosity beers have always been brewed on a relatively small scale - we are excited that this particular batch is large, and more people than ever will get to try some. We hope you like it!", ImageUrl = "curiositytwentytwo.png", Category = "IPA", Brewery = "Tree House Brewing", Country = "United States", ProductId = TwentyTwoId },
             new Product() { Name = "Susan", Description = "Susan (1891-1976) was our grandfather’s sister. In her honor, we offer this version of an American IPA brewed with hops from the Yakima Valley and Riwaka hops from New Zealand.", ImageUrl = "susan.png", Category = "IPA", Brewery = "Hill Farmstead Brewery", Country = "United States", ProductId = SusanId },
+
+            // Stouts (Untappd-sourced)
+            new Product() { Name = "Extravagant Chocolate Stout", Description = "Heavy-bodied caramel stout showcasing the best in craft chocolate, with notes of red fruit, roasted chocolate, cream, and honey. 13% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = ExtravagantChocolateId },
+            new Product() { Name = "Indulgence 28", Description = "Dense, velvety stout with aromas of chocolate ganache, fudge, and roasted nuts. Aged for 21 months and 24 days in three bourbon casks (Sazerac Rye, Weller Wheated, Eagle Rare), creating layered notes of caramel, coconut, and bourbon cream with subtle oak. 14% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence28Id },
+            new Product() { Name = "Kentucky Brunch Brand Stout (2025)", Description = "A meticulously curated blend of the best of what our barrel room holds, featuring espresso and maple syrup aromatics with bourbon-soaked maple candy and chocolate brownie notes. 12.6% ABV.", ImageUrl = "", Category = "Stout", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = KbbsId },
+
+            // Pale Ales / IPAs (Untappd-sourced)
+            new Product() { Name = "Galaxy Dry Hopped Fort Point", Description = "This version of our signature American pale ale is dry hopped with the pungent Galaxy variety. Enticingly hazy and blonde in appearance with frothy carb, the nose erupts with strong citrus, passion fruit, and pineapple aromatics. 6.6% ABV.", ImageUrl = "", Category = "Pale Ale", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = GalaxyFortPointId },
+            new Product() { Name = "Mosaic Dry Hopped Fort Point", Description = "This variant on Fort Point features Mosaic in the dry hop. Pouring a cloudy, canary gold, Mosaic Fort Point emits a distinctively dank nose of pulpy, fresh squeezed orange, pungent passionfruit, ripe mango, and papaya. 6.6% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = MosaicFortPointId },
+            new Product() { Name = "Double Dry Hop Pseudo Sue", Description = "This double dry hopped pale ale showcases the Citra hop for a well balanced beer that is delicate in body with a mild bitterness in the finish. 5.8% ABV.", ImageUrl = "", Category = "Pale Ale", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = PseudoSueId },
+            new Product() { Name = "Chicken & Broccoli", Description = "An IPA brewed with hand selected Citra, and Motueka and Riwaka selected from our pals at Freestyle Hops. Tropical citrus, papaya, and some sweet orange dominate the profile. 7.5% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Other Half Brewing Co.", Country = "United States", ProductId = ChickenBroccoliId },
+
+            // Mead
+            new Product() { Name = "Sunflowers", Description = "Made from a curated blend of many different honey varieties, Sunflowers is the ultimate traditional. Complex with alluring and beguiling aromatics, Sunflowers pairs extraordinarily well with a cheese course, almond and hazelnut flavors, and rich, luscious desserts. 10% ABV.", ImageUrl = "", Category = "Mead", Brewery = "Schramm's Mead", Country = "United States", ProductId = SunflowersId },
+            new Product() { Name = "Blue Suede Shews", Description = "Orange Blossom Honey-wine with Wild Blueberries and Cashew. 14% ABV.", ImageUrl = "", Category = "Mead", Brewery = "Pips Meadery", Country = "United States", ProductId = BlueSuedeShewsId },
+
+            // Quadrupel
+            new Product() { Name = "La Trappe Quadrupel Oak Aged Batch #50", Description = "Aged for over two years in previously-used barrels (Wild Turkey Bourbon 55%, Cognac 26%, New Oak Medium Toast 19%) to celebrate the brewery's 140th anniversary. 12.5% ABV.", ImageUrl = "", Category = "Quadrupel", Brewery = "Bierbrouwerij De Koningshoeven", Country = "The Netherlands", ProductId = LaTrappeQuad50Id },
         };
     }
 
@@ -60,6 +92,16 @@ public class SeedData
             new() { ProductId = TiarnaId, Delta = 28, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = BlueBerryMuffinId, Delta = 36, TimeStamp = DateTime.UtcNow, },
 
+            new() { ProductId = ExtravagantChocolateId, Delta = 12, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = Indulgence28Id, Delta = 6, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = KbbsId, Delta = 2, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = SunflowersId, Delta = 8, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = BlueSuedeShewsId, Delta = 2, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = GalaxyFortPointId, Delta = 16, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = MosaicFortPointId, Delta = 18, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = PseudoSueId, Delta = 24, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = LaTrappeQuad50Id, Delta = 10, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = ChickenBroccoliId, Delta = 20, TimeStamp = DateTime.UtcNow, },
         };
     }
 
@@ -78,6 +120,17 @@ public class SeedData
             new() { ProductId = OudeGeuzeId, EstimatedInStock = 45 },
             new() { ProductId = TiarnaId, EstimatedInStock = 30 },
             new() { ProductId = BlueBerryMuffinId, EstimatedInStock = 40 },
+
+            new() { ProductId = ExtravagantChocolateId, EstimatedInStock = 12 },
+            new() { ProductId = Indulgence28Id, EstimatedInStock = 6 },
+            new() { ProductId = KbbsId, EstimatedInStock = 2 },
+            new() { ProductId = SunflowersId, EstimatedInStock = 8 },
+            new() { ProductId = BlueSuedeShewsId, EstimatedInStock = 2 },
+            new() { ProductId = GalaxyFortPointId, EstimatedInStock = 16 },
+            new() { ProductId = MosaicFortPointId, EstimatedInStock = 18 },
+            new() { ProductId = PseudoSueId, EstimatedInStock = 24 },
+            new() { ProductId = LaTrappeQuad50Id, EstimatedInStock = 10 },
+            new() { ProductId = ChickenBroccoliId, EstimatedInStock = 20 },
         };
     }
 
