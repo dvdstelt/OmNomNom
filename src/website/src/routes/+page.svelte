@@ -25,7 +25,7 @@
   let selectedSort = $state('default');
 
   let page = $state(1);
-  let pageSize = $state(10);
+  let pageSize = $state(12);
   let totalCount = $state(0);
   let totalPages = $state(0);
 

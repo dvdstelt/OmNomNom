@@ -29,7 +29,7 @@ namespace Catalog.ServiceComposition.Products;
 //   Page, PageSize, TotalCount, TotalPages
 public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) : ICompositionRequestsHandler
 {
-    const int DefaultPageSize = 10;
+    const int DefaultPageSize = 12;
     const int MaxPageSize = 50;
 
     [HttpGet("/products")]

@@ -21,6 +21,10 @@ async function postJson(path, body) {
   return response.status === 204 ? null : response.json().catch(() => null);
 }
 
+// Keep DEFAULT_PAGE_SIZE in sync with ProductsHandler.DefaultPageSize
+// on the .NET side. Only non-default params end up in the URL.
+const DEFAULT_PAGE_SIZE = 12;
+
 function buildProductsQuery({
   categories = [],
   breweries = [],
@@ -28,7 +32,7 @@ function buildProductsQuery({
   inStock = true,
   sort = 'default',
   page = 1,
-  size = 10
+  size = DEFAULT_PAGE_SIZE
 } = {}) {
   const params = new URLSearchParams();
   if (categories.length) params.set('categories', categories.join(','));
@@ -38,7 +42,7 @@ function buildProductsQuery({
   if (inStock === false) params.set('inStock', 'false');
   if (sort && sort !== 'default') params.set('sort', sort);
   if (page !== 1) params.set('page', String(page));
-  if (size !== 10) params.set('size', String(size));
+  if (size !== DEFAULT_PAGE_SIZE) params.set('size', String(size));
   const qs = params.toString();
   return qs ? `/products?${qs}` : '/products';
 }
