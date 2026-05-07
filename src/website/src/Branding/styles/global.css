@@ -521,6 +521,126 @@ img {
   box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
+/* Multi-select trigger reuses .filter-select; the wrapper just owns
+   the popup positioning and a small "× clear" affordance when there
+   are selections. */
+.multiselect {
+  position: relative;
+  display: inline-flex;
+}
+
+.multiselect-trigger.has-selection {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  padding-right: 50px;
+}
+
+.multiselect-clear {
+  position: absolute;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.multiselect-clear:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.multiselect-popup {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(40, 24, 8, 0.12);
+  padding: 8px 0;
+}
+
+.multiselect-empty {
+  padding: 12px 16px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.multiselect-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  transition: background 0.15s;
+}
+
+.multiselect-option:hover {
+  background: var(--color-primary-light);
+}
+
+.multiselect-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Server-side pager for the front-page beer grid. Sits below the grid,
+   centred, with the same brand-orange accent on the buttons. */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 32px 0 16px;
+}
+
+.pager-btn {
+  padding: 10px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pager-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pager-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pager-status {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  min-width: 200px;
+  text-align: center;
+}
+
 .filter-btn {
   padding: 10px 24px;
   border-radius: 100px;

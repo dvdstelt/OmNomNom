@@ -10,12 +10,24 @@
   import Price from '../Finance/Price.svelte';
   import SaveBadge from '../Finance/SaveBadge.svelte';
 
+  // Facet lists are loaded once per session; the products page
+  // changes in lockstep with filter/sort/page state.
+  let categories = $state([]);
+  let breweries = $state([]);
+  let countries = $state([]);
+
   let products = $state([]);
   let loading = $state(true);
-  let selectedCategory = $state('All');
-  let selectedBrewery = $state('All');
-  let selectedCountry = $state('All');
+
+  let selectedCategories = $state([]);
+  let selectedBreweries = $state([]);
+  let selectedCountries = $state([]);
   let selectedSort = $state('default');
+
+  let page = $state(1);
+  let pageSize = $state(10);
+  let totalCount = $state(0);
+  let totalPages = $state(0);
 
   const sortOptions = [
     { value: 'default', label: 'Default' },
@@ -24,48 +36,49 @@
     { value: 'trending', label: 'Trending now' }
   ];
 
-  onMount(async () => {
+  async function loadFacets() {
+    const facets = await gateway.getFacets();
+    categories = facets?.categories ?? [];
+    breweries = facets?.breweries ?? [];
+    countries = facets?.countries ?? [];
+  }
+
+  async function loadPage() {
+    loading = true;
     try {
-      const data = await gateway.getProducts();
-      products = data.products ?? [];
+      const data = await gateway.getProducts({
+        categories: selectedCategories,
+        breweries: selectedBreweries,
+        countries: selectedCountries,
+        sort: selectedSort,
+        page,
+        size: pageSize
+      });
+      products = data?.products ?? [];
+      pageSize = data?.pageSize ?? pageSize;
+      totalCount = data?.totalCount ?? 0;
+      totalPages = data?.totalPages ?? 0;
     } finally {
       loading = false;
     }
+  }
+
+  onMount(async () => {
+    await loadFacets();
+    await loadPage();
   });
 
-  let categories = $derived([
-    ...new Set(products.map((p) => p.category).filter(Boolean))
-  ]);
-  let breweries = $derived(
-    [...new Set(products.map((p) => p.brewery).filter(Boolean))].sort()
-  );
-  let countries = $derived(
-    [...new Set(products.map((p) => p.country).filter(Boolean))].sort()
-  );
+  // Any filter or sort change resets to page 1 and refetches.
+  function onFilterChange() {
+    page = 1;
+    loadPage();
+  }
 
-  let filtered = $derived(
-    products.filter(
-      (p) =>
-        (selectedCategory === 'All' || p.category === selectedCategory) &&
-        (selectedBrewery === 'All' || p.brewery === selectedBrewery) &&
-        (selectedCountry === 'All' || p.country === selectedCountry)
-    )
-  );
-
-  // Each sort key maps to a numeric reader; "default" preserves the
-  // gateway's order (no reorder).
-  const sortReaders = {
-    default: () => 0,
-    rating: (p) => p.rating ?? 0,
-    orderCount: (p) => p.orderCount ?? 0,
-    trending: (p) => p.trending ?? 0
-  };
-
-  let visible = $derived.by(() => {
-    if (selectedSort === 'default') return filtered;
-    const reader = sortReaders[selectedSort] ?? sortReaders.default;
-    return [...filtered].sort((a, b) => reader(b) - reader(a));
-  });
+  function goToPage(target) {
+    if (target < 1 || target > totalPages || target === page) return;
+    page = target;
+    loadPage();
+  }
 </script>
 
 <svelte:head>
@@ -81,23 +94,24 @@
     {breweries}
     {countries}
     {sortOptions}
-    bind:selected={selectedCategory}
-    bind:selectedBrewery
-    bind:selectedCountry
+    bind:selectedCategories
+    bind:selectedBreweries
+    bind:selectedCountries
     bind:selectedSort
+    onChange={onFilterChange}
   />
 
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       Loading beers…
     </p>
-  {:else if visible.length === 0}
+  {:else if products.length === 0}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       No beers match your filter.
     </p>
   {:else}
     <div class="beer-grid">
-      {#each visible as product (product.productId)}
+      {#each products as product (product.productId)}
         <a class="beer-card" href="/product/{product.productId}">
           <BeerImage
             name={product.name}
@@ -116,5 +130,29 @@
         </a>
       {/each}
     </div>
+
+    {#if totalPages > 1}
+      <nav class="pager" aria-label="Pagination">
+        <button
+          type="button"
+          class="pager-btn"
+          disabled={page <= 1}
+          onclick={() => goToPage(page - 1)}
+        >
+          Previous
+        </button>
+        <span class="pager-status">
+          Page {page} of {totalPages} · {totalCount} total
+        </span>
+        <button
+          type="button"
+          class="pager-btn"
+          disabled={page >= totalPages}
+          onclick={() => goToPage(page + 1)}
+        >
+          Next
+        </button>
+      </nav>
+    {/if}
   {/if}
 </main>
