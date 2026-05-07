@@ -23,8 +23,8 @@
   let loading = $state(true);
 
   let selectedCategories = $state([]);
-  let selectedBreweries = $state([]);
-  let selectedCountries = $state([]);
+  let selectedBrewery = $state('All');
+  let selectedCountry = $state('All');
   let selectedSort = $state('default');
 
   let page = $state(1);
@@ -50,8 +50,8 @@
   function readStateFromUrl(url) {
     const params = url.searchParams;
     selectedCategories = parseList(params.get('categories'));
-    selectedBreweries = parseList(params.get('breweries'));
-    selectedCountries = parseList(params.get('countries'));
+    selectedBrewery = params.get('brewery') ?? 'All';
+    selectedCountry = params.get('country') ?? 'All';
     const sortParam = params.get('sort');
     selectedSort = sortOptions.some((o) => o.value === sortParam)
       ? sortParam
@@ -68,10 +68,10 @@
     const params = new URLSearchParams();
     if (selectedCategories.length)
       params.set('categories', selectedCategories.join(','));
-    if (selectedBreweries.length)
-      params.set('breweries', selectedBreweries.join(','));
-    if (selectedCountries.length)
-      params.set('countries', selectedCountries.join(','));
+    if (selectedBrewery && selectedBrewery !== 'All')
+      params.set('brewery', selectedBrewery);
+    if (selectedCountry && selectedCountry !== 'All')
+      params.set('country', selectedCountry);
     if (selectedSort && selectedSort !== 'default')
       params.set('sort', selectedSort);
     if (page !== 1) params.set('page', String(page));
@@ -96,8 +96,11 @@
     try {
       const data = await gateway.getProducts({
         categories: selectedCategories,
-        breweries: selectedBreweries,
-        countries: selectedCountries,
+        // Backend expects arrays for every filter axis. Brewery and
+        // Country are single-select on the UI, so we send a 1-element
+        // array (or skip entirely when 'All').
+        breweries: selectedBrewery !== 'All' ? [selectedBrewery] : [],
+        countries: selectedCountry !== 'All' ? [selectedCountry] : [],
         sort: selectedSort,
         page,
         size: pageSize
@@ -146,8 +149,8 @@
     {countries}
     {sortOptions}
     bind:selectedCategories
-    bind:selectedBreweries
-    bind:selectedCountries
+    bind:selectedBrewery
+    bind:selectedCountry
     bind:selectedSort
     onChange={onFilterChange}
   />

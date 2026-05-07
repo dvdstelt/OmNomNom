@@ -1,8 +1,8 @@
 <script>
-  // Top-of-page filter strip. Three multi-select filters
-  // (categories, breweries, countries) and a single-select sort
-  // dropdown that's visually distinguished from the filters with
-  // its own .sort-group separator + label.
+  // Top-of-page filter strip. Type is multi-select via the popup
+  // checkbox component; Brewery and Country are single-select via
+  // the existing branded `<select>` chip. Sort sits in its own
+  // .sort-group with the separator + label.
   //
   // All four controls are optional - pass an empty array (or no
   // sortOptions) to hide a dropdown.
@@ -15,8 +15,8 @@
     countries = [],
     sortOptions = [],
     selectedCategories = $bindable([]),
-    selectedBreweries = $bindable([]),
-    selectedCountries = $bindable([]),
+    selectedBrewery = $bindable('All'),
+    selectedCountry = $bindable('All'),
     selectedSort = $bindable('default'),
     onChange = () => {}
   } = $props();
@@ -43,20 +43,28 @@
         />
       {/if}
       {#if breweries.length > 0}
-        <MultiSelect
-          label="Brewery"
-          options={breweries}
-          bind:selected={selectedBreweries}
-          onChange={emit}
-        />
+        <select
+          class="filter-select"
+          bind:value={selectedBrewery}
+          onchange={emit}
+        >
+          <option value="All">All Breweries</option>
+          {#each breweries as brewery}
+            <option value={brewery}>{brewery}</option>
+          {/each}
+        </select>
       {/if}
       {#if countries.length > 0}
-        <MultiSelect
-          label="Country"
-          options={countries}
-          bind:selected={selectedCountries}
-          onChange={emit}
-        />
+        <select
+          class="filter-select"
+          bind:value={selectedCountry}
+          onchange={emit}
+        >
+          <option value="All">All Countries</option>
+          {#each countries as country}
+            <option value={country}>{country}</option>
+          {/each}
+        </select>
       {/if}
       {#if hasSortDropdown}
         <div class="sort-group" class:has-filters={hasFilterDropdowns}>
