@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import { page as pageStore } from '$app/state';
+  import { goto } from '$app/navigation';
   import { gateway } from '$lib/api/gateway.js';
   import FilterBar from '../Branding/FilterBar.svelte';
   import BeerImage from '../Catalog/BeerImage.svelte';
@@ -11,7 +13,8 @@
   import SaveBadge from '../Finance/SaveBadge.svelte';
 
   // Facet lists are loaded once per session; the products page
-  // changes in lockstep with filter/sort/page state.
+  // changes in lockstep with filter/sort/page state, which is also
+  // mirrored to the URL so back-from-detail and bookmarks work.
   let categories = $state([]);
   let breweries = $state([]);
   let countries = $state([]);
@@ -35,6 +38,51 @@
     { value: 'orderCount', label: 'Top sellers' },
     { value: 'trending', label: 'Trending now' }
   ];
+
+  function parseList(raw) {
+    if (!raw) return [];
+    return raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  function readStateFromUrl(url) {
+    const params = url.searchParams;
+    selectedCategories = parseList(params.get('categories'));
+    selectedBreweries = parseList(params.get('breweries'));
+    selectedCountries = parseList(params.get('countries'));
+    const sortParam = params.get('sort');
+    selectedSort = sortOptions.some((o) => o.value === sortParam)
+      ? sortParam
+      : 'default';
+    const pageParam = parseInt(params.get('page') ?? '1', 10);
+    page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+  }
+
+  // Mirror current state back into the URL so bookmarks and
+  // back-from-detail navigation restore the same view. replaceState
+  // keeps every keystroke from inflating browser history; the URL
+  // is still part of the entry that the product detail link pushes.
+  function syncUrl() {
+    const params = new URLSearchParams();
+    if (selectedCategories.length)
+      params.set('categories', selectedCategories.join(','));
+    if (selectedBreweries.length)
+      params.set('breweries', selectedBreweries.join(','));
+    if (selectedCountries.length)
+      params.set('countries', selectedCountries.join(','));
+    if (selectedSort && selectedSort !== 'default')
+      params.set('sort', selectedSort);
+    if (page !== 1) params.set('page', String(page));
+    const qs = params.toString();
+    const target = qs ? `/?${qs}` : '/';
+    goto(target, {
+      replaceState: true,
+      keepFocus: true,
+      noScroll: true
+    });
+  }
 
   async function loadFacets() {
     const facets = await gateway.getFacets();
@@ -64,6 +112,7 @@
   }
 
   onMount(async () => {
+    readStateFromUrl(pageStore.url);
     await loadFacets();
     await loadPage();
   });
@@ -71,12 +120,14 @@
   // Any filter or sort change resets to page 1 and refetches.
   function onFilterChange() {
     page = 1;
+    syncUrl();
     loadPage();
   }
 
   function goToPage(target) {
     if (target < 1 || target > totalPages || target === page) return;
     page = target;
+    syncUrl();
     loadPage();
   }
 </script>
