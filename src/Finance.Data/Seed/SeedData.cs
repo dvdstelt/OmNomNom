@@ -22,11 +22,15 @@ public static class SeedData
     static readonly Guid MosaicFortPointId = Guid.Parse("25a008d8-0973-44c8-b39b-fc4436843f2e");
     static readonly Guid PseudoSueId = Guid.Parse("c38d7784-78e7-4326-a910-046ab80e63cc");
     static readonly Guid ChickenBroccoliId = Guid.Parse("976482a4-e6cd-4d2f-ae99-350d9af7c8d0");
+    static readonly Guid TripleFruitBombId = Guid.Parse("16004eed-7468-4919-90e6-cc04427280f6");
+    static readonly Guid JuiceLandV4Id = Guid.Parse("155e8d38-e60e-441f-b440-debabc30a02a");
+    static readonly Guid DoubleMosaicDreamId = Guid.Parse("67f8323c-fc40-49d7-adf3-58199164c12e");
 
     // Sours
     static readonly Guid OudeGeuzeId = Guid.Parse("6f9d5730-5195-44f0-968e-829afb69a2dc"); // 4
     static readonly Guid TiarnaId = Guid.Parse("9d081a68-2cd0-481a-8ee5-6e99dfa927f1"); //4.1
     static readonly Guid BlueBerryMuffinId = Guid.Parse("6bd65199-e702-4411-b71d-65c856d879f4"); //4.2
+    static readonly Guid CoastalSunshineId = Guid.Parse("d8bb0052-10de-45f7-8f40-97e004ecb372");
 
     // Mead
     static readonly Guid SunflowersId = Guid.Parse("0d397cfa-a38a-4696-9ddc-11b8a3501253");
@@ -67,6 +71,10 @@ public static class SeedData
             new() { ProductId = PseudoSueId, Price = 8.75m, Discount = 0 },
             new() { ProductId = LaTrappeQuad50Id, Price = 34.95m, Discount = 0 },
             new() { ProductId = ChickenBroccoliId, Price = 4.92m, Discount = 0 },
+            new() { ProductId = TripleFruitBombId, Price = 4.99m, Discount = 0 },
+            new() { ProductId = CoastalSunshineId, Price = 9.99m, Discount = 0 },
+            new() { ProductId = JuiceLandV4Id, Price = 13.98m, Discount = 0 },
+            new() { ProductId = DoubleMosaicDreamId, Price = 9.99m, Discount = 0 },
         };
     }
 

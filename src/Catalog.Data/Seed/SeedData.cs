@@ -24,11 +24,15 @@ public class SeedData
     static readonly Guid MosaicFortPointId = Guid.Parse("25a008d8-0973-44c8-b39b-fc4436843f2e"); // 4.34
     static readonly Guid PseudoSueId = Guid.Parse("c38d7784-78e7-4326-a910-046ab80e63cc"); // 4.3
     static readonly Guid ChickenBroccoliId = Guid.Parse("976482a4-e6cd-4d2f-ae99-350d9af7c8d0"); // 4.22
+    static readonly Guid TripleFruitBombId = Guid.Parse("16004eed-7468-4919-90e6-cc04427280f6"); // 3.93
+    static readonly Guid JuiceLandV4Id = Guid.Parse("155e8d38-e60e-441f-b440-debabc30a02a"); // 4.09
+    static readonly Guid DoubleMosaicDreamId = Guid.Parse("67f8323c-fc40-49d7-adf3-58199164c12e"); // 4.36
 
     // Sours
     static readonly Guid OudeGeuzeId = Guid.Parse("6f9d5730-5195-44f0-968e-829afb69a2dc"); // 4
     static readonly Guid TiarnaId = Guid.Parse("9d081a68-2cd0-481a-8ee5-6e99dfa927f1"); //4.1
     static readonly Guid BlueBerryMuffinId = Guid.Parse("6bd65199-e702-4411-b71d-65c856d879f4"); //4.2
+    static readonly Guid CoastalSunshineId = Guid.Parse("d8bb0052-10de-45f7-8f40-97e004ecb372"); // 3.83
 
     // Mead
     static readonly Guid SunflowersId = Guid.Parse("0d397cfa-a38a-4696-9ddc-11b8a3501253"); // 4.64
@@ -67,6 +71,12 @@ public class SeedData
             new Product() { Name = "Mosaic Dry Hopped Fort Point", Description = "This variant on Fort Point features Mosaic in the dry hop. Pouring a cloudy, canary gold, Mosaic Fort Point emits a distinctively dank nose of pulpy, fresh squeezed orange, pungent passionfruit, ripe mango, and papaya. 6.6% ABV.", ImageUrl = "mosaicfortpoint.png", Category = "IPA", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = MosaicFortPointId },
             new Product() { Name = "Double Dry Hop Pseudo Sue", Description = "This double dry hopped pale ale showcases the Citra hop for a well balanced beer that is delicate in body with a mild bitterness in the finish. 5.8% ABV.", ImageUrl = "doubledryhoppseudo.png", Category = "Pale Ale", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = PseudoSueId },
             new Product() { Name = "Chicken & Broccoli", Description = "An IPA brewed with hand selected Citra, and Motueka and Riwaka selected from our pals at Freestyle Hops. Tropical citrus, papaya, and some sweet orange dominate the profile. 7.5% ABV.", ImageUrl = "chickenbroccoli.png", Category = "IPA", Brewery = "Other Half Brewing Co.", Country = "United States", ProductId = ChickenBroccoliId },
+            new Product() { Name = "Triple Fruit Bomb", Description = "Triple Fruit Bomb takes everything you love about Fruit Bomb and dials it way up. At 9.5% it's fuller, richer and punchier, loaded with the same Mosaic, Nelson Sauvin and Citra combo - just more of it.", ImageUrl = "", Category = "IPA", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = TripleFruitBombId },
+            new Product() { Name = "Juice Land v4 (Mosaic, Simcoe, Amarillo)", Description = "Catch the next wave to Juice Land volume 4! In this version of our award-winning NEIIPA, we've doubled down on the juiciness with Mosaic, Simcoe, and Amarillo. This citrus bomb has notes of orange, nectarine, and grapefruit and a subtle, pleasant earthiness. 8.4% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Beer Tree Brew Co", Country = "United States", ProductId = JuiceLandV4Id },
+            new Product() { Name = "Double Mosaic Dream", Description = "Our classic Mosaic focused Imperial IPA containing our hand selected Mosaic, Mosaic Cryo and Mosaic Incognito. Notes of blueberry, mango and orange. 8.5% ABV.", ImageUrl = "", Category = "IPA", Brewery = "Other Half Brewing Co.", Country = "United States", ProductId = DoubleMosaicDreamId },
+
+            // Sours (Untappd-sourced)
+            new Product() { Name = "Coastal Sunshine V19 - Passion Fruit, Tangerine, Pink Guava", Description = "Tropical paradise in a can, packed with passion fruit, tangerine, and pink guava with balanced tartness and refreshing flavors. 6% ABV.", ImageUrl = "", Category = "Sour", Brewery = "Humble Forager Brewery", Country = "United States", ProductId = CoastalSunshineId },
 
             // Mead
             new Product() { Name = "Sunflowers", Description = "Made from a curated blend of many different honey varieties, Sunflowers is the ultimate traditional. Complex with alluring and beguiling aromatics, Sunflowers pairs extraordinarily well with a cheese course, almond and hazelnut flavors, and rich, luscious desserts. 10% ABV.", ImageUrl = "schrammsunflowers.png", Category = "Mead", Brewery = "Schramm's Mead", Country = "United States", ProductId = SunflowersId },
@@ -105,6 +115,10 @@ public class SeedData
             new() { ProductId = PseudoSueId, Delta = 24, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = LaTrappeQuad50Id, Delta = 10, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = ChickenBroccoliId, Delta = 20, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = TripleFruitBombId, Delta = 12, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = JuiceLandV4Id, Delta = 18, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = DoubleMosaicDreamId, Delta = 22, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = CoastalSunshineId, Delta = 6, TimeStamp = DateTime.UtcNow, },
         };
     }
 
@@ -135,6 +149,10 @@ public class SeedData
             new() { ProductId = PseudoSueId, EstimatedInStock = 24 },
             new() { ProductId = LaTrappeQuad50Id, EstimatedInStock = 10 },
             new() { ProductId = ChickenBroccoliId, EstimatedInStock = 20 },
+            new() { ProductId = TripleFruitBombId, EstimatedInStock = 12 },
+            new() { ProductId = JuiceLandV4Id, EstimatedInStock = 18 },
+            new() { ProductId = DoubleMosaicDreamId, EstimatedInStock = 22 },
+            new() { ProductId = CoastalSunshineId, EstimatedInStock = 6 },
         };
     }
 

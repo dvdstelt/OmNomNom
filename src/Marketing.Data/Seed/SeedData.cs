@@ -22,11 +22,15 @@ public static class SeedData
     static readonly Guid MosaicFortPointId = Guid.Parse("25a008d8-0973-44c8-b39b-fc4436843f2e"); // 4.34
     static readonly Guid PseudoSueId = Guid.Parse("c38d7784-78e7-4326-a910-046ab80e63cc"); // 4.3
     static readonly Guid ChickenBroccoliId = Guid.Parse("976482a4-e6cd-4d2f-ae99-350d9af7c8d0"); // 4.22
+    static readonly Guid TripleFruitBombId = Guid.Parse("16004eed-7468-4919-90e6-cc04427280f6"); // 3.93
+    static readonly Guid JuiceLandV4Id = Guid.Parse("155e8d38-e60e-441f-b440-debabc30a02a"); // 4.09
+    static readonly Guid DoubleMosaicDreamId = Guid.Parse("67f8323c-fc40-49d7-adf3-58199164c12e"); // 4.36
 
     // Sours
     static readonly Guid OudeGeuzeId = Guid.Parse("6f9d5730-5195-44f0-968e-829afb69a2dc"); // 4
     static readonly Guid TiarnaId = Guid.Parse("9d081a68-2cd0-481a-8ee5-6e99dfa927f1"); //4.1
     static readonly Guid BlueBerryMuffinId = Guid.Parse("6bd65199-e702-4411-b71d-65c856d879f4"); //4.2
+    static readonly Guid CoastalSunshineId = Guid.Parse("d8bb0052-10de-45f7-8f40-97e004ecb372"); // 3.83
 
     // Mead
     static readonly Guid SunflowersId = Guid.Parse("0d397cfa-a38a-4696-9ddc-11b8a3501253"); // 4.64
@@ -66,6 +70,10 @@ public static class SeedData
             new Product { ProductId = PseudoSueId,            Rating = 4.3,  RatingCount = 55451, OrderCount = 41, Trending = 18 },
             new Product { ProductId = LaTrappeQuad50Id,       Rating = 4.46, RatingCount = 3195,  OrderCount = 13, Trending = 9  },
             new Product { ProductId = ChickenBroccoliId,      Rating = 4.22, RatingCount = 9744,  OrderCount = 22, Trending = 16 },
+            new Product { ProductId = TripleFruitBombId,      Rating = 3.93, RatingCount = 2997,  OrderCount = 14, Trending = 8  },
+            new Product { ProductId = JuiceLandV4Id,          Rating = 4.09, RatingCount = 3051,  OrderCount = 19, Trending = 13 },
+            new Product { ProductId = DoubleMosaicDreamId,    Rating = 4.36, RatingCount = 48485, OrderCount = 38, Trending = 22 },
+            new Product { ProductId = CoastalSunshineId,      Rating = 3.83, RatingCount = 254,   OrderCount = 4,  Trending = 3  },
         };
     }
 
@@ -125,6 +133,10 @@ public static class SeedData
             (PseudoSueId,            18, 41),
             (LaTrappeQuad50Id,        9, 13),
             (ChickenBroccoliId,      16, 22),
+            (TripleFruitBombId,       8, 14),
+            (JuiceLandV4Id,          13, 19),
+            (DoubleMosaicDreamId,    22, 38),
+            (CoastalSunshineId,       3,  4),
         };
 
         return perProduct.SelectMany(p => Build(p.Item1, p.Trending, p.Total));
