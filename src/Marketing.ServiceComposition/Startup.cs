@@ -27,8 +27,11 @@ public class Startup : IViewModelCompositionOptionsCustomization
         // contracts library so Catalog never touches Marketing.Data.
         options.Services.AddScoped<IProductRanker, ProductRanker>();
 
-        // No separate Marketing.Endpoint, so the gateway has to run
-        // migrate + seed itself.
+        // Run EnsureCreated + seed in the gateway process too, alongside
+        // the standalone Marketing.Endpoint. EnsureCreated is idempotent
+        // and the seed only runs when Products is empty, so two writers
+        // racing against the same SQLite file is harmless and keeps the
+        // gateway usable when Marketing.Endpoint isn't started yet.
         options.Services.AddHostedService<MarketingDatabaseInitializer>();
     }
 }

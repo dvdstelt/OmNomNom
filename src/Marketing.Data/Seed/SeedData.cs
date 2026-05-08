@@ -41,10 +41,14 @@ public static class SeedData
 
     public static IEnumerable<Product> Products()
     {
-        // OrderCount = all-time orders. Trending = same as OrderCount on
-        // a fresh seed since every seeded activity row is by construction
-        // within the 30-day window; the recompute will keep them in sync
-        // as the demo runs and seeded events age past the cutoff.
+        // OrderCount = total seeded activity rows per beer.
+        // Trending  = the in-window subset (per the recent/oldEnough
+        //             split in OrderActivity() below). Hand-picked so
+        //             beers like Bourbon County (31 all-time but 7 in
+        //             window) sort differently under "Top sellers"
+        //             vs "Trending now". The first recompute after
+        //             startup converges Trending on the live activity
+        //             totals.
         return new List<Product>
         {
             new Product { ProductId = FremontId,         Rating = 4.6, RatingCount = 1337, OrderCount = 18, Trending = 12 },

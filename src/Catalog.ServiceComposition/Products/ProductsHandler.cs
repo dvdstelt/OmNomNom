@@ -22,7 +22,7 @@ namespace Catalog.ServiceComposition.Products;
 //   inStock     bool, default true (0-stock items hidden)
 //   sort        default | rating | orderCount | trending
 //   page        int >= 1, default 1
-//   size        int 1-50, default 10
+//   size        int 1-MaxPageSize, default DefaultPageSize
 //
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
