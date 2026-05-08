@@ -21,12 +21,19 @@ public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsH
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders.SingleAsync(s => s.OrderId == orderId, ct);
-        // The customer reaches /buy/payment after picking shipping, so
-        // DeliveryOptionId should be set; .Value matches the pre-SQLite
-        // assumption that this row is non-null at this point.
+        // The shipping POST that brought the customer here only sends a
+        // SubmitDeliveryOption command; the saga that writes the row runs
+        // asynchronously, so the Order may not yet exist (or may exist with
+        // a null DeliveryOptionId). Skip the delivery section in that case
+        // and let the rest of the composed response — credit cards, cart
+        // summary, etc. — render normally. A later refresh will pick the
+        // row up.
+        var order = await dbContext.Orders
+            .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
+        if (order?.DeliveryOptionId is not { } deliveryOptionId) return;
+
         var deliveryOption = await dbContext.DeliveryOptions
-            .SingleAsync(s => s.DeliveryOptionId == order.DeliveryOptionId!.Value, ct);
+            .SingleAsync(s => s.DeliveryOptionId == deliveryOptionId, ct);
 
         dynamic delivery = new ExpandoObject();
         delivery.DeliveryOptionName = deliveryOption.Name;
