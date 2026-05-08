@@ -1,0 +1,48 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Catalog/">
+    <Project Path="Catalog.Data/Catalog.Data.csproj" />
+    <Project Path="Catalog.Endpoint.Messages/Catalog.Endpoint.Messages.csproj" />
+    <Project Path="Catalog.Endpoint/Catalog.Endpoint.csproj" />
+    <Project Path="Catalog.ServiceComposition.Events/Catalog.ServiceComposition.Events.csproj" />
+    <Project Path="Catalog.ServiceComposition/Catalog.ServiceComposition.csproj" />
+  </Folder>
+  <Folder Name="/Finance/">
+    <Project Path="Finance.Data/Finance.Data.csproj" />
+    <Project Path="Finance.Endpoint.Messages/Finance.Endpoint.Messages.csproj" />
+    <Project Path="Finance.Endpoint/Finance.Endpoint.csproj" />
+    <Project Path="Finance.ServiceComposition.Events/Finance.ServiceComposition.Events.csproj" />
+    <Project Path="Finance.ServiceComposition/Finance.ServiceComposition.csproj" />
+  </Folder>
+  <Folder Name="/ITOps/">
+    <Project Path="ITOps.Shared/ITOps.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Marketing/">
+    <Project Path="Marketing.Data/Marketing.Data.csproj" />
+    <Project Path="Marketing.ServiceComposition/Marketing.ServiceComposition.csproj" />
+  </Folder>
+  <Folder Name="/PaymentInfo/">
+    <Project Path="PaymentInfo.Data/PaymentInfo.Data.csproj" />
+    <Project Path="PaymentInfo.Endpoint.Messages/PaymentInfo.Endpoint.Messages.csproj" />
+    <Project Path="PaymentInfo.Endpoint/PaymentInfo.Endpoint.csproj" />
+    <Project Path="PaymentInfo.ServiceComposition/PaymentInfo.ServiceComposition.csproj" />
+  </Folder>
+  <Folder Name="/Shipping/">
+    <Project Path="Shipping.Data/Shipping.Data.csproj" />
+    <Project Path="Shipping.Endpoint.Messages/Shipping.Endpoint.Messages.csproj" />
+    <Project Path="Shipping.Endpoint/Shipping.Endpoint.csproj" />
+    <Project Path="Shipping.ServiceComposition.Events/Shipping.ServiceComposition.Events.csproj" />
+    <Project Path="Shipping.ServiceComposition/Shipping.ServiceComposition.csproj" />
+  </Folder>
+  <Project Path="CompositionGateway/CompositionGateway.csproj" />
+  <Project Path="Marketing.Contracts/Marketing.Contracts.csproj" />
+  <Project Path="Marketing.Endpoint/Marketing.Endpoint.csproj" />
+  <Project Path="OmNomNom.BackOffice/OmNomNom.BackOffice.csproj" />
+  <Project Path="website/website.esproj">
+    <Platform Project="AnyCPU" />
+  </Project>
+</Solution>
