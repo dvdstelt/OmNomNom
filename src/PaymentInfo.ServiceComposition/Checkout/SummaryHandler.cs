@@ -17,15 +17,25 @@ public class SummaryHandler(PaymentInfoDbContext dbContext, CacheHelper cacheHel
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders
-            .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
-        if (order == null)
-        {
-            order = await cacheHelper.GetOrder(orderId);
-        }
+        var row = await (
+            from o in dbContext.Orders
+            where o.OrderId == orderId
+            from c in dbContext.CreditCards.Where(c => c.CreditCardId == o.CreditCardId).DefaultIfEmpty()
+            select new { Order = o, CreditCard = c })
+            .FirstOrDefaultAsync(ct);
 
-        var creditCard = await dbContext.CreditCards
-            .FirstOrDefaultAsync(s => s.CreditCardId == order.CreditCardId, ct);
+        Data.Models.CreditCard? creditCard;
+        if (row != null)
+        {
+            creditCard = row.CreditCard;
+        }
+        else
+        {
+            // Order not yet persisted; fall back to the in-progress cache.
+            var order = await cacheHelper.GetOrder(orderId);
+            creditCard = await dbContext.CreditCards
+                .FirstOrDefaultAsync(s => s.CreditCardId == order.CreditCardId, ct);
+        }
 
         var vm = request.GetComposedResponseModel();
         vm.CreditCardLastDigits = creditCard?.LastDigits;

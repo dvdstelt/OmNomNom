@@ -19,10 +19,13 @@ public class ProductHandler(CatalogDbContext dbContext) : ICompositionRequestsHa
         var productId = Guid.Parse(productIdString);
 
         var ct = request.HttpContext.RequestAborted;
-        var product = await dbContext.Products.SingleAsync(s => s.ProductId == productId, ct);
-        var inventoryItem = await dbContext.InventorySnapshots.SingleAsync(s => s.ProductId == productId, ct);
+        var row = await (
+            from p in dbContext.Products
+            join s in dbContext.InventorySnapshots on p.ProductId equals s.ProductId
+            where p.ProductId == productId
+            select new { Product = p, Inventory = s }).SingleAsync(ct);
 
-        var productModel = Mapper.MapToViewModel(product, inventoryItem);
+        var productModel = Mapper.MapToViewModel(row.Product, row.Inventory);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductLoaded

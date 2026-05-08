@@ -24,12 +24,16 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessag
             order.Items.Clear();
         }
 
+        // NOTE: Never ever do this! Don't retrieve _current_ price after submitting the order.
+        // Instead, use attached PriceId. But that isn't implemented yet.
+        var productIds = message.Items.Select(i => i.ProductId).ToList();
+        var products = await dbContext.Products
+            .Where(p => productIds.Contains(p.ProductId))
+            .ToDictionaryAsync(p => p.ProductId, context.CancellationToken);
+
         foreach (var item in message.Items)
         {
-            // NOTE: Never ever do this! Don't retrieve _current_ price after submitting the order.
-            // Instead, use attached PriceId. But that isn't implemented yet.
-            var product = await dbContext.Products
-                .SingleAsync(s => s.ProductId == item.ProductId, context.CancellationToken);
+            var product = products[item.ProductId];
             order.Items.Add(new OrderItem
             {
                 ProductId = item.ProductId,
