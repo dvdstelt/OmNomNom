@@ -52,7 +52,13 @@ public class OrderPlacedHandler(MarketingDbContext dbContext) : IHandleMessages<
             }
             else
             {
-                log.WarnFormat("OrderPlaced for unknown ProductId {ProductId}; activity logged but OrderCount not bumped", item.ProductId);
+                // Catalog and Marketing have diverged on which products exist.
+                // Activity is preserved in the log, but OrderCount silently
+                // understates this product's popularity until someone reseeds.
+                log.ErrorFormat(
+                    "OrderPlaced for unknown ProductId {0} (OrderId {1}); activity logged but OrderCount not bumped. Marketing seed is out of sync with Catalog.",
+                    item.ProductId,
+                    message.OrderId);
             }
         }
 
