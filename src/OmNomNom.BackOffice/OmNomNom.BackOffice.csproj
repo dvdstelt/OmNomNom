@@ -12,8 +12,8 @@
            DependencyModel below 9, EF Core 10 (transitively via Catalog.Data)
            wants 10. Pin the higher version explicitly. -->
       <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.0" />
-      <PackageReference Include="NServiceBus" Version="9.0.0" />
-      <PackageReference Include="NServiceBus.Extensions.Hosting" Version="3.0.0" />
+      <PackageReference Include="NServiceBus" Version="10.1.4" />
+      <PackageReference Include="NServiceBus.Extensions.Hosting" Version="4.0.1" />
       <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
     </ItemGroup>
 
