@@ -1,4 +1,5 @@
 using Marketing.Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,9 +8,10 @@ using Microsoft.Extensions.Logging;
 namespace Marketing.Endpoint;
 
 // Periodically recomputes Marketing.Product.Trending from the
-// OrderActivity append log so events ageing past the 30-day window
-// drop out of the score. The OrderPlaced handler already bumps
-// Trending on every fresh event; this service only handles decay.
+// OrderActivity append log. This is the only writer of Trending -
+// OrderPlacedHandler used to bump it on every event but that
+// raced this recompute, so we let the recompute own the value
+// and accept up-to-one-interval staleness as the trade.
 //
 // One pass:
 //   trending[productId] = SUM(OrderActivity.Quantity)
@@ -44,7 +46,12 @@ internal sealed class TrendingRecomputeService(
             {
                 return;
             }
-            catch (Exception ex)
+            // Narrow the safety net to the transient/operator errors
+            // we're prepared to retry on the next tick. Anything else
+            // (programmer bugs, disposed contexts, OOM, etc.) bubbles
+            // out so the hosting infrastructure can crash the process
+            // and surface the real problem.
+            catch (Exception ex) when (ex is DbUpdateException or SqliteException)
             {
                 logger.LogError(ex, "Trending recompute failed; will retry on the next tick");
             }
