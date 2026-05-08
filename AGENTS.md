@@ -12,7 +12,7 @@ OmNomNom is a **conference demo** for teaching UI Composition and service bounda
 
 ```bash
 # Build entire solution
-dotnet build src/OmNomNom.sln
+dotnet build src/OmNomNom.slnx
 
 # Run an individual endpoint (repeat for each service)
 dotnet run --project src/Catalog.Endpoint/Catalog.Endpoint.csproj
