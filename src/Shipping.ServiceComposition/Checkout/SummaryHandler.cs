@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
 using Shipping.ServiceComposition.Events;
+using Shipping.ServiceComposition.Helpers;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsHandler
+public class SummaryHandler(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/payment/{orderId}")]
     [HttpGet("/buy/summary/{orderId}")]
@@ -21,19 +22,24 @@ public class SummaryHandler(ShippingDbContext dbContext) : ICompositionRequestsH
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        // The shipping POST that brought the customer here only sends a
-        // SubmitDeliveryOption command; the saga that writes the row runs
-        // asynchronously, so the Order may not yet exist (or may exist with
-        // a null DeliveryOptionId). Skip the delivery section in that case
-        // and let the rest of the composed response — credit cards, cart
-        // summary, etc. — render normally. A later refresh will pick the
-        // row up.
-        var order = await dbContext.Orders
-            .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
-        if (order?.DeliveryOptionId is not { } deliveryOptionId) return;
+        // DeliveryOptionSubmitHandler writes the chosen DeliveryOptionId to
+        // the cache synchronously, before sending the saga command, so the
+        // cache is the freshest source while the saga is still in flight.
+        // Fall back to the DB on a cache miss (sliding 30-min expiry); if
+        // both are empty, skip the delivery section so the rest of the
+        // composed response — credit cards, cart summary — still renders.
+        var cached = await cacheHelper.GetOrder(orderId);
+        Guid? deliveryOptionId = cached.DeliveryOptionId;
+        if (deliveryOptionId is null)
+        {
+            var order = await dbContext.Orders
+                .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
+            deliveryOptionId = order?.DeliveryOptionId;
+        }
+        if (deliveryOptionId is not { } resolvedId) return;
 
         var deliveryOption = await dbContext.DeliveryOptions
-            .SingleAsync(s => s.DeliveryOptionId == deliveryOptionId, ct);
+            .SingleAsync(s => s.DeliveryOptionId == resolvedId, ct);
 
         dynamic delivery = new ExpandoObject();
         delivery.DeliveryOptionName = deliveryOption.Name;
