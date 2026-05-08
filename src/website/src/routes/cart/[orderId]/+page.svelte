@@ -28,15 +28,32 @@
 
   onMount(load);
 
-  function changeQuantity(productId, newQuantity) {
+  async function changeQuantity(productId, newQuantity) {
     if (newQuantity <= 0) return removeItem(productId);
+    const current = items.find((it) => it.productId === productId)?.quantity ?? 0;
+    const delta = newQuantity - current;
+    if (delta === 0) return;
     items = items.map((it) =>
       it.productId === productId ? { ...it, quantity: newQuantity } : it
     );
+    try {
+      await gateway.addProductToCart(routeOrderId, { id: productId, quantity: delta });
+      await refreshCartCount(routeOrderId);
+    } catch {
+      await load();
+    }
   }
 
-  function removeItem(productId) {
+  async function removeItem(productId) {
+    const current = items.find((it) => it.productId === productId)?.quantity ?? 0;
     items = items.filter((it) => it.productId !== productId);
+    if (current <= 0) return;
+    try {
+      await gateway.addProductToCart(routeOrderId, { id: productId, quantity: -current });
+      await refreshCartCount(routeOrderId);
+    } catch {
+      await load();
+    }
   }
 
   async function saveAndContinue() {
