@@ -18,15 +18,17 @@ public class OrderSummary(FinanceDbContext dbContext) : ICompositionRequestsHand
         var orderData = await request.Bind<OrderData>();
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders
-            .Include(o => o.Items)
-            .SingleAsync(s => s.OrderId == orderData.OrderId, ct);
-
         // The email summary fires on OrderShipped, so by this point a
         // delivery option has been chosen; the .Value access matches the
         // pre-SQLite assumption that this is non-null on a placed order.
-        var deliveryOption = await dbContext.DeliveryOptions
-            .SingleAsync(s => s.DeliveryOptionId == order.DeliveryOptionId!.Value, ct);
+        var row = await (
+            from o in dbContext.Orders.Include(o => o.Items)
+            join d in dbContext.DeliveryOptions on o.DeliveryOptionId equals d.DeliveryOptionId
+            where o.OrderId == orderData.OrderId
+            select new { Order = o, DeliveryOption = d }).SingleAsync(ct);
+
+        var order = row.Order;
+        var deliveryOption = row.DeliveryOption;
 
         dynamic deliveryOptionModel = new ExpandoObject();
         deliveryOptionModel.Price = deliveryOption.Price;
