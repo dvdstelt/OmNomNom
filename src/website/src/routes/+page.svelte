@@ -35,6 +35,11 @@
   let totalCount = $state(0);
   let totalPages = $state(0);
 
+  // Mirror the current URL query into product card hrefs so the
+  // detail page can navigate back to the same filtered view after
+  // "Add to Cart" instead of dropping the user on a bare "/".
+  let currentSearch = $derived(pageStore.url.search);
+
   const sortOptions = [
     { value: 'default', label: 'Default' },
     { value: 'rating', label: 'Top rated' },
@@ -191,7 +196,12 @@
   {:else}
     <div class="beer-grid">
       {#each products as product (product.productId)}
-        <a class="beer-card" href="/product/{product.productId}">
+        <a
+          class="beer-card"
+          href={currentSearch
+            ? `/product/${product.productId}?return=${encodeURIComponent(currentSearch)}`
+            : `/product/${product.productId}`}
+        >
           <BeerImage
             name={product.name}
             imageUrl={product.imageUrl}
