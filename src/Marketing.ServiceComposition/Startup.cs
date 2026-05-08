@@ -1,5 +1,7 @@
 using ITOps.Shared.Sqlite;
+using Marketing.Contracts;
 using Marketing.Data;
+using Marketing.ServiceComposition.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceComposer.AspNetCore;
@@ -18,8 +20,18 @@ public class Startup : IViewModelCompositionOptionsCustomization
         options.Services.AddDbContext<MarketingDbContext>(opts =>
             opts.UseSqlite(SqliteStorage.GetConnectionString("marketing")));
 
-        // No separate Marketing.Endpoint, so the gateway has to run
-        // migrate + seed itself.
+        // Cross-service contract: Catalog asks Marketing for sorted
+        // ProductId lists when sorting on Marketing-owned signals
+        // (rating, orderCount, trending). The implementation lives
+        // in Marketing.ServiceComposition; the interface in the
+        // contracts library so Catalog never touches Marketing.Data.
+        options.Services.AddScoped<IProductRanker, ProductRanker>();
+
+        // Run EnsureCreated + seed in the gateway process too, alongside
+        // the standalone Marketing.Endpoint. EnsureCreated is idempotent
+        // and the seed only runs when Products is empty, so two writers
+        // racing against the same SQLite file is harmless and keeps the
+        // gateway usable when Marketing.Endpoint isn't started yet.
         options.Services.AddHostedService<MarketingDatabaseInitializer>();
     }
 }

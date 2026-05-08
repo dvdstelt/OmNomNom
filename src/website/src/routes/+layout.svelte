@@ -1,5 +1,6 @@
 <script>
   import '../Branding/styles/global.css';
+  import 'flag-icons/css/flag-icons.min.css';
   import Layout from '../Branding/Layout.svelte';
   import { onMount } from 'svelte';
   import { orderId } from '$lib/stores/orderId.js';

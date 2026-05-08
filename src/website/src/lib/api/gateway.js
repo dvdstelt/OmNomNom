@@ -21,8 +21,35 @@ async function postJson(path, body) {
   return response.status === 204 ? null : response.json().catch(() => null);
 }
 
+// Keep DEFAULT_PAGE_SIZE in sync with ProductsHandler.DefaultPageSize
+// on the .NET side. Only non-default params end up in the URL.
+const DEFAULT_PAGE_SIZE = 12;
+
+function buildProductsQuery({
+  categories = [],
+  breweries = [],
+  countries = [],
+  inStock = true,
+  sort = 'default',
+  page = 1,
+  size = DEFAULT_PAGE_SIZE
+} = {}) {
+  const params = new URLSearchParams();
+  if (categories.length) params.set('categories', categories.join(','));
+  if (breweries.length) params.set('breweries', breweries.join(','));
+  if (countries.length) params.set('countries', countries.join(','));
+  // Only emit inStock when it differs from the server-side default.
+  if (inStock === false) params.set('inStock', 'false');
+  if (sort && sort !== 'default') params.set('sort', sort);
+  if (page !== 1) params.set('page', String(page));
+  if (size !== DEFAULT_PAGE_SIZE) params.set('size', String(size));
+  const qs = params.toString();
+  return qs ? `/products?${qs}` : '/products';
+}
+
 export const gateway = {
-  getProducts: () => getJson('/products'),
+  getProducts: (options) => getJson(buildProductsQuery(options)),
+  getFacets: () => getJson('/products/facets'),
   getProduct: (id) => getJson(`/product/${id}`),
   addProductToCart: (orderId, productDetails) =>
     postJson(`/cart/addproduct/${orderId}`, productDetails),

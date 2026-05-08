@@ -8,6 +8,7 @@
   import { get } from 'svelte/store';
 
   import BeerImage from '../../../Catalog/BeerImage.svelte';
+  import BreweryLine from '../../../Catalog/BreweryLine.svelte';
   import ProductDescription from '../../../Catalog/ProductDescription.svelte';
   import StockBadge from '../../../Catalog/StockBadge.svelte';
   import ProductRating from '../../../Marketing/ProductRating.svelte';
@@ -68,7 +69,12 @@
       <BeerImage hero name={product.name} imageUrl={product.imageUrl} category={product.category} />
       <div class="product-details">
         <h1>{product.name}</h1>
-        <ProductRating stars={product.stars} reviewCount={product.reviewCount} />
+        <BreweryLine
+          brewery={product.brewery}
+          country={product.country}
+          variant="detail"
+        />
+        <ProductRating rating={product.rating} ratingCount={product.ratingCount} />
         <PriceDetail price={product.price} discount={product.discount} />
         <ProductDescription description={product.description} />
         <StockBadge inStock={product.inStock} />

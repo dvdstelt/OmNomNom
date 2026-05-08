@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Data.Seed;
 
-// Apply pending migrations and, on a fresh database, drop in the demo
-// seed. The "Products is empty" check keeps it idempotent so subsequent
-// startups don't duplicate rows; deleting the .db file (per the demo
-// reset workflow) brings everything back from scratch.
+// Create the schema directly from the model and, on a fresh database,
+// drop in the demo seed. We deliberately don't ship EF migrations:
+// the demo's contract is "delete the .db file when the schema
+// changes", so EnsureCreatedAsync is the right tool.
 public static class DatabaseInitializer
 {
     public static async Task InitializeAsync(
         CatalogDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         if (await dbContext.Products.AnyAsync(cancellationToken))
             return;

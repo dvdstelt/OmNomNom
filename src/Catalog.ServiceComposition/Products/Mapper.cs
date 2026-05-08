@@ -28,6 +28,8 @@ public class Mapper
         vm.Description = product.Description;
         vm.ImageUrl = product.ImageUrl;
         vm.Category = product.Category;
+        vm.Brewery = product.Brewery;
+        vm.Country = product.Country;
         vm.InStock = inventoryItem.EstimatedInStock;
         return vm;
     }

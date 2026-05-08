@@ -24,6 +24,7 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
         {
             OrderId = message.OrderId
         };
+        var fulfilledItems = new List<OrderedItem>();
 
         foreach (var orderItem in order.Products)
         {
@@ -48,6 +49,11 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
                     ProductId = orderItem.ProductId,
                     TimeStamp = DateTime.UtcNow
                 });
+                fulfilledItems.Add(new OrderedItem
+                {
+                    ProductId = orderItem.ProductId,
+                    Quantity = orderItem.Quantity
+                });
             }
         }
 
@@ -71,6 +77,17 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
 
         var orderAccepted = new OrderAccepted { OrderId = message.OrderId };
         await context.Publish(orderAccepted);
+
+        // OrderPlaced carries the line items so analytics subscribers
+        // (Marketing's popularity/trending counters) don't have to read
+        // from Catalog. Only the in-stock items are reported - the
+        // out-of-stock ones never actually got ordered.
+        await context.Publish(new OrderPlaced
+        {
+            OrderId = message.OrderId,
+            OccurredAt = DateTime.UtcNow,
+            Items = fulfilledItems
+        });
 
         log.InfoFormat("{OrderId} - Order accepted", message.OrderId);
     }

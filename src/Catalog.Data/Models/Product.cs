@@ -7,4 +7,6 @@ public class Product
     public string Description { get; set; }
     public string ImageUrl { get; set; }
     public string Category { get; set; }
+    public string Brewery { get; set; }
+    public string Country { get; set; }
 }

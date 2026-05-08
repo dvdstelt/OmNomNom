@@ -21,8 +21,10 @@ class ProductsLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEvent
             foreach (var product in @event.Products)
             {
                 var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
-                product.Value.Stars = matchingProduct.Stars;
-                product.Value.ReviewCount = matchingProduct.ReviewCount;
+                product.Value.Rating = matchingProduct.Rating;
+                product.Value.RatingCount = matchingProduct.RatingCount;
+                product.Value.OrderCount = matchingProduct.OrderCount;
+                product.Value.Trending = matchingProduct.Trending;
             }
         });
     }

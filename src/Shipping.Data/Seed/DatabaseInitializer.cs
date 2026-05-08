@@ -8,7 +8,7 @@ public static class DatabaseInitializer
         ShippingDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         if (await dbContext.DeliveryOptions.AnyAsync(cancellationToken))
             return;
