@@ -45,7 +45,8 @@
       });
       if (result?.orderId) orderId.set(result.orderId);
       await refreshCartCount(get(orderId));
-      await goto('/');
+      const returnSearch = page.url.searchParams.get('return');
+      await goto(returnSearch ? `/${returnSearch}` : '/');
     } finally {
       adding = false;
     }
