@@ -1,12 +1,14 @@
 ﻿namespace ITOps.Shared.EndpointConfiguration;
 
 using System;
+using Messaging.Persistence.Sqlite;
 using NServiceBus;
 
 public static class EndpointConfigurationExtensions
 {
     public static EndpointConfiguration Configure(
         this EndpointConfiguration endpointConfiguration,
+        string sqliteConnectionString = null,
         Action<RoutingSettings<LearningTransport>> configureRouting = null)
     {
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
@@ -16,7 +18,11 @@ public static class EndpointConfigurationExtensions
 
         var routing = transport.Routing();
 
-        endpointConfiguration.UsePersistence<LearningPersistence>();
+        if (sqliteConnectionString != null)
+        {
+            var persistence = endpointConfiguration.UsePersistence<SqlitePersistence>();
+            persistence.ConnectionString(sqliteConnectionString);
+        }
 
         endpointConfiguration.SendFailedMessagesTo("error");
         endpointConfiguration.AuditProcessedMessagesTo("audit");

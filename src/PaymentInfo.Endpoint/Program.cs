@@ -10,12 +10,14 @@ const string EndpointName = "PaymentInfo";
 
 HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
 
+var sqliteConnectionString = SqliteStorage.GetConnectionString("paymentinfo");
+
 hostBuilder.Services.AddDbContext<PaymentInfoDbContext>(options =>
-    options.UseSqlite(SqliteStorage.GetConnectionString("paymentinfo")));
+    options.UseSqlite(sqliteConnectionString));
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure();
+endpointConfiguration.Configure(sqliteConnectionString);
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();

@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="NServiceBus" Version="10.1.4" />
+      <PackageReference Include="NServiceBusContrib.Persistence.Sqlite" Version="0.1.0-beta.1" />
     </ItemGroup>
 
 </Project>

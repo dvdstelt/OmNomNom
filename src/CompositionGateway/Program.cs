@@ -15,7 +15,7 @@ builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
-endpointConfiguration.Configure(s =>
+endpointConfiguration.Configure(configureRouting: s =>
 {
     // TODO: Figure out how this can be defined per service and not globally
     s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");

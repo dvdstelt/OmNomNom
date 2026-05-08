@@ -10,15 +10,21 @@ const string EndpointName = "Catalog";
 
 HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
 
+// One SQLite file per service: domain data and the NServiceBus
+// persister tables (saga, outbox, subscriptions) share the same
+// connection string so a future TransactionalSession can commit
+// across both atomically.
+var sqliteConnectionString = SqliteStorage.GetConnectionString("catalog");
+
 // SQLite via EF Core. AddDbContext registers the context as scoped,
 // which is what message handlers and request handlers expect (each
 // message / request gets its own change-tracker).
 hostBuilder.Services.AddDbContext<CatalogDbContext>(options =>
-    options.UseSqlite(SqliteStorage.GetConnectionString("catalog")));
+    options.UseSqlite(sqliteConnectionString));
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure();
+endpointConfiguration.Configure(sqliteConnectionString);
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();
