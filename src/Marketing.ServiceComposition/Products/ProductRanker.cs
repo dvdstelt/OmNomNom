@@ -20,11 +20,12 @@ internal sealed class ProductRanker(MarketingDbContext dbContext) : IProductRank
         var ids = candidateIds.ToList();
         var query = dbContext.Products.Where(p => ids.Contains(p.ProductId));
 
+        // ThenBy(ProductId) is a stable tiebreaker so paginated rank order is reproducible across requests.
         query = field switch
         {
-            ProductRankBy.Rating => query.OrderByDescending(p => p.Rating),
-            ProductRankBy.OrderCount => query.OrderByDescending(p => p.OrderCount),
-            ProductRankBy.Trending => query.OrderByDescending(p => p.Trending),
+            ProductRankBy.Rating => query.OrderByDescending(p => p.Rating).ThenBy(p => p.ProductId),
+            ProductRankBy.OrderCount => query.OrderByDescending(p => p.OrderCount).ThenBy(p => p.ProductId),
+            ProductRankBy.Trending => query.OrderByDescending(p => p.Trending).ThenBy(p => p.ProductId),
             _ => throw new ArgumentOutOfRangeException(nameof(field), field, "Unknown rank field")
         };
 
