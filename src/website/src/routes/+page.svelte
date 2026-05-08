@@ -21,6 +21,9 @@
 
   let products = $state([]);
   let loading = $state(true);
+  // Non-null when the last fetch failed - lets the template
+  // distinguish "the gateway is down" from "zero matches".
+  let error = $state(null);
 
   let selectedCategories = $state([]);
   let selectedBrewery = $state('All');
@@ -85,14 +88,22 @@
   }
 
   async function loadFacets() {
-    const facets = await gateway.getFacets();
-    categories = facets?.categories ?? [];
-    breweries = facets?.breweries ?? [];
-    countries = facets?.countries ?? [];
+    try {
+      const facets = await gateway.getFacets();
+      categories = facets?.categories ?? [];
+      breweries = facets?.breweries ?? [];
+      countries = facets?.countries ?? [];
+    } catch (e) {
+      error = e?.message ?? 'Could not load filter options.';
+      categories = [];
+      breweries = [];
+      countries = [];
+    }
   }
 
   async function loadPage() {
     loading = true;
+    error = null;
     try {
       const data = await gateway.getProducts({
         categories: selectedCategories,
@@ -109,9 +120,18 @@
       pageSize = data?.pageSize ?? pageSize;
       totalCount = data?.totalCount ?? 0;
       totalPages = data?.totalPages ?? 0;
+    } catch (e) {
+      error = e?.message ?? 'Could not load beers.';
+      products = [];
+      totalCount = 0;
+      totalPages = 0;
     } finally {
       loading = false;
     }
+  }
+
+  function retry() {
+    loadPage();
   }
 
   onMount(async () => {
@@ -159,6 +179,11 @@
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       Loading beers…
     </p>
+  {:else if error}
+    <div class="load-error">
+      <p>Couldn't load beers. {error}</p>
+      <button type="button" class="btn-primary" onclick={retry}>Try again</button>
+    </div>
   {:else if products.length === 0}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       No beers match your filter.

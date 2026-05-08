@@ -641,6 +641,22 @@ img {
   text-align: center;
 }
 
+/* Shown by the front page when a fetch fails. Keeps the empty
+   state visually distinct from "we just got zero results back". */
+.load-error {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.load-error p {
+  font-size: 15px;
+}
+
 .filter-btn {
   padding: 10px 24px;
   border-radius: 100px;
