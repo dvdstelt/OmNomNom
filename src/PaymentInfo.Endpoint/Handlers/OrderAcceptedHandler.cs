@@ -12,10 +12,11 @@ public class OrderAcceptedHandler(PaymentInfoDbContext dbContext) : IHandleMessa
 
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        var order = await dbContext.Orders
-            .SingleAsync(s => s.OrderId == message.OrderId, context.CancellationToken);
-        var creditCard = await dbContext.CreditCards
-            .SingleAsync(s => s.CreditCardId == order.CreditCardId, context.CancellationToken);
+        _ = await (
+            from o in dbContext.Orders
+            join c in dbContext.CreditCards on o.CreditCardId equals c.CreditCardId
+            where o.OrderId == message.OrderId
+            select new { o, c }).SingleAsync(context.CancellationToken);
 
         // Send a message to IT/Ops to talk to payment gateway and subtract money.
         // For now we'll assume it all worked and we'll move on.
