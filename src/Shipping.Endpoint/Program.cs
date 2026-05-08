@@ -12,12 +12,14 @@ const string EndpointName = "Shipping";
 
 HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
 
+var sqliteConnectionString = SqliteStorage.GetConnectionString("shipping");
+
 hostBuilder.Services.AddDbContext<ShippingDbContext>(options =>
-    options.UseSqlite(SqliteStorage.GetConnectionString("shipping")));
+    options.UseSqlite(sqliteConnectionString));
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure(routing =>
+endpointConfiguration.Configure(sqliteConnectionString, routing =>
 {
     routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
 });

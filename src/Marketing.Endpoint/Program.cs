@@ -11,14 +11,16 @@ const string EndpointName = "Marketing";
 
 HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
 
+var sqliteConnectionString = SqliteStorage.GetConnectionString("marketing");
+
 hostBuilder.Services.AddDbContext<MarketingDbContext>(options =>
-    options.UseSqlite(SqliteStorage.GetConnectionString("marketing")));
+    options.UseSqlite(sqliteConnectionString));
 
 // Configure NServiceBus. Marketing only subscribes to events, so no
 // command routing is needed - LearningTransport's pub/sub handles the
 // rest via the shared .learningtransport folder.
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure();
+endpointConfiguration.Configure(sqliteConnectionString);
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 // Background recompute that keeps Marketing.Product.Trending honest as

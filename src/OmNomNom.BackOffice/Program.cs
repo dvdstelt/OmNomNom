@@ -1,6 +1,7 @@
 using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Integration;
+using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +38,7 @@ DataProviders.RegisterAll(builder.Services);
 builder.Host.UseNServiceBus(c =>
 {
     var endpointConfiguration = new EndpointConfiguration("OmNomNomBackOffice");
-    endpointConfiguration.Configure();
+    endpointConfiguration.Configure(SqliteStorage.GetConnectionString("backoffice"));
 
     return endpointConfiguration;
 });
