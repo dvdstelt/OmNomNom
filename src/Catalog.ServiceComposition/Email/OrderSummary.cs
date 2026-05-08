@@ -17,16 +17,18 @@ public class OrderSummary(CatalogDbContext dbContext) : ICompositionRequestsHand
         var orderData = await request.Bind<OrderData>();
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders
-            .Include(o => o.Products)
-            .SingleAsync(s => s.OrderId == orderData.OrderId, ct);
+        var rows = await (
+            from o in dbContext.Orders
+            from i in o.Products
+            join p in dbContext.Products on i.ProductId equals p.ProductId
+            where o.OrderId == orderData.OrderId
+            select new { OrderItem = i, Product = p }).ToListAsync(ct);
 
-        var productIds = order.Products.Select(s => s.ProductId).ToList();
-        var products = await dbContext.Products
-            .Where(s => productIds.Contains(s.ProductId))
-            .ToListAsync(ct);
-
-        var productsModel = MapToDictionary(order.Products, products);
+        var productsModel = new Dictionary<Guid, dynamic>();
+        foreach (var row in rows)
+        {
+            productsModel[row.OrderItem.ProductId] = MapToViewModel(row.OrderItem, row.Product);
+        }
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductsLoaded
@@ -37,21 +39,6 @@ public class OrderSummary(CatalogDbContext dbContext) : ICompositionRequestsHand
         var vm = request.GetComposedResponseModel();
         vm.Products = productsModel.Values.ToList();
         vm.OrderId = orderData.OrderId;
-    }
-
-    public IDictionary<Guid, dynamic> MapToDictionary(IEnumerable<OrderItem> orderedProducts, List<Product> products)
-    {
-        var productsViewModel = new Dictionary<Guid, dynamic>();
-
-        foreach (var orderedProduct in orderedProducts)
-        {
-            var product = products.Single(s => s.ProductId == orderedProduct.ProductId);
-            var vm = MapToViewModel(orderedProduct, product);
-
-            productsViewModel[orderedProduct.ProductId] = vm;
-        }
-
-        return productsViewModel;
     }
 
     private dynamic MapToViewModel(OrderItem orderedProduct, Product product)
