@@ -6,10 +6,20 @@ using NServiceBus.Logging;
 
 namespace Marketing.Endpoint.Handlers;
 
-// Append the order activity to the log, bump the all-time popularity
-// counter, and bump the rolling trending counter (a fresh event is
-// always within the 30-day window so the bump is always valid).
-// Decay is handled separately by TrendingRecomputeService.
+// Append the order activity to the log and bump the all-time
+// popularity counter (OrderCount). Trending is intentionally NOT
+// bumped here: it's a derived value owned by TrendingRecomputeService,
+// which periodically rewrites it from the OrderActivity log. If we
+// also bumped Trending from this handler we'd race the recompute -
+// the recompute reads the activity totals and the products table at
+// two different points in time, and a handler bump that lands between
+// those two reads gets silently overwritten. Letting the recompute be
+// the only writer of Trending costs at most one recompute interval of
+// staleness and removes the race entirely.
+//
+// OrderCount is safe to bump here: it's a monotonic counter with no
+// recompute touching it, so additive writes from this handler don't
+// race anyone.
 //
 // No idempotency dedup here - the NServiceBus Outbox is the next thing
 // being added and will handle exactly-once for us.
@@ -39,11 +49,10 @@ public class OrderPlacedHandler(MarketingDbContext dbContext) : IHandleMessages<
             if (products.TryGetValue(item.ProductId, out var product))
             {
                 product.OrderCount += item.Quantity;
-                product.Trending += item.Quantity;
             }
             else
             {
-                log.WarnFormat("OrderPlaced for unknown ProductId {ProductId}; activity logged but counters not bumped", item.ProductId);
+                log.WarnFormat("OrderPlaced for unknown ProductId {ProductId}; activity logged but OrderCount not bumped", item.ProductId);
             }
         }
 
