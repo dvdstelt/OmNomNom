@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>WorkflowComposer.Sqlite</RootNamespace>
+        <Description>SQLite + NServiceBus outbox backend for WorkflowComposer. Submit commits the workflow row and the outbox messages in one SQLite transaction via TransactionalSession.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.7" />
+      <PackageReference Include="NServiceBusContrib.Persistence.Sqlite.TransactionalSession" Version="0.1.0-beta.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WorkflowComposer\WorkflowComposer.csproj" />
+    </ItemGroup>
+
+</Project>

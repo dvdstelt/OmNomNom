@@ -44,4 +44,8 @@
   <Project Path="website/website.esproj">
     <Platform Project="AnyCPU" />
   </Project>
+  <Folder Name="/WorkflowComposer/">
+    <Project Path="WorkflowComposer/WorkflowComposer.csproj" />
+    <Project Path="WorkflowComposer.Sqlite/WorkflowComposer.Sqlite.csproj" />
+  </Folder>
 </Solution>
