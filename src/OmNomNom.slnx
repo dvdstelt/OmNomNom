@@ -39,7 +39,6 @@
     <Project Path="Shipping.ServiceComposition/Shipping.ServiceComposition.csproj" />
   </Folder>
   <Project Path="CompositionGateway/CompositionGateway.csproj" />
-  <Project Path="Marketing.Contracts/Marketing.Contracts.csproj" />
   <Project Path="Marketing.Endpoint/Marketing.Endpoint.csproj" />
   <Project Path="OmNomNom.BackOffice/OmNomNom.BackOffice.csproj" />
   <Project Path="website/website.esproj">

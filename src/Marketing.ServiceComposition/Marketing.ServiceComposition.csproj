@@ -15,7 +15,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
-      <ProjectReference Include="..\Marketing.Contracts\Marketing.Contracts.csproj" />
       <ProjectReference Include="..\Marketing.Data\Marketing.Data.csproj" />
     </ItemGroup>
 

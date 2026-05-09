@@ -1,7 +1,6 @@
 using Catalog.Data;
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
-using Marketing.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,23 +10,25 @@ namespace Catalog.ServiceComposition.Products;
 
 // Server-side product search. Catalog owns the result set and applies
 // filters on Catalog-owned fields (category/brewery/country/in-stock).
-// Sorting on Marketing-owned signals (rating/orderCount/trending) is
-// delegated to IProductRanker so Catalog never reads Marketing's
-// database directly.
+// Sorting on signals Catalog doesn't own is delegated by raising
+// ProductCandidatesAvailable: any subscriber that owns a sort signal
+// (e.g. Marketing) writes the ordered IDs back. The sort token is
+// forwarded as an opaque string so Catalog never names a foreign
+// vocabulary.
 //
 // Query parameters:
 //   categories  comma-separated; empty -> no filter
 //   breweries   comma-separated; empty -> no filter
 //   countries   comma-separated; empty -> no filter
 //   inStock     bool, default true (0-stock items hidden)
-//   sort        default | rating | orderCount | trending
+//   sort        opaque token; null -> Catalog's default (by Name)
 //   page        int >= 1, default 1
 //   size        int 1-MaxPageSize, default DefaultPageSize
 //
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
 //   Page, PageSize, TotalCount, TotalPages
-public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) : ICompositionRequestsHandler
+public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     const int DefaultPageSize = 12;
     const int MaxPageSize = 50;
@@ -71,21 +72,24 @@ public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) 
         var candidateIds = await productsQuery.Select(p => p.ProductId).ToListAsync(ct);
         var totalCount = candidateIds.Count;
 
-        // 4. Sort. Default sorts by Name in Catalog; the others ask
-        //    Marketing for the order.
-        IReadOnlyList<Guid> orderedIds;
-        if (sort is null)
+        // 4. Ask other components to claim ownership of the sort.
+        //    Subscribers that recognise SortBy fill OrderedIds; if no
+        //    one does (sort is null, unknown, or Marketing isn't
+        //    deployed) Catalog falls back to its default sort by Name.
+        var context = request.GetCompositionContext();
+        var sortRequest = new ProductCandidatesAvailable
         {
-            orderedIds = await dbContext.Products
+            CandidateIds = candidateIds,
+            SortBy = sort
+        };
+        await context.RaiseEvent(sortRequest);
+
+        IReadOnlyList<Guid> orderedIds = sortRequest.OrderedIds
+            ?? await dbContext.Products
                 .Where(p => candidateIds.Contains(p.ProductId))
                 .OrderBy(p => p.Name)
                 .Select(p => p.ProductId)
                 .ToListAsync(ct);
-        }
-        else
-        {
-            orderedIds = await ranker.RankAsync(candidateIds, sort.Value, ct);
-        }
 
         var pageIds = orderedIds.Skip((page - 1) * size).Take(size).ToList();
 
@@ -98,21 +102,16 @@ public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) 
             select new { Product = p, Inventory = s }).ToListAsync(ct);
 
         var lookup = pageRows.ToDictionary(x => x.Product.ProductId);
-        var orderedPage = pageIds
-            .Where(lookup.ContainsKey)
-            .Select(id => lookup[id])
-            .ToList();
 
         var productsModel = new Dictionary<Guid, dynamic>();
-        foreach (var row in orderedPage)
+        foreach (var id in pageIds)
         {
-            var vm = Mapper.MapToViewModel(row.Product, row.Inventory);
-            productsModel[row.Product.ProductId] = vm;
+            if (!lookup.TryGetValue(id, out var row)) continue;
+            productsModel[id] = Mapper.MapToViewModel(row.Product, row.Inventory);
         }
 
         // 6. Compose: Marketing/Finance subscribers attach their
         //    slices to the page items (not the whole catalog).
-        var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductsLoaded
         {
             Products = productsModel
@@ -120,7 +119,15 @@ public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) 
 
         var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)size);
         var responseModel = request.GetComposedResponseModel();
-        responseModel.Products = productsModel.Values.ToList();
+
+        // Drive the response array from the explicit ordered key list
+        // rather than productsModel.Values — Dictionary enumeration
+        // order is documented as unspecified and must not be the
+        // source of truth for a user-visible sort.
+        responseModel.Products = pageIds
+            .Where(productsModel.ContainsKey)
+            .Select(id => productsModel[id])
+            .ToList();
         responseModel.Page = page;
         responseModel.PageSize = size;
         responseModel.TotalCount = totalCount;
@@ -150,17 +157,12 @@ public class ProductsHandler(CatalogDbContext dbContext, IProductRanker ranker) 
         return int.TryParse(values[0], out var parsed) ? parsed : defaultValue;
     }
 
-    static ProductRankBy? ReadSort(IQueryCollection query)
+    static string? ReadSort(IQueryCollection query)
     {
         if (!query.TryGetValue("sort", out var values) || values.Count == 0)
             return null;
 
-        return values[0]?.ToLowerInvariant() switch
-        {
-            "rating" => ProductRankBy.Rating,
-            "ordercount" => ProductRankBy.OrderCount,
-            "trending" => ProductRankBy.Trending,
-            _ => null
-        };
+        var raw = values[0];
+        return string.IsNullOrWhiteSpace(raw) ? null : raw;
     }
 }
