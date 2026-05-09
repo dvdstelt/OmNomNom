@@ -52,17 +52,16 @@ Commit `08e3b9d` on `feature/workflowcomposer`. The original plan called for one
 - [x] `Finance.ServiceComposition.Helpers.CacheHelper.cs` deleted; `AddSingleton<CacheHelper>()` dropped from `Startup.cs`.
 - [x] Three slices registered via `workflow.RegisterSlicesFromAssembliesOf(typeof(BillingAddressWorkflowSlice), ...)`.
 
-### Phase 3 — Shipping slices
+### Phase 3 — Shipping slices — DONE
 
-Shipping has two workflow concerns: shipping address and delivery option. Two slices, two `IWorkflowSlice` implementations.
+Commit `86d5537` on `feature/workflowcomposer`.
 
-- [ ] `ShippingAddressSlice` + `ShippingAddressWorkflowSlice` (`SliceKey = "Shipping.Address"`) → `SubmitShippingAddress`.
-- [ ] `DeliveryOptionSlice` + `DeliveryOptionWorkflowSlice` (`SliceKey = "Shipping.DeliveryOption"`) → `SubmitDeliveryOption`.
-- [ ] Reference `WorkflowComposer` from `Shipping.ServiceComposition.csproj`.
-- [ ] Rewrite `Shipping.ServiceComposition` checkout handlers (`AddressSubmitHandler`, `DeliveryOptionSubmitHandler`, `DeliveryOptionsHandler`, `SummaryHandler`) to use `IWorkflowStore`.
-- [ ] Delete `Shipping.ServiceComposition.Helpers.CacheHelper.cs`.
-- [ ] Register both slices in the gateway.
-- [ ] Smoke-test: post address, post delivery option, read shipping summary.
+- [x] `ShippingAddressSlice` + `ShippingAddressWorkflowSlice` (`SliceKey = "Shipping.Address"`) → `SubmitShippingAddress`.
+- [x] `DeliveryOptionSlice` + `DeliveryOptionWorkflowSlice` (`SliceKey = "Shipping.DeliveryOption"`) → `Shipping.Endpoint.Messages.Commands.SubmitDeliveryOption`.
+- [x] `WorkflowComposer` referenced from `Shipping.ServiceComposition.csproj`.
+- [x] Five Shipping checkout handlers migrated. `AddressSubmitHandler` and `DeliveryOptionSubmitHandler` write their slices and continue to dispatch their commands directly (Phase 5 will move that). `AddressHandler` reads the `ShippingAddress` slice; the previous-order mock is now only used when the slice is empty. `DeliveryOptionsHandler` and `SummaryHandler` read slice first with DB fallback.
+- [x] `Shipping.ServiceComposition.Helpers.CacheHelper.cs` deleted; `AddSingleton<CacheHelper>()` dropped from `Startup.cs`.
+- [x] Both slices registered via `workflow.RegisterSlicesFromAssembliesOf(typeof(ShippingAddressWorkflowSlice), ...)`.
 
 ### Phase 4 — PaymentInfo slice
 
@@ -111,7 +110,8 @@ The repo is intentionally in a half-migrated state. Don't paper over these — t
 | [`Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs) | Still dispatches Finance's `SubmitOrderItems` after writing the slice | Phase 5 |
 | [`Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitBillingAddress` after writing the slice | Phase 5 |
 | [`Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Finance's `SubmitDeliveryOption` after writing the slice | Phase 5 |
-| `Shipping.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by Shipping handlers | Phase 3 |
+| [`Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitShippingAddress` after writing the slice | Phase 5 |
+| [`Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Shipping's `SubmitDeliveryOption` after writing the slice | Phase 5 |
 | `PaymentInfo.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by PaymentInfo handlers | Phase 4 |
 | [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `builder.Services.AddDistributedMemoryCache()` still registered | Phase 6 |
 | [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `ProcessorEndpoint = "Checkout"` references an endpoint that doesn't exist as a process | Phase 5 (when Checkout.Endpoint is created) |
