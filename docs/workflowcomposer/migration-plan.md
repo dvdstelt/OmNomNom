@@ -63,14 +63,16 @@ Commit `86d5537` on `feature/workflowcomposer`.
 - [x] `Shipping.ServiceComposition.Helpers.CacheHelper.cs` deleted; `AddSingleton<CacheHelper>()` dropped from `Startup.cs`.
 - [x] Both slices registered via `workflow.RegisterSlicesFromAssembliesOf(typeof(ShippingAddressWorkflowSlice), ...)`.
 
-### Phase 4 — PaymentInfo slice
+### Phase 4 — PaymentInfo slice — DONE
 
-- [ ] `PaymentInfoSlice` + `PaymentInfoWorkflowSlice` (`SliceKey = "PaymentInfo.Card"`) → `SubmitPaymentInfo`.
-- [ ] Reference `WorkflowComposer` from `PaymentInfo.ServiceComposition.csproj`.
-- [ ] Rewrite `PaymentInfo.ServiceComposition` checkout handlers.
-- [ ] Delete `PaymentInfo.ServiceComposition.Helpers.CacheHelper.cs`.
-- [ ] Register the slice in the gateway.
-- [ ] Smoke-test: post payment info, read the summary screen.
+Commit `a383cd8` on `feature/workflowcomposer`.
+
+- [x] `PaymentSlice` + `PaymentWorkflowSlice` (`SliceKey = "PaymentInfo.Card"`) → `SubmitPaymentInfo`. Customer id stays hardcoded inside `BuildSubmitCommand` until real authentication is wired in.
+- [x] `WorkflowComposer` referenced from `PaymentInfo.ServiceComposition.csproj`.
+- [x] Three PaymentInfo checkout handlers migrated. `PaymentSubmitHandler` writes the slice and continues to dispatch `SubmitPaymentInfo` directly (Phase 5 will move that). `SummaryHandler` falls back to the slice instead of the cache. `PaymentHandler` (GET) now reads the slice first so returning to `/buy/payment` shows the just-selected card before `SubmitPaymentInfo` is processed.
+- [x] `PaymentInfo.ServiceComposition.Helpers.CacheHelper.cs` deleted; `AddSingleton<CacheHelper>()` dropped from `Startup.cs`.
+- [x] Slice registered via `workflow.RegisterSlicesFromAssembliesOf(..., typeof(PaymentWorkflowSlice))`.
+- [x] **Bonus cleanup:** with no boundary using `IDistributedCache` anymore, `builder.Services.AddDistributedMemoryCache()` is gone from the gateway. All in-flight checkout state is now exclusively in `checkout.db`.
 
 ### Phase 5 — Wire `WorkflowSubmitter` and stand up the Checkout endpoint
 
@@ -93,8 +95,8 @@ This is the phase that flips the system over to atomic submit. Until this phase 
 
 ### Phase 6 — Cleanup
 
-- [ ] Remove `builder.Services.AddDistributedMemoryCache()` from `CompositionGateway/Program.cs` once no `CacheHelper` remains.
-- [ ] Confirm no `CacheHelper` exists in any `ServiceComposition` project.
+- [x] Remove `builder.Services.AddDistributedMemoryCache()` from `CompositionGateway/Program.cs` — done as part of Phase 4.
+- [x] Confirm no `CacheHelper` exists in any `ServiceComposition` project — done after Phase 4.
 - [ ] Remove any TODOs related to the cache-vs-DB consistency workarounds (see `git log --grep "Tolerate not-yet-processed"` etc.).
 - [ ] Update `AGENTS.md` to describe the WorkflowComposer pattern as the canonical write-side mechanism.
 - [ ] Consider whether `WorkflowComposer` and `WorkflowComposer.Sqlite` should be split out into their own repository at this point (NuGet, possibly into the ServiceComposer family). Out of scope for this rollout but worth a flag.
@@ -112,8 +114,7 @@ The repo is intentionally in a half-migrated state. Don't paper over these — t
 | [`Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Finance's `SubmitDeliveryOption` after writing the slice | Phase 5 |
 | [`Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitShippingAddress` after writing the slice | Phase 5 |
 | [`Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Shipping's `SubmitDeliveryOption` after writing the slice | Phase 5 |
-| `PaymentInfo.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by PaymentInfo handlers | Phase 4 |
-| [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `builder.Services.AddDistributedMemoryCache()` still registered | Phase 6 |
+| [`PaymentInfo.ServiceComposition/Checkout/PaymentSubmitHandler.cs`](../../src/PaymentInfo.ServiceComposition/Checkout/PaymentSubmitHandler.cs) | Still dispatches `SubmitPaymentInfo` after writing the slice | Phase 5 |
 | [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `ProcessorEndpoint = "Checkout"` references an endpoint that doesn't exist as a process | Phase 5 (when Checkout.Endpoint is created) |
 
 The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing calls `session.Commit()`. The current phases only use slice reads and writes, so the session is never opened. As soon as Phase 5 wires `WorkflowSubmitHandler`, the Checkout endpoint must exist before any user clicks Submit.
