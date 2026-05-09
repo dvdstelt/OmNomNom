@@ -20,7 +20,6 @@
     try {
       const data = await gateway.getCart(routeOrderId);
       items = data?.cartItems ?? [];
-      await refreshCartCount(routeOrderId);
     } finally {
       loading = false;
     }
