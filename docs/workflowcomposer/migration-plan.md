@@ -118,7 +118,7 @@ The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing
 ## Things deliberately not in scope
 
 - **Saga orchestration.** WorkflowComposer's job ends when the bag of commands is enqueued. Sagas (e.g. `ShippingPolicy`) downstream stay where they are.
-- **Cross-boundary partial-commit recovery.** If two service boundaries' handlers act on the dispatched commands and one fails, that's a downstream messaging concern, not WorkflowComposer's. Handlers must be idempotent.
+- **Cross-boundary partial-commit recovery.** If two service boundaries' NServiceBus message handlers act on the dispatched commands and one fails, that's a downstream messaging concern, not WorkflowComposer's. Handlers must be idempotent.
 - **Multi-workflow-type support.** Today there's one workflow: checkout. The slice keys aren't namespaced per workflow. If a second workflow joins the system, revisit the key naming and the table layout.
 - **Backend portability across SQLite-incompatible stores.** The current `IWorkflowStore.Submit` contract requires the backend to support an outbox-equivalent mechanism. A pure read/write store (e.g. Redis Hash) without atomic dispatch couldn't satisfy `Submit`. A Redis backend would need a complementary outbox table or stream.
 
