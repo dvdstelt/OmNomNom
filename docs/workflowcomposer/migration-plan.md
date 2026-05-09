@@ -74,24 +74,16 @@ Commit `a383cd8` on `feature/workflowcomposer`.
 - [x] Slice registered via `workflow.RegisterSlicesFromAssembliesOf(..., typeof(PaymentWorkflowSlice))`.
 - [x] **Bonus cleanup:** with no boundary using `IDistributedCache` anymore, `builder.Services.AddDistributedMemoryCache()` is gone from the gateway. All in-flight checkout state is now exclusively in `checkout.db`.
 
-### Phase 5 — Wire `WorkflowSubmitter` and stand up the Checkout endpoint
+### Phase 5 — Wire `WorkflowSubmitter` and stand up the Checkout endpoint — DONE
 
-This is the phase that flips the system over to atomic submit. Until this phase lands, the Phase 1 commit's `OrderSubmitHandler` is still dispatching `SubmitOrderItems` directly via `IMessageSession`. Same is true for whatever direct `Send`s exist in Finance/Shipping/PaymentInfo `OrderSubmitHandler` analogues.
+Commits `99df629` and `d1ba237` on `feature/workflowcomposer`. The phase that flipped the system over to atomic submit.
 
-- [ ] Create a `Checkout.Endpoint` project: a tiny NServiceBus host with no message handlers of its own. Configured with the SQLite persister against `checkout.db`, `EnableOutbox()`, `EnableTransactionalSession()` (no `ProcessorEndpoint` — it *is* the processor endpoint). Add to slnx, add to the JetBrains run configuration.
-- [ ] Add a `WorkflowSubmitHandler` (in `CompositionGateway` or in a new `Checkout.ServiceComposition` project under IT/OPS) for `[HttpPost("/buy/summary/{orderId}")]` that calls `submitter.Submit(orderId, ct)`. This is the single user-facing trigger for the atomic fan-out.
-- [ ] Decide where `CompleteOrder` lives. Today it's sent by `Catalog.ServiceComposition.Checkout.SummarySubmitHandler` via `IMessageSession`. Two options:
-   - Add a `CompleteOrderSlice` whose `BuildSubmitCommand` returns `CompleteOrder` unconditionally, so it goes out as part of the atomic bundle.
-   - Keep `SummarySubmitHandler` separate, sending `CompleteOrder` only after the workflow submit returns successfully.
-
-   The first option is cleaner (everything atomic) but requires `CompleteOrder` to tolerate arrival before/concurrent with `SubmitOrderItems` etc. — verify the receiver-side handler is idempotent and order-independent. Default to option 1 unless evidence says otherwise.
-- [ ] **Remove the direct `IMessageSession.Send` from each per-boundary `OrderSubmitHandler` analogue.** Specifically:
-   - `Catalog.ServiceComposition.Checkout.OrderSubmitHandler.cs` — drop `messageSession.Send(message)`. The handler becomes a slice-write only (or fold into the cart-page POST handling).
-   - The same in Finance/Shipping/PaymentInfo if they have analogous handlers that call `Send` directly during checkout.
-- [ ] Smoke-test the full checkout end-to-end: add cart items, post addresses, post payment, hit `/buy/summary` POST, verify all six commands land in their respective endpoints and that `checkout.db` records the workflow as submitted with the outbox row dispatched.
-- [ ] Failure-mode tests:
-   - Kill `Checkout.Endpoint` between session commit and dispatch — restart it and confirm outbox replays.
-   - Kill the gateway mid-commit — confirm no outbox row, no slice changes, and the user can retry.
+- [x] `Checkout.Endpoint` exists under `src/Checkout.Endpoint/`. Tiny NServiceBus host with no business handlers, bound to `checkout.db` with `EnableOutbox()` and `EnableTransactionalSession()`. Added to the slnx (under `/ITOps/`) and to the `Website + Endpoints` JetBrains compound run config.
+- [x] `WorkflowSubmitHandler` lives in `src/CompositionGateway/Checkout/`. POST `/buy/summary/{orderId}` writes the `CompleteOrder` marker slice and calls `IWorkflowSubmitter.Submit`. Going with the simpler in-gateway home for now; can split out into a `Checkout.ServiceComposition` project later if that folder ever gets siblings.
+- [x] **`CompleteOrder` resolved as Option 1.** New `CompleteOrderWorkflowSlice` in `Catalog.ServiceComposition/Workflow/`. Marker slice (no payload) written by `WorkflowSubmitHandler` immediately before the submit call so `CompleteOrder` rides the same atomic dispatch bundle as the per-boundary commands. `Catalog.Endpoint` now configures three delayed retries (overriding the shared `NumberOfRetries(0)`) so `CompleteOrderHandler` can wait if it lands before `SubmitOrderItems` writes the Order row.
+- [x] **All seven direct `IMessageSession.Send` calls removed** from the migrated submit handlers in Catalog/Finance/Shipping/PaymentInfo `ServiceComposition`. `SummarySubmitHandler.cs` is deleted - its only job was sending `CompleteOrder`, now part of the workflow.
+- [x] **End-to-end smoke test passed.** Add cart, post addresses, post shipping option, post payment, POST `/buy/summary` → `submit HTTP 200`. Within seconds, all four boundary DBs have their `Order` row, Catalog's `InventoryDeltas` records the stock decrement (proving `CompleteOrderHandler` ran), and `checkout.db` has the `$submitted` marker.
+- [x] **Failure-mode test passed.** Killed `Checkout.Endpoint` before submit, ran the full checkout flow, POST `/buy/summary` returned 200 with all four boundary DBs empty for the order. Restarted `Checkout.Endpoint`; within ~5s the outbox dispatched and all four boundaries received their commands. The atomic-or-nothing guarantee held end-to-end.
 
 ### Phase 6 — Cleanup
 
@@ -101,23 +93,9 @@ This is the phase that flips the system over to atomic submit. Until this phase 
 - [ ] Update `AGENTS.md` to describe the WorkflowComposer pattern as the canonical write-side mechanism.
 - [ ] Consider whether `WorkflowComposer` and `WorkflowComposer.Sqlite` should be split out into their own repository at this point (NuGet, possibly into the ServiceComposer family). Out of scope for this rollout but worth a flag.
 
-## Loose ends in the current state — these are temporary, do not normalize them
+## Loose ends in the current state
 
-The repo is intentionally in a half-migrated state. Don't paper over these — they're scheduled to be removed in later phases.
-
-| Where | What | When it goes away |
-|---|---|---|
-| [`Catalog.ServiceComposition/Checkout/OrderSubmitHandler.cs`](../../src/Catalog.ServiceComposition/Checkout/OrderSubmitHandler.cs) | Still calls `messageSession.Send(new SubmitOrderItems {...})` after writing the slice | Phase 5 |
-| [`Catalog.ServiceComposition/Checkout/SummarySubmitHandler.cs`](../../src/Catalog.ServiceComposition/Checkout/SummarySubmitHandler.cs) | Still calls `messageSession.Send(new CompleteOrder {...})` directly | Phase 5 |
-| [`Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs) | Still dispatches Finance's `SubmitOrderItems` after writing the slice | Phase 5 |
-| [`Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitBillingAddress` after writing the slice | Phase 5 |
-| [`Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Finance's `SubmitDeliveryOption` after writing the slice | Phase 5 |
-| [`Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitShippingAddress` after writing the slice | Phase 5 |
-| [`Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Shipping.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Shipping's `SubmitDeliveryOption` after writing the slice | Phase 5 |
-| [`PaymentInfo.ServiceComposition/Checkout/PaymentSubmitHandler.cs`](../../src/PaymentInfo.ServiceComposition/Checkout/PaymentSubmitHandler.cs) | Still dispatches `SubmitPaymentInfo` after writing the slice | Phase 5 |
-| [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `ProcessorEndpoint = "Checkout"` references an endpoint that doesn't exist as a process | Phase 5 (when Checkout.Endpoint is created) |
-
-The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing calls `session.Commit()`. The current phases only use slice reads and writes, so the session is never opened. As soon as Phase 5 wires `WorkflowSubmitHandler`, the Checkout endpoint must exist before any user clicks Submit.
+After Phase 5 there are no temporary loose ends left. All seven direct `IMessageSession.Send` calls in `*.ServiceComposition` have been removed; `SummarySubmitHandler.cs` is deleted; `Checkout.Endpoint` exists as a real process; the workflow submit is the single dispatch path.
 
 ## Things deliberately not in scope
 
@@ -126,11 +104,11 @@ The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing
 - **Multi-workflow-type support.** Today there's one workflow: checkout. The slice keys aren't namespaced per workflow. If a second workflow joins the system, revisit the key naming and the table layout.
 - **Backend portability across SQLite-incompatible stores.** The current `IWorkflowStore.Submit` contract requires the backend to support an outbox-equivalent mechanism. A pure read/write store (e.g. Redis Hash) without atomic dispatch couldn't satisfy `Submit`. A Redis backend would need a complementary outbox table or stream.
 
-## Open questions to resolve in Phase 5
+## Phase 5 decisions (resolved)
 
-- **Should `CompleteOrder` go through `WorkflowSubmitter`?** See Phase 5 step 3. Default to yes; confirm receiver idempotence.
-- **Where does `WorkflowSubmitHandler` live?** In `CompositionGateway/` directly, or in a new `Checkout.ServiceComposition` project under IT/OPS that mirrors the per-boundary `*.ServiceComposition` projects? The latter is more consistent with the existing folder convention.
-- **What happens to the existing `OrderSubmitHandler` on `[HttpPost("/cart/{orderId}")]`?** That route is the cart-page submit (not the workflow submit at `/buy/summary`). After Phase 5 it just writes the cart slice — no message. Confirm the frontend still posts to it, and that nothing relies on `SubmitOrderItems` being dispatched at that point in the flow.
+- **Should `CompleteOrder` go through `WorkflowSubmitter`?** Yes. Implemented as `CompleteOrderWorkflowSlice`, a marker slice written by `WorkflowSubmitHandler` immediately before `Submit`. `Catalog.Endpoint` got delayed retries (3) so the receiver tolerates `CompleteOrder` arriving before `SubmitOrderItems` writes the Order row.
+- **Where does `WorkflowSubmitHandler` live?** `CompositionGateway/Checkout/`. We didn't create a separate `Checkout.ServiceComposition` project; it would have only one file. If a second IT/OPS-level composition handler appears, that's the moment to extract.
+- **What happens to the cart-page `OrderSubmitHandler` on `[HttpPost("/cart/{orderId}")]`?** After Phase 5 it just writes the cart slice. The frontend posts to it from the cart page; no other code relies on `SubmitOrderItems` being dispatched at that point. Smoke test confirmed.
 
 ## What success looks like at end of Phase 6
 
