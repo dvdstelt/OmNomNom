@@ -1,5 +1,9 @@
+using Catalog.ServiceComposition.Workflow;
 using ITOps.Shared.EndpointConfiguration;
+using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
+using WorkflowComposer.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +28,28 @@ endpointConfiguration.Configure(configureRouting: s =>
     s.RouteToEndpoint(typeof(PaymentInfo.Endpoint.Messages.Commands.SubmitPaymentInfo).Assembly, "PaymentInfo");
 });
 endpointConfiguration.SendOnly();
+
+// WorkflowComposer + SQLite store: workflow state for in-flight
+// checkouts lives in checkout.db. Per-page slice writes use plain
+// SqliteConnection; the workflow submit (added once all four service
+// boundaries have migrated) will use TransactionalSession against
+// this same file so the dispatch fan-out is atomic with the
+// "submitted" flag.
+builder.Services.AddWorkflowComposer(workflow =>
+{
+    workflow.UseSqliteStore(endpointConfiguration, new SqliteWorkflowStoreOptions
+    {
+        ConnectionString = SqliteStorage.GetConnectionString("checkout"),
+        ProcessorEndpoint = "Checkout"
+    });
+
+    workflow.RegisterSlicesFromAssembliesOf(typeof(CartWorkflowSlice));
+});
+
 builder.UseNServiceBus(endpointConfiguration);
 
-// Add cache which is used for storing the cart for now.
+// Distributed cache still serves Finance/Shipping/PaymentInfo cart
+// state until those service boundaries migrate to workflow slices.
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();

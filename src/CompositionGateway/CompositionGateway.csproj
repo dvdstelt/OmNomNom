@@ -28,6 +28,8 @@
       <ProjectReference Include="..\PaymentInfo.Endpoint.Messages\PaymentInfo.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\PaymentInfo.ServiceComposition\PaymentInfo.ServiceComposition.csproj" />
       <ProjectReference Include="..\Shipping.ServiceComposition\Shipping.ServiceComposition.csproj" />
+      <ProjectReference Include="..\WorkflowComposer\WorkflowComposer.csproj" />
+      <ProjectReference Include="..\WorkflowComposer.Sqlite\WorkflowComposer.Sqlite.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,17 +1,15 @@
 using System.Dynamic;
-using Catalog.Data;
-using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
-using Catalog.ServiceComposition.Helpers;
+using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class SummaryComposer(CatalogDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class SummaryComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -20,16 +18,10 @@ public class SummaryComposer(CatalogDbContext dbContext, CacheHelper cacheHelper
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders
-            .Include(o => o.Products)
-            .SingleOrDefaultAsync(s => s.OrderId == orderId, ct);
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
+                   ?? CartSlice.Empty;
 
-        if (order == null)
-        {
-            order = await cacheHelper.GetOrder(orderId);
-        }
-
-        var productsModel = MapToDictionary(order.Products);
+        var productsModel = MapToDictionary(cart);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new SummaryLoaded
@@ -43,17 +35,17 @@ public class SummaryComposer(CatalogDbContext dbContext, CacheHelper cacheHelper
         vm.Products = productsModel;
     }
 
-    IDictionary<Guid, dynamic> MapToDictionary(List<OrderItem> products)
+    static IDictionary<Guid, dynamic> MapToDictionary(CartSlice cart)
     {
         var productsViewModel = new Dictionary<Guid, dynamic>();
 
-        foreach (var product in products)
+        foreach (var line in cart.Items)
         {
             dynamic vm = new ExpandoObject();
-            vm.ProductId = product.ProductId;
-            vm.Quantity = product.Quantity;
+            vm.ProductId = line.ProductId;
+            vm.Quantity = line.Quantity;
 
-            productsViewModel[product.ProductId] = vm;
+            productsViewModel[line.ProductId] = vm;
         }
 
         return productsViewModel;

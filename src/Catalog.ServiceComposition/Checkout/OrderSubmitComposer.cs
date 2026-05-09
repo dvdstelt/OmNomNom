@@ -1,51 +1,46 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
-using Catalog.Data.Models;
 using Catalog.Endpoint.Messages.Commands;
-using Catalog.ServiceComposition.Helpers;
+using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 using OrderItem = Catalog.Endpoint.Messages.Commands.OrderItem;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class OrderSubmitComposer(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
+// Cart-page submit: the user clicked "Proceed to checkout" on /cart.
+// Body carries the final line items (quantity edits and removes happen
+// inline on the cart page and only land here). We rewrite the cart
+// slice with the body's items and continue to dispatch
+// SubmitOrderItems directly via IMessageSession - that send becomes
+// part of the WorkflowSubmitter's atomic fan-out once all four
+// service boundaries have migrated to slices.
+public class OrderSubmitComposer(IMessageSession messageSession, IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var data = await request.Bind<ShoppingCart>();
+        var ct = request.HttpContext.RequestAborted;
 
-        // Read the cart items straight from the body. The shared cache only
-        // tracks Add-to-Cart calls; quantity edits made on the cart page
-        // arrive for the first time in this POST.
         request.Body.Position = 0;
         using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
-        var body = await reader.ReadToEndAsync();
+        var body = await reader.ReadToEndAsync(ct);
         var items = JsonSerializer.Deserialize<List<ShoppingCartItem>>(body,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
 
-        // Refresh the shared cache so a later GET /cart/{orderId} reflects
-        // what was actually submitted.
-        var cacheOrder = new Order { OrderId = data.OrderId };
-        foreach (var item in items)
-        {
-            cacheOrder.Products.Add(new Data.Models.OrderItem
-            {
-                OrderId = data.OrderId,
-                ProductId = item.ProductId,
-                Quantity = item.Quantity
-            });
-        }
-        await cacheHelper.StoreOrder(cacheOrder);
+        var slice = new CartSlice(items
+            .Select(i => new CartLine(i.ProductId, i.Quantity))
+            .ToList());
+        await workflow.Write(data.OrderId, CartWorkflowSlice.Key, slice, ct);
 
         var message = new SubmitOrderItems { OrderId = data.OrderId };
         foreach (var item in items)
         {
             message.Items.Add(new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity });
         }
-
         await messageSession.Send(message);
     }
 

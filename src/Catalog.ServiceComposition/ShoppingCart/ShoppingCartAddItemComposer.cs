@@ -1,12 +1,12 @@
-﻿using Catalog.Data.Models;
-using Catalog.ServiceComposition.Helpers;
+using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class ShoppingCartAddItemComposer(CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class ShoppingCartAddItemComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/addproduct/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -14,38 +14,43 @@ public class ShoppingCartAddItemComposer(CacheHelper cacheHelper) : IComposition
         var productToAdd = await request.Bind<ProductModel>();
         var orderId = productToAdd.orderId;
         var productId = productToAdd.Detail.Id;
+        var ct = request.HttpContext.RequestAborted;
 
         if (orderId == Guid.Empty)
             orderId = Guid.NewGuid();
 
-        var order = await cacheHelper.GetOrder(orderId);
-        UpsertProduct(order, productId, productToAdd);
-        await cacheHelper.StoreOrder(order);
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
+                   ?? CartSlice.Empty;
+        var updated = Upsert(cart, productId, productToAdd.Detail.Quantity);
+        await workflow.Write(orderId, CartWorkflowSlice.Key, updated, ct);
 
         var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
     }
 
-    private static void UpsertProduct(Order order, Guid productId, ProductModel productToAdd)
+    static CartSlice Upsert(CartSlice cart, Guid productId, int delta)
     {
-        var existingOrderItem = order.Products.SingleOrDefault(p => p.ProductId == productId);
-        if (existingOrderItem != null)
+        var lines = cart.Items.ToList();
+        var existing = lines.FindIndex(l => l.ProductId == productId);
+        if (existing >= 0)
         {
-            existingOrderItem.Quantity += productToAdd.Detail.Quantity;
-            if (existingOrderItem.Quantity <= 0)
-                order.Products.Remove(existingOrderItem);
+            var newQty = lines[existing].Quantity + delta;
+            if (newQty <= 0)
+                lines.RemoveAt(existing);
+            else
+                lines[existing] = lines[existing] with { Quantity = newQty };
         }
-        else
+        else if (delta > 0)
         {
-            var orderItem = new OrderItem() { ProductId = productId, Quantity = productToAdd.Detail.Quantity };
-            order.Products.Add(orderItem);
+            lines.Add(new CartLine(productId, delta));
         }
+        return new CartSlice(lines);
     }
 
     class ProductModel
     {
         [FromRoute] public Guid orderId { get; set; }
-        [FromBody] public ProductModelBody Detail { get; set; }
+        [FromBody] public ProductModelBody Detail { get; set; } = null!;
     }
 
     class ProductModelBody
