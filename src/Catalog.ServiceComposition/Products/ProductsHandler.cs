@@ -12,16 +12,16 @@ namespace Catalog.ServiceComposition.Products;
 // filters on Catalog-owned fields (category/brewery/country/in-stock).
 // Sorting on signals Catalog doesn't own is delegated by raising
 // ProductCandidatesAvailable: any subscriber that owns a sort signal
-// (e.g. Marketing) writes the ordered IDs back. The sort token is
-// forwarded as an opaque string so Catalog never names a foreign
-// vocabulary.
+// (e.g. Marketing) reads its own request parameters and writes the
+// ordered IDs back. Catalog has no opinion on the sort vocabulary and
+// never reads ?sort= itself.
 //
 // Query parameters:
 //   categories  comma-separated; empty -> no filter
 //   breweries   comma-separated; empty -> no filter
 //   countries   comma-separated; empty -> no filter
 //   inStock     bool, default true (0-stock items hidden)
-//   sort        opaque token; null -> Catalog's default (by Name)
+//   sort        consumed by subscribers; if none claims it, Catalog's default (by Name) wins
 //   page        int >= 1, default 1
 //   size        int 1-MaxPageSize, default DefaultPageSize
 //
@@ -43,7 +43,6 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
         var breweries = ReadList(query, "breweries");
         var countries = ReadList(query, "countries");
         var inStock = ReadBool(query, "inStock", defaultValue: true);
-        var sort = ReadSort(query);
         var page = Math.Max(1, ReadInt(query, "page", defaultValue: 1));
         var size = Math.Clamp(ReadInt(query, "size", defaultValue: DefaultPageSize), 1, MaxPageSize);
 
@@ -72,15 +71,15 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
         var candidateIds = await productsQuery.Select(p => p.ProductId).ToListAsync(ct);
         var totalCount = candidateIds.Count;
 
-        // 4. Ask other components to claim ownership of the sort.
-        //    Subscribers that recognise SortBy fill OrderedIds; if no
-        //    one does (sort is null, unknown, or Marketing isn't
-        //    deployed) Catalog falls back to its default sort by Name.
+        // 4. Ask other components to claim ownership of the sort. Each
+        //    subscriber inspects whatever request parameters it cares
+        //    about and fills OrderedIds. If none does (no sort param,
+        //    unknown sort, or no subscriber deployed) Catalog falls
+        //    back to its own default sort by Name.
         var context = request.GetCompositionContext();
         var sortRequest = new ProductCandidatesAvailable
         {
-            CandidateIds = candidateIds,
-            SortBy = sort
+            CandidateIds = candidateIds
         };
         await context.RaiseEvent(sortRequest);
 
@@ -155,14 +154,5 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
     {
         if (!query.TryGetValue(name, out var values) || values.Count == 0) return defaultValue;
         return int.TryParse(values[0], out var parsed) ? parsed : defaultValue;
-    }
-
-    static string? ReadSort(IQueryCollection query)
-    {
-        if (!query.TryGetValue("sort", out var values) || values.Count == 0)
-            return null;
-
-        var raw = values[0];
-        return string.IsNullOrWhiteSpace(raw) ? null : raw;
     }
 }

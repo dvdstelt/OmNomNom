@@ -8,7 +8,8 @@ namespace Marketing.ServiceComposition.Products;
 
 // Sorts the candidate ProductIds by a Marketing-owned signal and writes
 // the result back into the event. Catalog never names a Marketing sort
-// dimension; this subscriber owns parsing the SortBy token end to end.
+// dimension; this subscriber reads ?sort= straight off the request and
+// owns the vocabulary end to end.
 class ProductCandidatesAvailableSubscriber(MarketingDbContext dbContext) : ICompositionEventsSubscriber
 {
     [HttpGet("/products")]
@@ -18,12 +19,15 @@ class ProductCandidatesAvailableSubscriber(MarketingDbContext dbContext) : IComp
         {
             if (@event.CandidateIds.Count == 0) return;
 
+            if (!request.Query.TryGetValue("sort", out var values) || values.Count == 0)
+                return;
+
             var ct = request.HttpContext.RequestAborted;
             var ids = @event.CandidateIds.ToList();
             var query = dbContext.Products.Where(p => ids.Contains(p.ProductId));
 
             // ThenBy(ProductId) is a stable tiebreaker so paginated rank order is reproducible across requests.
-            query = @event.SortBy?.ToLowerInvariant() switch
+            query = values[0]?.ToLowerInvariant() switch
             {
                 "rating" => query.OrderByDescending(p => p.Rating).ThenBy(p => p.ProductId),
                 "ordercount" => query.OrderByDescending(p => p.OrderCount).ThenBy(p => p.ProductId),
