@@ -40,16 +40,17 @@ Commits `3156e80`, `16d89ce` on `feature/workflowcomposer`.
 - [x] `Catalog.ServiceComposition.Helpers.CacheHelper` deleted.
 - [x] Gateway wired with `AddWorkflowComposer` + `UseSqliteStore` against `checkout.db`.
 
-### Phase 2 — Finance slice
+### Phase 2 — Finance slices — DONE
 
-The shape of this phase is the template for Phases 3 and 4.
+Commit `08e3b9d` on `feature/workflowcomposer`. The original plan called for one slice; Finance actually emits three commands (`SubmitOrderItems`, `SubmitBillingAddress`, `SubmitDeliveryOption`) so it needs three slices. The same per-command-per-slice rule applies to Phases 3 and 4.
 
-- [ ] Add `Finance.ServiceComposition/Workflow/BillingAddressSlice` (record) and `BillingAddressWorkflowSlice : WorkflowSlice<BillingAddressSlice>` with `SliceKey = "Finance.BillingAddress"`. `BuildSubmitCommand` returns a `SubmitBillingAddress` (or whatever Finance's existing submit command is — preserve the contract).
-- [ ] Reference `WorkflowComposer` from `Finance.ServiceComposition.csproj`.
-- [ ] Rewrite `Finance.ServiceComposition` checkout handlers that read or write the cache to use `IWorkflowStore` instead. Plain reads/writes; no session.
-- [ ] Delete `Finance.ServiceComposition.Helpers.CacheHelper.cs`. Drop its DI registration in `Finance.ServiceComposition.Startup.cs`.
-- [ ] Register the new slice in the gateway: extend `RegisterSlicesFromAssembliesOf` to include the Finance assembly's marker type.
-- [ ] Smoke-test: post billing address, read it back, confirm the slice JSON in `checkout.db`.
+- [x] `OrderItemsSlice` + `OrderItemsWorkflowSlice` (`SliceKey = "Finance.OrderItems"`) → `Finance.Endpoint.Messages.Commands.SubmitOrderItems`.
+- [x] `BillingAddressSlice` + `BillingAddressWorkflowSlice` (`SliceKey = "Finance.BillingAddress"`) → `SubmitBillingAddress`.
+- [x] `DeliveryOptionSlice` + `DeliveryOptionWorkflowSlice` (`SliceKey = "Finance.DeliveryOption"`) → `Finance.Endpoint.Messages.Commands.SubmitDeliveryOption`.
+- [x] `WorkflowComposer` referenced from `Finance.ServiceComposition.csproj`.
+- [x] All five Finance checkout handlers migrated to `IWorkflowStore`. `OrderSubmitHandler`, `AddressSubmitHandler`, `DeliveryOptionSubmitHandler` write their slices and continue to dispatch their existing commands directly (Phase 5 will move that). `AddressHandler` reads `BillingAddress` slice with the previous-order mock as fallback. `SummaryLoadedSubscriber` falls back to `OrderItems` slice instead of the cache.
+- [x] `Finance.ServiceComposition.Helpers.CacheHelper.cs` deleted; `AddSingleton<CacheHelper>()` dropped from `Startup.cs`.
+- [x] Three slices registered via `workflow.RegisterSlicesFromAssembliesOf(typeof(BillingAddressWorkflowSlice), ...)`.
 
 ### Phase 3 — Shipping slices
 
@@ -101,19 +102,21 @@ This is the phase that flips the system over to atomic submit. Until this phase 
 
 ## Loose ends in the current state — these are temporary, do not normalize them
 
-After Phase 1, the repo is intentionally in a half-migrated state. Don't paper over these — they're scheduled to be removed in later phases.
+The repo is intentionally in a half-migrated state. Don't paper over these — they're scheduled to be removed in later phases.
 
 | Where | What | When it goes away |
 |---|---|---|
 | [`Catalog.ServiceComposition/Checkout/OrderSubmitHandler.cs`](../../src/Catalog.ServiceComposition/Checkout/OrderSubmitHandler.cs) | Still calls `messageSession.Send(new SubmitOrderItems {...})` after writing the slice | Phase 5 |
 | [`Catalog.ServiceComposition/Checkout/SummarySubmitHandler.cs`](../../src/Catalog.ServiceComposition/Checkout/SummarySubmitHandler.cs) | Still calls `messageSession.Send(new CompleteOrder {...})` directly | Phase 5 |
-| `Finance.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by Finance handlers | Phase 2 |
+| [`Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/OrderSubmitHandler.cs) | Still dispatches Finance's `SubmitOrderItems` after writing the slice | Phase 5 |
+| [`Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/AddressSubmitHandler.cs) | Still dispatches `SubmitBillingAddress` after writing the slice | Phase 5 |
+| [`Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs`](../../src/Finance.ServiceComposition/Checkout/DeliveryOptionSubmitHandler.cs) | Still dispatches Finance's `SubmitDeliveryOption` after writing the slice | Phase 5 |
 | `Shipping.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by Shipping handlers | Phase 3 |
 | `PaymentInfo.ServiceComposition/Helpers/CacheHelper.cs` | Still exists, still used by PaymentInfo handlers | Phase 4 |
 | [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `builder.Services.AddDistributedMemoryCache()` still registered | Phase 6 |
 | [`CompositionGateway/Program.cs`](../../src/CompositionGateway/Program.cs) | `ProcessorEndpoint = "Checkout"` references an endpoint that doesn't exist as a process | Phase 5 (when Checkout.Endpoint is created) |
 
-The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing calls `session.Commit()`. Phase 1 only uses slice reads and writes, so the session is never opened. As soon as Phase 5 wires `WorkflowSubmitHandler`, the Checkout endpoint must exist before any user clicks Submit.
+The "Checkout endpoint doesn't exist yet" loose end is benign as long as nothing calls `session.Commit()`. The current phases only use slice reads and writes, so the session is never opened. As soon as Phase 5 wires `WorkflowSubmitHandler`, the Checkout endpoint must exist before any user clicks Submit.
 
 ## Things deliberately not in scope
 
