@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
-using Shipping.Data;
 using Shipping.Data.Models;
+using Shipping.ServiceComposition.Workflow;
+using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class AddressComposer(ShippingDbContext dbContext) : ICompositionRequestsHandler
+public class AddressComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/address/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -18,23 +18,27 @@ public class AddressComposer(ShippingDbContext dbContext) : ICompositionRequests
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders.FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
+        // Slice holds the user's just-entered address; if empty, fall
+        // back to a stand-in "previous order" address.
+        var slice = await workflow.Read<ShippingAddressSlice>(orderId, ShippingAddressWorkflowSlice.Key, ct);
 
-        // If there is no order yet, we retrieve the address from the previous order.
-        Address address;
-        if (order?.Address == null)
-            address = RetrieveAddressFromPreviousOrder(orderId);
-        else
-            address = order.Address;
-
-        vm.ShippingAddress = address;
+        vm.ShippingAddress = slice is not null
+            ? new Address
+            {
+                FullName = slice.FullName,
+                Street = slice.Street,
+                ZipCode = slice.ZipCode,
+                Town = slice.Town,
+                Country = slice.Country
+            }
+            : RetrieveAddressFromPreviousOrder(orderId);
     }
 
-    Address RetrieveAddressFromPreviousOrder(Guid orderId)
+    static Address RetrieveAddressFromPreviousOrder(Guid orderId)
     {
         // Hahaha, we don't look it up, we just return the address
         // of the best football team in The Netherlands!
-        return new Address()
+        return new Address
         {
             FullName = "Dennis van der Stelt",
             Street = "Van Zandvlietplein 1",

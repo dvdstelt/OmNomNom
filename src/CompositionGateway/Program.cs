@@ -3,6 +3,7 @@ using Finance.ServiceComposition.Workflow;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
+using Shipping.ServiceComposition.Workflow;
 using WorkflowComposer;
 using WorkflowComposer.Sqlite;
 
@@ -46,13 +47,14 @@ builder.Services.AddWorkflowComposer(workflow =>
 
     workflow.RegisterSlicesFromAssembliesOf(
         typeof(CartWorkflowSlice),
-        typeof(BillingAddressWorkflowSlice));
+        typeof(BillingAddressWorkflowSlice),
+        typeof(ShippingAddressWorkflowSlice));
 });
 
 builder.UseNServiceBus(endpointConfiguration);
 
-// Distributed cache still serves Shipping/PaymentInfo cart state
-// until those service boundaries migrate to workflow slices.
+// Distributed cache still serves PaymentInfo cart state until that
+// service boundary migrates to workflow slices.
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();

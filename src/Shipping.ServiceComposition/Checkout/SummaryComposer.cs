@@ -6,11 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
 using Shipping.ServiceComposition.Events;
-using Shipping.ServiceComposition.Helpers;
+using Shipping.ServiceComposition.Workflow;
+using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class SummaryComposer(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class SummaryComposer(ShippingDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/payment/{orderId}")]
     [HttpGet("/buy/summary/{orderId}")]
@@ -22,15 +23,20 @@ public class SummaryComposer(ShippingDbContext dbContext, CacheHelper cacheHelpe
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        // DeliveryOptionSubmitComposer writes the chosen DeliveryOptionId to
-        // the cache synchronously, before sending the saga command, so the
-        // cache is the freshest source while the saga is still in flight.
-        // Fall back to the DB on a cache miss (sliding 30-min expiry); if
-        // both are empty, skip the delivery section so the rest of the
-        // composed response — credit cards, cart summary — still renders.
-        var cached = await cacheHelper.GetOrder(orderId);
-        Guid? deliveryOptionId = cached.DeliveryOptionId;
-        if (deliveryOptionId is null)
+        // DeliveryOptionSubmitHandler writes the chosen DeliveryOptionId
+        // synchronously to the workflow slice before sending the saga
+        // command, so the slice is the freshest source while the saga
+        // is still in flight. Fall back to the DB for orders submitted
+        // previously; if both are empty, skip the delivery section so
+        // the rest of the composed response - credit cards, cart
+        // summary - still renders.
+        Guid? deliveryOptionId = null;
+        var slice = await workflow.Read<DeliveryOptionSlice>(orderId, DeliveryOptionWorkflowSlice.Key, ct);
+        if (slice is not null)
+        {
+            deliveryOptionId = slice.DeliveryOptionId;
+        }
+        else
         {
             var order = await dbContext.Orders
                 .FirstOrDefaultAsync(s => s.OrderId == orderId, ct);
@@ -46,7 +52,7 @@ public class SummaryComposer(ShippingDbContext dbContext, CacheHelper cacheHelpe
         delivery.DeliveryOptionDescription = deliveryOption.Description;
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new DeliverySummaryLoaded()
+        await context.RaiseEvent(new DeliverySummaryLoaded
         {
             DeliveryOptionId = deliveryOption.DeliveryOptionId,
             DeliveryOption = delivery
