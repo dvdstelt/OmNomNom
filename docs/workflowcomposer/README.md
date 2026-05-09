@@ -112,3 +112,4 @@ If the gateway crashes mid-commit, nothing was written and nothing was sent - th
 
 - [`concepts.md`](concepts.md) - the three interfaces in detail and the lifetimes that fall out.
 - [`getting-started.md`](getting-started.md) - the minimum wiring to get a slice writing and submitting.
+- [`migration-plan.md`](migration-plan.md) - staged rollout across all four service boundaries, with the load-bearing decisions, the temporary loose ends in the current state, and the open questions to resolve at Phase 5.
