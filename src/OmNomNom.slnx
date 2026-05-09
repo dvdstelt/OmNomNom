@@ -19,6 +19,7 @@
     <Project Path="Finance.ServiceComposition/Finance.ServiceComposition.csproj" />
   </Folder>
   <Folder Name="/ITOps/">
+    <Project Path="Checkout.Endpoint/Checkout.Endpoint.csproj" />
     <Project Path="ITOps.Shared/ITOps.Shared.csproj" />
   </Folder>
   <Folder Name="/Marketing/">

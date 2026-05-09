@@ -2,13 +2,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using Shipping.Data.Models;
-using Shipping.Endpoint.Messages.Commands;
 using Shipping.ServiceComposition.Workflow;
 using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class AddressSubmitComposer(IMessageSession messageSession, IWorkflowStore workflow) : ICompositionRequestsHandler
+public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/address/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -23,17 +22,6 @@ public class AddressSubmitComposer(IMessageSession messageSession, IWorkflowStor
             submitted.Details.ShippingAddress.Town,
             submitted.Details.ShippingAddress.Country);
         await workflow.Write(submitted.OrderId, ShippingAddressWorkflowSlice.Key, slice, ct);
-
-        var message = new SubmitShippingAddress
-        {
-            OrderId = submitted.OrderId,
-            FullName = slice.FullName,
-            Street = slice.Street,
-            ZipCode = slice.ZipCode,
-            Town = slice.Town,
-            Country = slice.Country
-        };
-        await messageSession.Send(message);
     }
 
     class OrderAddressDetails

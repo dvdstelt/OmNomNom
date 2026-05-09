@@ -1,16 +1,14 @@
 using System.Text;
 using System.Text.Json;
-using Finance.Endpoint.Messages.Commands;
 using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
-using OrderItem = Finance.Endpoint.Messages.Commands.OrderItem;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class OrderSubmitComposer(IMessageSession messageSession, IWorkflowStore workflow) : ICompositionRequestsHandler
+public class OrderSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -28,13 +26,6 @@ public class OrderSubmitComposer(IMessageSession messageSession, IWorkflowStore 
             .Select(i => new OrderItemLine(i.ProductId, i.Quantity))
             .ToList());
         await workflow.Write(submitted.OrderId, OrderItemsWorkflowSlice.Key, slice, ct);
-
-        var message = new SubmitOrderItems { OrderId = submitted.OrderId };
-        foreach (var item in shoppingCartItems)
-        {
-            message.Items.Add(new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity });
-        }
-        await messageSession.Send(message);
     }
 
     class ShoppingCart
