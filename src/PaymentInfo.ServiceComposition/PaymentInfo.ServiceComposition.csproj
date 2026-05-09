@@ -14,6 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\PaymentInfo.Data\PaymentInfo.Data.csproj" />
       <ProjectReference Include="..\PaymentInfo.Endpoint.Messages\PaymentInfo.Endpoint.Messages.csproj" />
+      <ProjectReference Include="..\WorkflowComposer\WorkflowComposer.csproj" />
     </ItemGroup>
 
 </Project>
