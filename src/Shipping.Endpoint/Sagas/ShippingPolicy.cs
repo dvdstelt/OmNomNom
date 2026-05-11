@@ -1,4 +1,4 @@
-﻿using Catalog.Endpoint.Messages.Events;
+using Catalog.Endpoint.Messages.Events;
 using NServiceBus.Logging;
 using PaymentInfo.Endpoint.Messages.Events;
 using Shipping.Endpoint.Messages.Commands;

@@ -1,4 +1,4 @@
-﻿namespace Marketing.Data.Models;
+namespace Marketing.Data.Models;
 
 public class Product
 {

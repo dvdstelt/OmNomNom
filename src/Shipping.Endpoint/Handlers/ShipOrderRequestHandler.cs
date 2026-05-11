@@ -1,4 +1,4 @@
-﻿using Shipping.Endpoint.Messages.Commands;
+using Shipping.Endpoint.Messages.Commands;
 using Shipping.Endpoint.Messages.Messages;
 
 namespace Shipping.Endpoint.Handlers;

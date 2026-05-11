@@ -1,4 +1,4 @@
-﻿using PaymentInfo.Data.Models;
+using PaymentInfo.Data.Models;
 
 namespace PaymentInfo.Data.Seed;
 

@@ -1,4 +1,4 @@
-﻿namespace Catalog.Data.Models;
+namespace Catalog.Data.Models;
 
 public class InventoryDelta
 {

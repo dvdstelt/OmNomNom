@@ -1,4 +1,4 @@
-﻿namespace Shipping.ServiceComposition.Events;
+namespace Shipping.ServiceComposition.Events;
 
 public class DeliverySummaryLoaded
 {

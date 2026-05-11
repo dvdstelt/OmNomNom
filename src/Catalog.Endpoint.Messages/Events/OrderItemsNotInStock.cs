@@ -1,4 +1,4 @@
-﻿namespace Catalog.Endpoint.Messages.Events;
+namespace Catalog.Endpoint.Messages.Events;
 
 public class OrderItemsNotFulfilled
 {

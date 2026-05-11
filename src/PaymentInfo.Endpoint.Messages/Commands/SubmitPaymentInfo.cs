@@ -1,4 +1,4 @@
-﻿namespace PaymentInfo.Endpoint.Messages.Commands;
+namespace PaymentInfo.Endpoint.Messages.Commands;
 
 public class SubmitPaymentInfo
 {

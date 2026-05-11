@@ -1,4 +1,4 @@
-﻿namespace ITOps.Shared.Integration;
+namespace ITOps.Shared.Integration;
 
 public interface IProvideData
 {

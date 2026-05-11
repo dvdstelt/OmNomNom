@@ -1,4 +1,4 @@
-﻿namespace Finance.Endpoint.Messages.Commands;
+namespace Finance.Endpoint.Messages.Commands;
 
 public class SubmitDeliveryOption
 {

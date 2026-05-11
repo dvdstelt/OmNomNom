@@ -1,4 +1,4 @@
-﻿using Finance.Data.Models;
+using Finance.Data.Models;
 
 namespace Finance.Data.Seed;
 

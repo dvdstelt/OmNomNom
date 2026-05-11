@@ -1,4 +1,4 @@
-﻿namespace Shipping.Endpoint.Messages.Messages;
+namespace Shipping.Endpoint.Messages.Messages;
 
 public class ShipOrderReply
 {

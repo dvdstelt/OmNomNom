@@ -1,4 +1,4 @@
-﻿using Shipping.Endpoint.Messages.Events;
+using Shipping.Endpoint.Messages.Events;
 
 namespace Shipping.Endpoint.Sagas;
 

@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Microsoft.Extensions.Options;
 using Shipping.Data.Models;
 

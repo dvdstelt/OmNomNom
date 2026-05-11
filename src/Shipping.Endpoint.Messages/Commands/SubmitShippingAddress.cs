@@ -1,4 +1,4 @@
-﻿namespace Shipping.Endpoint.Messages.Commands;
+namespace Shipping.Endpoint.Messages.Commands;
 
 public class SubmitShippingAddress
 {

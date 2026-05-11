@@ -1,4 +1,4 @@
-﻿using Catalog.Data.Models;
+using Catalog.Data.Models;
 
 namespace Catalog.Data.Seed;
 
