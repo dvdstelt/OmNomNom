@@ -6,7 +6,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class SummarySubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
+public class SummarySubmitComposer(IMessageSession messageSession) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)

@@ -28,7 +28,7 @@ namespace Catalog.ServiceComposition.Products;
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
 //   Page, PageSize, TotalCount, TotalPages
-public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class ProductsComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     const int DefaultPageSize = 12;
     const int MaxPageSize = 50;

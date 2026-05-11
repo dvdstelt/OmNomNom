@@ -9,7 +9,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Email;
 
-public class OrderSummary(CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class OrderSummaryComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/email/summary/{orderId}")]
     public async Task Handle(HttpRequest request)

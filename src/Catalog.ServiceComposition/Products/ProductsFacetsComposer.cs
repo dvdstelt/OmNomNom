@@ -9,12 +9,12 @@ namespace Catalog.ServiceComposition.Products;
 
 // Returns the distinct values for each filter axis the dropdowns
 // need to populate. Restricted to in-stock products to match the
-// default ProductsHandler filter - otherwise the UI would offer
+// default ProductsComposer filter - otherwise the UI would offer
 // breweries/countries whose only beers are sold out, leading to a
 // "No beers match your filter" page after the user picks one.
 //
 // Three small distinct queries; cheap enough to compute on every call.
-public class ProductsFacetsHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class ProductsFacetsComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/products/facets")]
     public async Task Handle(HttpRequest request)

@@ -6,7 +6,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class ShoppingCartAddItemHandler(CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class ShoppingCartAddItemComposer(CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/addproduct/{orderId}")]
     public async Task Handle(HttpRequest request)

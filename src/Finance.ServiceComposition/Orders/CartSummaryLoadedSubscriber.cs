@@ -7,7 +7,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Orders;
 
-// Companion to `CartSummaryHandler` on the Catalog side: receives
+// Companion to `CartSummaryComposer` on the Catalog side: receives
 // `CartSummaryLoaded`, attaches per-item Price/Discount from Finance's
 // Products view, and exposes the cart total. The shipping route uses
 // the heavier `CartLoadedSubscriber`/`CartLoaded` pair instead, because

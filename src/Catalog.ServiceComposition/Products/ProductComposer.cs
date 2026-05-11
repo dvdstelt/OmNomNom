@@ -8,7 +8,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Products;
 
-public class ProductHandler(CatalogDbContext dbContext) : ICompositionRequestsHandler
+public class ProductComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/product/{productId}")]
     public async Task Handle(HttpRequest request)

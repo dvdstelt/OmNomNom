@@ -10,7 +10,7 @@ using Shipping.ServiceComposition.Helpers;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class SummaryHandler(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class SummaryComposer(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/payment/{orderId}")]
     [HttpGet("/buy/summary/{orderId}")]
@@ -22,7 +22,7 @@ public class SummaryHandler(ShippingDbContext dbContext, CacheHelper cacheHelper
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        // DeliveryOptionSubmitHandler writes the chosen DeliveryOptionId to
+        // DeliveryOptionSubmitComposer writes the chosen DeliveryOptionId to
         // the cache synchronously, before sending the saga command, so the
         // cache is the freshest source while the saga is still in flight.
         // Fall back to the DB on a cache miss (sliding 30-min expiry); if

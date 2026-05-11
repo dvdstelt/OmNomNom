@@ -1,4 +1,6 @@
+using System.Dynamic;
 using Catalog.Data;
+using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Helpers;
 using Microsoft.AspNetCore.Http;
@@ -9,16 +11,9 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-// Powers the shipping screen, which renders the full `CartItemList`
-// (product image + name) on top of the order summary. Reads from the
-// SQLite Orders row first; if the SubmitOrderItems message hasn't been
-// processed yet, falls back to the in-flight cart in the distributed
-// cache so the page renders cleanly while the read model catches up.
-//
-// Address and payment use the leaner `CartSummaryHandler` instead.
-public class ShoppingCartHandler(CatalogDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class SummaryComposer(CatalogDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
-    [HttpGet("/buy/shipping/{orderId}")]
+    [HttpGet("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
@@ -34,17 +29,33 @@ public class ShoppingCartHandler(CatalogDbContext dbContext, CacheHelper cacheHe
             order = await cacheHelper.GetOrder(orderId);
         }
 
-        var products = await dbContext.Products.ToListAsync(ct);
-        var orderedProducts = ShoppingCart.Mapper.MapToDictionary(order, products);
+        var productsModel = MapToDictionary(order.Products);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new CartLoaded
+        await context.RaiseEvent(new SummaryLoaded
         {
-            OrderedProducts = orderedProducts
+            OrderId = orderId,
+            Products = productsModel
         });
 
         var vm = request.GetComposedResponseModel();
         vm.OrderId = orderId;
-        vm.CartItems = orderedProducts.Values.ToList();
+        vm.Products = productsModel;
+    }
+
+    IDictionary<Guid, dynamic> MapToDictionary(List<OrderItem> products)
+    {
+        var productsViewModel = new Dictionary<Guid, dynamic>();
+
+        foreach (var product in products)
+        {
+            dynamic vm = new ExpandoObject();
+            vm.ProductId = product.ProductId;
+            vm.Quantity = product.Quantity;
+
+            productsViewModel[product.ProductId] = vm;
+        }
+
+        return productsViewModel;
     }
 }
