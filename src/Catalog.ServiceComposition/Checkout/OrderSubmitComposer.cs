@@ -11,7 +11,7 @@ namespace Catalog.ServiceComposition.Checkout;
 // Cart-page submit. The user clicked "Proceed to checkout" on /cart;
 // the body carries the final line items (cart-page +/- and Remove
 // edits arrive here for the first time). Updates the cart slice;
-// SubmitOrderItems will be dispatched later by WorkflowSubmitHandler
+// SubmitOrderItems will be dispatched later by SummarySubmitComposer
 // as part of the atomic checkout submit.
 public class OrderSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {

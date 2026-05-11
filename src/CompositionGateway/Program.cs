@@ -53,7 +53,7 @@ builder.Services.AddWorkflowComposer(workflow =>
         typeof(PaymentWorkflowSlice));
     // CompleteOrderWorkflowSlice lives in Catalog.ServiceComposition,
     // already covered by typeof(CartWorkflowSlice). Listed here for
-    // discoverability since it's only written by WorkflowSubmitHandler.
+    // discoverability since it's only written by SummarySubmitComposer.
 });
 
 builder.UseNServiceBus(endpointConfiguration);

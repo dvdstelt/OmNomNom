@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
-namespace CompositionGateway.Checkout;
+namespace Catalog.ServiceComposition.Checkout;
 
 // User-facing trigger for the atomic checkout submit. Writes the
 // CompleteOrder marker slice (so it becomes part of the dispatch
@@ -14,7 +14,7 @@ namespace CompositionGateway.Checkout;
 // per-boundary commands and CompleteOrder are guaranteed to
 // dispatch from checkout.db's outbox via the Checkout.Endpoint
 // processor.
-public class WorkflowSubmitHandler(IWorkflowStore store, IWorkflowSubmitter submitter) : ICompositionRequestsHandler
+public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter submitter) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
