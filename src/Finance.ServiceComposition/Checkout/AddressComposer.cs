@@ -1,4 +1,3 @@
-using Finance.Data.Models;
 using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,29 +23,16 @@ public class AddressComposer(IWorkflowStore workflow) : ICompositionRequestsHand
         // system this would be looked up from the customer's history.
         var slice = await workflow.Read<BillingAddressSlice>(orderId, BillingAddressWorkflowSlice.Key, ct);
 
-        vm.BillingAddress = slice is not null
-            ? new Address
-            {
-                FullName = slice.FullName,
-                Street = slice.Street,
-                ZipCode = slice.ZipCode,
-                Town = slice.Town,
-                Country = slice.Country
-            }
-            : RetrieveAddressFromPreviousOrder(orderId);
+        vm.BillingAddress = slice?.Address ?? RetrieveAddressFromPreviousOrder(orderId);
     }
 
-    static Address RetrieveAddressFromPreviousOrder(Guid orderId)
-    {
+    static BillingAddressData RetrieveAddressFromPreviousOrder(Guid orderId) =>
         // Hahaha, we don't look it up, we just return the address
         // of the best football team in The Netherlands!
-        return new Address
-        {
-            FullName = "Dennis van der Stelt",
-            Street = "Van Zandvlietplein 1",
-            ZipCode = "3077 AA",
-            Town = "Rotterdam",
-            Country = "The Netherlands"
-        };
-    }
+        new(
+            FullName: "Dennis van der Stelt",
+            Street: "Van Zandvlietplein 1",
+            ZipCode: "3077 AA",
+            Town: "Rotterdam",
+            Country: "The Netherlands");
 }

@@ -1,4 +1,3 @@
-using Finance.Data.Models;
 using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +14,11 @@ public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionReques
         var submitted = await request.Bind<OrderAddressDetails>();
         var ct = request.HttpContext.RequestAborted;
 
-        var slice = new BillingAddressSlice(
-            submitted.Details.BillingAddress.FullName,
-            submitted.Details.BillingAddress.Street,
-            submitted.Details.BillingAddress.ZipCode,
-            submitted.Details.BillingAddress.Town,
-            submitted.Details.BillingAddress.Country);
-        await workflow.Write(submitted.OrderId, BillingAddressWorkflowSlice.Key, slice, ct);
+        await workflow.Write(
+            submitted.OrderId,
+            BillingAddressWorkflowSlice.Key,
+            new BillingAddressSlice(submitted.Details.BillingAddress),
+            ct);
     }
 
     class OrderAddressDetails
@@ -31,7 +28,7 @@ public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionReques
 
         public class OrderAddress
         {
-            public Address BillingAddress { get; set; } = null!;
+            public BillingAddressData BillingAddress { get; set; } = null!;
         }
     }
 }
