@@ -37,7 +37,11 @@ class ProductCandidatesAvailableSubscriber(MarketingDbContext dbContext) : IComp
 
             if (query is null) return;
 
-            @event.OrderedIds = await query.Select(p => p.ProductId).ToListAsync(ct);
+            @event.OrderedIds = await query
+                .Skip((@event.Page - 1) * @event.Size)
+                .Take(@event.Size)
+                .Select(p => p.ProductId)
+                .ToListAsync(ct);
         });
     }
 }

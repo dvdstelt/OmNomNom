@@ -7,5 +7,7 @@ namespace Catalog.ServiceComposition.Events;
 public class ProductCandidatesAvailable
 {
     public required IReadOnlyList<Guid> CandidateIds { get; init; }
+    public required int Page { get; init; }
+    public required int Size { get; init; }
     public IReadOnlyList<Guid>? OrderedIds { get; set; }
 }

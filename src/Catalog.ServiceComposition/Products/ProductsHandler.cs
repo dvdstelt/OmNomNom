@@ -66,8 +66,8 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
         }
 
         // 3. Materialise the filtered candidate set as IDs only. We
-        //    re-query the full Product rows for just the page slice
-        //    after the sort decides the order.
+        //    re-query via productsQuery for the fallback page slice
+        //    if no subscriber claims the sort.
         var candidateIds = await productsQuery.Select(p => p.ProductId).ToListAsync(ct);
         var totalCount = candidateIds.Count;
 
@@ -79,18 +79,19 @@ public class ProductsHandler(CatalogDbContext dbContext) : ICompositionRequestsH
         var context = request.GetCompositionContext();
         var sortRequest = new ProductCandidatesAvailable
         {
-            CandidateIds = candidateIds
+            CandidateIds = candidateIds,
+            Page = page,
+            Size = size
         };
         await context.RaiseEvent(sortRequest);
 
-        IReadOnlyList<Guid> orderedIds = sortRequest.OrderedIds
-            ?? await dbContext.Products
-                .Where(p => candidateIds.Contains(p.ProductId))
+        var pageIds = sortRequest.OrderedIds?.ToList()
+            ?? await productsQuery
                 .OrderBy(p => p.Name)
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(p => p.ProductId)
                 .ToListAsync(ct);
-
-        var pageIds = orderedIds.Skip((page - 1) * size).Take(size).ToList();
 
         // 5. Load the Product + InventorySnapshot rows for the page,
         //    preserving the rank order from step 4.
