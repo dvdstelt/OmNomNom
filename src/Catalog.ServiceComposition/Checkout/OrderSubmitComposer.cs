@@ -10,7 +10,7 @@ using OrderItem = Catalog.Endpoint.Messages.Commands.OrderItem;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class OrderSubmitHandler(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class OrderSubmitComposer(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpPost("/cart/{orderId}")]
     public async Task Handle(HttpRequest request)

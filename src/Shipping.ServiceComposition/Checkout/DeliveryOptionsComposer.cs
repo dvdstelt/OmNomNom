@@ -10,7 +10,7 @@ using Shipping.ServiceComposition.Helpers;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class DeliveryOptionsHandler(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class DeliveryOptionsComposer(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)

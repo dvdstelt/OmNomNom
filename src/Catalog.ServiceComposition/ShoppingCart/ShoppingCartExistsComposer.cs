@@ -7,7 +7,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class ShoppingCartExistsHandler(CacheHelper cacheHelper, CatalogDbContext dbContext): ICompositionRequestsHandler
+public class ShoppingCartExistsComposer(CacheHelper cacheHelper, CatalogDbContext dbContext): ICompositionRequestsHandler
 {
     [HttpGet("/existingCart/{orderId}")]
     public async Task Handle(HttpRequest request)

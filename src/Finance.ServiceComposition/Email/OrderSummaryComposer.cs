@@ -10,7 +10,7 @@ using Shipping.ServiceComposition.Events;
 
 namespace Finance.ServiceComposition.Email;
 
-public class OrderSummary(FinanceDbContext dbContext) : ICompositionRequestsHandler
+public class OrderSummaryComposer(FinanceDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/email/summary/{orderId}")]
     public async Task Handle(HttpRequest request)

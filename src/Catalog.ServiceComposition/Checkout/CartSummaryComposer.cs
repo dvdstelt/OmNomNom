@@ -17,8 +17,8 @@ namespace Catalog.ServiceComposition.Checkout;
 //
 // Shipping is intentionally excluded: that screen renders the full
 // `CartItemList` and still needs name/imageUrl, so it stays on the
-// existing `ShoppingCartHandler` path.
-public class CartSummaryHandler(CacheHelper cacheHelper) : ICompositionRequestsHandler
+// existing `ShoppingCartComposer` path.
+public class CartSummaryComposer(CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/address/{orderId}")]
     [HttpGet("/buy/payment/{orderId}")]

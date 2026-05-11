@@ -6,7 +6,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class AddressSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
+public class AddressSubmitComposer(IMessageSession messageSession) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/address/{orderId}")]
     public async Task Handle(HttpRequest request)

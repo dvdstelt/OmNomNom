@@ -8,7 +8,7 @@ using ServiceComposer.AspNetCore;
 
 namespace PaymentInfo.ServiceComposition.Checkout;
 
-public class SummaryHandler(PaymentInfoDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class SummaryComposer(PaymentInfoDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)

@@ -1,17 +1,22 @@
-﻿using Finance.Endpoint.Messages.Commands;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
+using Shipping.Endpoint.Messages.Commands;
+using Shipping.ServiceComposition.Helpers;
 
-namespace Finance.ServiceComposition.Checkout;
+namespace Shipping.ServiceComposition.Checkout;
 
-public class DeliveryOptionSubmitHandler(IMessageSession messageSession) : ICompositionRequestsHandler
+public class DeliveryOptionSubmitComposer(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var submitted = await request.Bind<SelectedDeliveryOption>();
 
+        var order = await cacheHelper.GetOrder(submitted.OrderId);
+        order.DeliveryOptionId = submitted.Body.DeliveryOptionId;
+        await cacheHelper.StoreOrder(order);
+        
         var message = new SubmitDeliveryOption()
         {
             OrderId = submitted.OrderId,

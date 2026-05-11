@@ -1,14 +1,14 @@
-using Finance.Data;
-using Finance.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
+using Shipping.Data;
+using Shipping.Data.Models;
 
-namespace Finance.ServiceComposition.Checkout;
+namespace Shipping.ServiceComposition.Checkout;
 
-public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHandler
+public class AddressComposer(ShippingDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/address/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -22,12 +22,12 @@ public class AddressHandler(FinanceDbContext dbContext) : ICompositionRequestsHa
 
         // If there is no order yet, we retrieve the address from the previous order.
         Address address;
-        if (order?.BillingAddress == null)
+        if (order?.Address == null)
             address = RetrieveAddressFromPreviousOrder(orderId);
         else
-            address = order.BillingAddress;
+            address = order.Address;
 
-        vm.BillingAddress = address;
+        vm.ShippingAddress = address;
     }
 
     Address RetrieveAddressFromPreviousOrder(Guid orderId)
