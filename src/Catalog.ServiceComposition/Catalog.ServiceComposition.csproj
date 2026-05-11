@@ -17,7 +17,6 @@
       <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
-      <ProjectReference Include="..\Marketing.Contracts\Marketing.Contracts.csproj" />
     </ItemGroup>
 
 </Project>
