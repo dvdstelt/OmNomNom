@@ -1,4 +1,3 @@
-using System.Dynamic;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
@@ -37,14 +36,7 @@ public class CartSummaryComposer(IWorkflowStore workflow, IHttpContextAccessor h
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
                    ?? CartSlice.Empty;
 
-        var orderedProducts = new Dictionary<Guid, dynamic>();
-        foreach (var line in cart.Items)
-        {
-            dynamic vm = new ExpandoObject();
-            vm.ProductId = line.ProductId;
-            vm.Quantity = line.Quantity;
-            orderedProducts[line.ProductId] = vm;
-        }
+        var orderedProducts = Mapper.MapToDictionary(cart);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartSummaryLoaded

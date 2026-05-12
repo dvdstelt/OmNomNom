@@ -1,6 +1,4 @@
-using System.Dynamic;
 using Catalog.Data;
-using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +23,7 @@ public class OrderSummaryComposer(CatalogDbContext dbContext, IHttpContextAccess
             where o.OrderId == orderId
             select new { OrderItem = i, Product = p }).ToListAsync(ct);
 
-        var productsModel = new Dictionary<Guid, dynamic>();
-        foreach (var row in rows)
-        {
-            productsModel[row.OrderItem.ProductId] = MapToViewModel(row.OrderItem, row.Product);
-        }
+        var productsModel = Mapper.MapToDictionary(rows.Select(r => (r.OrderItem, r.Product)));
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductsLoaded
@@ -40,16 +34,5 @@ public class OrderSummaryComposer(CatalogDbContext dbContext, IHttpContextAccess
         var vm = request.GetComposedResponseModel();
         vm.Products = productsModel.Values.ToList();
         vm.OrderId = orderId;
-    }
-
-    private dynamic MapToViewModel(OrderItem orderedProduct, Product product)
-    {
-        dynamic vm = new ExpandoObject();
-        vm.ProductId = orderedProduct.ProductId;
-        vm.Name = product.Name;
-        vm.Description = product.Description;
-        vm.ImageUrl = product.ImageUrl;
-        vm.Quantity = orderedProduct.Quantity;
-        return vm;
     }
 }
