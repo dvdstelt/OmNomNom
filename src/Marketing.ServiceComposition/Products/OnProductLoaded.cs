@@ -6,7 +6,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Marketing.ServiceComposition.Products;
 
-class ProductLoadedSubscriber(MarketingDbContext dbContext) : ICompositionEventsHandler<ProductLoaded>
+class OnProductLoaded(MarketingDbContext dbContext) : ICompositionEventsHandler<ProductLoaded>
 {
     public async Task Handle(ProductLoaded @event, HttpRequest request)
     {

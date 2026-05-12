@@ -6,7 +6,7 @@ using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
 
-public class ProductLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<ProductLoaded>
+public class OnProductLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<ProductLoaded>
 {
     public async Task Handle(ProductLoaded @event, HttpRequest request)
     {

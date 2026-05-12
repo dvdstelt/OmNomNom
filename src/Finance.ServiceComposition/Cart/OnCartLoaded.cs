@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Orders;
+namespace Finance.ServiceComposition.Cart;
 
-public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<CartLoaded>
+public class OnCartLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<CartLoaded>
 {
     public async Task Handle(CartLoaded @event, HttpRequest request)
     {

@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Orders;
+namespace Finance.ServiceComposition.Cart;
 
 // Companion to `CartSummaryComposer` on the Catalog side: receives
 // `CartSummaryLoaded`, attaches per-item Price/Discount from Finance's
 // Products view, and exposes the cart total. The shipping route uses
-// the heavier `CartLoadedSubscriber`/`CartLoaded` pair instead, because
+// the heavier `OnCartLoaded` / `CartLoaded` pair instead, because
 // it also renders product names/images.
-public class CartSummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<CartSummaryLoaded>
+public class OnCartSummaryLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<CartSummaryLoaded>
 {
     public async Task Handle(CartSummaryLoaded @event, HttpRequest request)
     {

@@ -7,7 +7,7 @@ using Shipping.ServiceComposition.Events;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class DeliverySummaryLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<DeliverySummaryLoaded>
+public class OnDeliverySummaryLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<DeliverySummaryLoaded>
 {
     public async Task Handle(DeliverySummaryLoaded @event, HttpRequest request)
     {

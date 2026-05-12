@@ -8,7 +8,7 @@ namespace Catalog.ServiceComposition.Checkout;
 // attach Price/Discount via CartSummaryLoaded / SummaryLoaded events,
 // and Catalog subscribers attach Name/ImageUrl on /buy/summary.
 // The cart and shipping screens need a richer line (Name + ImageUrl)
-// and use the heavier Catalog.ShoppingCart.Mapper instead.
+// and use the heavier Catalog.Cart.Mapper instead.
 public static class Mapper
 {
     public static IDictionary<Guid, dynamic> MapToDictionary(CartSlice cart)

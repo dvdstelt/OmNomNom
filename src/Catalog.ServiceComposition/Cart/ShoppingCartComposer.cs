@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
-namespace Catalog.ServiceComposition.ShoppingCart;
+namespace Catalog.ServiceComposition.Cart;
 
 [CompositionHandler]
 public class ShoppingCartComposer(IWorkflowStore workflow, CatalogDbContext dbContext, IHttpContextAccessor http)

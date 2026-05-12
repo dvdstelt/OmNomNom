@@ -10,7 +10,7 @@ using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class SummaryLoadedSubscriber(FinanceDbContext dbContext, IWorkflowStore workflow) : ICompositionEventsHandler<SummaryLoaded>
+public class OnSummaryLoaded(FinanceDbContext dbContext, IWorkflowStore workflow) : ICompositionEventsHandler<SummaryLoaded>
 {
     public async Task Handle(SummaryLoaded @event, HttpRequest request)
     {

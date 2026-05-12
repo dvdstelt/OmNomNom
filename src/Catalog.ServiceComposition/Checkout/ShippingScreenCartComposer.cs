@@ -28,7 +28,7 @@ public class ShippingScreenCartComposer(IWorkflowStore workflow, CatalogDbContex
                    ?? CartSlice.Empty;
 
         var products = await dbContext.Products.ToListAsync(ct);
-        var orderedProducts = ShoppingCart.Mapper.MapToDictionary(cart, products);
+        var orderedProducts = Cart.Mapper.MapToDictionary(cart, products);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartLoaded

@@ -10,7 +10,6 @@ public class ProductsQuery
     public string? Categories { get; set; }
     public string? Breweries { get; set; }
     public string? Countries { get; set; }
-    public bool InStock { get; set; } = true;
     public string? Sort { get; set; }
     public int Page { get; set; } = 1;
     public int Size { get; set; } = 12;

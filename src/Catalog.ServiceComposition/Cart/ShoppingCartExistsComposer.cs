@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
-namespace Catalog.ServiceComposition.ShoppingCart;
+namespace Catalog.ServiceComposition.Cart;
 
 [CompositionHandler]
 public class ShoppingCartExistsComposer(IWorkflowStore workflow, IHttpContextAccessor http)

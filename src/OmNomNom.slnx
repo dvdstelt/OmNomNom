@@ -24,6 +24,7 @@
   </Folder>
   <Folder Name="/Marketing/">
     <Project Path="Marketing.Data/Marketing.Data.csproj" />
+    <Project Path="Marketing.Endpoint/Marketing.Endpoint.csproj" />
     <Project Path="Marketing.ServiceComposition/Marketing.ServiceComposition.csproj" />
   </Folder>
   <Folder Name="/PaymentInfo/">
@@ -40,7 +41,6 @@
     <Project Path="Shipping.ServiceComposition/Shipping.ServiceComposition.csproj" />
   </Folder>
   <Project Path="CompositionGateway/CompositionGateway.csproj" />
-  <Project Path="Marketing.Endpoint/Marketing.Endpoint.csproj" />
   <Project Path="OmNomNom.BackOffice/OmNomNom.BackOffice.csproj" />
   <Project Path="website/website.esproj">
     <Platform Project="AnyCPU" />

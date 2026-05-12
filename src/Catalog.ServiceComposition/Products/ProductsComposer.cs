@@ -1,5 +1,4 @@
 using Catalog.Data;
-using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,7 @@ using ServiceComposer.AspNetCore;
 namespace Catalog.ServiceComposition.Products;
 
 // Server-side product search. Catalog owns the result set and applies
-// filters on Catalog-owned fields (category/brewery/country/in-stock).
+// filters on Catalog-owned fields (category/brewery/country).
 // Sorting on signals Catalog doesn't own is delegated by raising
 // ProductCandidatesAvailable: any subscriber that owns a sort signal
 // (e.g. Marketing) reads its own request parameters and writes the
@@ -38,30 +37,18 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
 
         // 1. Filter Catalog-owned attributes. Each filter only applies
         //    when the caller supplied at least one value.
-        IQueryable<Product> productsQuery = dbContext.Products;
+        var productsQuery = dbContext.Products.AsQueryable();
         if (query.CategoryList.Count > 0) productsQuery = productsQuery.Where(p => query.CategoryList.Contains(p.Category));
         if (query.BreweryList.Count > 0) productsQuery = productsQuery.Where(p => query.BreweryList.Contains(p.Brewery));
         if (query.CountryList.Count > 0) productsQuery = productsQuery.Where(p => query.CountryList.Contains(p.Country));
 
-        // 2. Apply the in-stock filter via a join on the snapshot.
-        //    The default of true keeps zero-stock items off the list,
-        //    matching what users would expect on a storefront.
-        if (query.InStock)
-        {
-            productsQuery =
-                from p in productsQuery
-                join s in dbContext.InventorySnapshots on p.ProductId equals s.ProductId
-                where s.EstimatedInStock > 0
-                select p;
-        }
-
-        // 3. Materialise the filtered candidate set as IDs only. We
+        // 2. Materialise the filtered candidate set as IDs only. We
         //    re-query via productsQuery for the fallback page slice
         //    if no subscriber claims the sort.
         var candidateIds = await productsQuery.Select(p => p.ProductId).ToListAsync(ct);
         var totalCount = candidateIds.Count;
 
-        // 4. Ask other components to claim ownership of the sort. Each
+        // 3. Ask other components to claim ownership of the sort. Each
         //    subscriber inspects whatever request parameters it cares
         //    about and fills OrderedIds. If none does (no sort param,
         //    unknown sort, or no subscriber deployed) Catalog falls
@@ -83,13 +70,21 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
                 .Select(p => p.ProductId)
                 .ToListAsync(ct);
 
-        // 5. Load the Product + InventorySnapshot rows for the page,
-        //    preserving the rank order from step 4.
-        var pageRows = await (
-            from p in dbContext.Products
-            join s in dbContext.InventorySnapshots on p.ProductId equals s.ProductId
-            where pageIds.Contains(p.ProductId)
-            select new { Product = p, Inventory = s }).ToListAsync(ct);
+        // 4. Load the Product rows for the page plus the live in-stock
+        //    figure (sum of the InventoryDelta ledger) and drop the
+        //    sold-out ones. Worst case the page shows fewer than `size`
+        //    items rather than a "Less than 1 left" tile.
+        var pageRows = await dbContext.Products
+            .Where(p => pageIds.Contains(p.ProductId))
+            .Select(p => new
+            {
+                Product = p,
+                InStock = dbContext.InventoryDeltas
+                    .Where(d => d.ProductId == p.ProductId)
+                    .Sum(d => (int?)d.Delta) ?? 0
+            })
+            .Where(x => x.InStock > 0)
+            .ToListAsync(ct);
 
         var lookup = pageRows.ToDictionary(x => x.Product.ProductId);
 
@@ -97,10 +92,10 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
         foreach (var id in pageIds)
         {
             if (!lookup.TryGetValue(id, out var row)) continue;
-            productsModel[id] = Mapper.MapToViewModel(row.Product, row.Inventory);
+            productsModel[id] = Mapper.MapToViewModel(row.Product, row.InStock);
         }
 
-        // 6. Compose: Marketing/Finance subscribers attach their
+        // 5. Compose: Marketing/Finance subscribers attach their
         //    slices to the page items (not the whole catalog).
         await context.RaiseEvent(new ProductsLoaded
         {

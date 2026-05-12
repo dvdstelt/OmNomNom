@@ -1,12 +1,12 @@
 using Catalog.ServiceComposition.Events;
-using Finance.Data;
+using Marketing.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Products;
+namespace Marketing.ServiceComposition.Products;
 
-class ProductsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<ProductsLoaded>
+class OnProductsLoaded(MarketingDbContext dbContext) : ICompositionEventsHandler<ProductsLoaded>
 {
     public async Task Handle(ProductsLoaded @event, HttpRequest request)
     {
@@ -18,8 +18,10 @@ class ProductsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsH
         foreach (var product in @event.Products)
         {
             var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
-            product.Value.Price = matchingProduct.Price;
-            product.Value.Discount = matchingProduct.Discount;
+            product.Value.Rating = matchingProduct.Rating;
+            product.Value.RatingCount = matchingProduct.RatingCount;
+            product.Value.OrderCount = matchingProduct.OrderCount;
+            product.Value.Trending = matchingProduct.Trending;
         }
     }
 }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.ServiceComposition.Events;
 
-namespace Finance.ServiceComposition.DeliveryOptions;
+namespace Finance.ServiceComposition.Checkout;
 
-public class DeliveryOptionsLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<DeliveryOptionsLoaded>
+public class OnDeliveryOptionsLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<DeliveryOptionsLoaded>
 {
     public async Task Handle(DeliveryOptionsLoaded @event, HttpRequest request)
     {

@@ -19,7 +19,6 @@ public static class DatabaseInitializer
 
         await dbContext.Products.AddRangeAsync(SeedData.Products(), cancellationToken);
         await dbContext.InventoryDeltas.AddRangeAsync(SeedData.ProductInventory(), cancellationToken);
-        await dbContext.InventorySnapshots.AddRangeAsync(SeedData.InventorySnapshots(), cancellationToken);
         await dbContext.Orders.AddAsync(SeedData.Orders(), cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
