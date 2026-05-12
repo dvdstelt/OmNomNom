@@ -1,37 +1,32 @@
 using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Finance.Data.Models;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Orders;
 
-public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsSubscriber
+public class CartLoadedSubscriber(FinanceDbContext dbContext) : ICompositionEventsHandler<CartLoaded>
 {
-    [HttpGet("/cart/{orderId}")]
-    [HttpGet("/buy/shipping/{orderId}")]
-    public void Subscribe(ICompositionEventsPublisher publisher)
+    public async Task Handle(CartLoaded @event, HttpRequest request)
     {
-        publisher.Subscribe<CartLoaded>(async (@event, request) =>
+        var productIds = @event.OrderedProducts.Keys.ToList();
+        var resultSet = await dbContext.Products
+            .Where(s => productIds.Contains(s.ProductId))
+            .ToListAsync(request.HttpContext.RequestAborted);
+
+        decimal totalPrice = 0;
+        foreach (var product in @event.OrderedProducts)
         {
-            var productIds = @event.OrderedProducts.Keys.ToList();
-            var resultSet = await dbContext.Products
-                .Where(s => productIds.Contains(s.ProductId))
-                .ToListAsync(request.HttpContext.RequestAborted);
+            var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
+            product.Value.Price = matchingProduct.Price;
+            product.Value.Discount = matchingProduct.Discount;
 
-            decimal totalPrice = 0;
-            foreach (var product in @event.OrderedProducts)
-            {
-                var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
-                product.Value.Price = matchingProduct.Price;
-                product.Value.Discount = matchingProduct.Discount;
+            totalPrice += matchingProduct.EffectivePrice() * (int)product.Value.Quantity;
+        }
 
-                totalPrice += matchingProduct.EffectivePrice() * (int)product.Value.Quantity;
-            }
-
-            var vm = request.GetComposedResponseModel();
-            vm.TotalCartPrice = totalPrice;
-        });
+        var vm = request.GetComposedResponseModel();
+        vm.TotalCartPrice = totalPrice;
     }
 }
