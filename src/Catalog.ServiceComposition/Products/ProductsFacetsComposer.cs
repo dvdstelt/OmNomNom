@@ -14,11 +14,13 @@ namespace Catalog.ServiceComposition.Products;
 // "No beers match your filter" page after the user picks one.
 //
 // Three small distinct queries; cheap enough to compute on every call.
-public class ProductsFacetsComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class ProductsFacetsComposer(CatalogDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/products/facets")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle()
     {
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         IQueryable<Product> inStockProducts =

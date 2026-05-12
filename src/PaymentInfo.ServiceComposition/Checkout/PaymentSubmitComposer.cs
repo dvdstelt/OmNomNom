@@ -6,25 +6,19 @@ using WorkflowComposer;
 
 namespace PaymentInfo.ServiceComposition.Checkout;
 
-public class PaymentSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class PaymentSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/payment/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] PaymentBody body)
     {
-        var submitted = await request.Bind<CreditCard>();
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
-        var slice = new PaymentSlice(submitted.Body.CreditCardId);
-        await workflow.Write(submitted.OrderId, PaymentWorkflowSlice.Key, slice, ct);
+        var slice = new PaymentSlice(body.CreditCardId);
+        await workflow.Write(orderId, PaymentWorkflowSlice.Key, slice, ct);
     }
 
-    class CreditCard
-    {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public PaymentBody Body { get; set; } = null!;
-    }
-
-    class PaymentBody
+    public class PaymentBody
     {
         public Guid CreditCardId { get; set; }
     }

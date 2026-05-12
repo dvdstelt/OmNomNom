@@ -6,29 +6,23 @@ using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class AddressSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/address/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] OrderAddress details)
     {
-        var submitted = await request.Bind<OrderAddressDetails>();
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
         await workflow.Write(
-            submitted.OrderId,
+            orderId,
             BillingAddressWorkflowSlice.Key,
-            new BillingAddressSlice(submitted.Details.BillingAddress),
+            new BillingAddressSlice(details.BillingAddress),
             ct);
     }
 
-    class OrderAddressDetails
+    public class OrderAddress
     {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public OrderAddress Details { get; set; } = null!;
-
-        public class OrderAddress
-        {
-            public BillingAddressData BillingAddress { get; set; } = null!;
-        }
+        public BillingAddressData BillingAddress { get; set; } = null!;
     }
 }

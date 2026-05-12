@@ -1,7 +1,6 @@
 using System.Dynamic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
@@ -11,16 +10,22 @@ using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class SummaryComposer(ShippingDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class SummaryComposer(ShippingDbContext dbContext, IWorkflowStore workflow, IHttpContextAccessor http)
 {
+    // ServiceComposer 5.x allows only one Http* attribute per method;
+    // payment and summary screens get their own entry points that share
+    // LoadAsync. Both screens need the same shipping summary slice.
     [HttpGet("/buy/payment/{orderId}")]
-    [HttpGet("/buy/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
-    {
-        var vm = request.GetComposedResponseModel();
+    public Task HandlePayment(Guid orderId) => LoadAsync(orderId);
 
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
+    [HttpGet("/buy/summary/{orderId}")]
+    public Task HandleSummary(Guid orderId) => LoadAsync(orderId);
+
+    async Task LoadAsync(Guid orderId)
+    {
+        var request = http.HttpContext!.Request;
+        var vm = request.GetComposedResponseModel();
         var ct = request.HttpContext.RequestAborted;
 
         // DeliveryOptionSubmitHandler writes the chosen DeliveryOptionId

@@ -6,6 +6,7 @@ using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 builder.Services.AddViewModelComposition(options =>
 {

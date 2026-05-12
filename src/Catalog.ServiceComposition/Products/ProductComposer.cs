@@ -8,15 +8,14 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Products;
 
-public class ProductComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class ProductComposer(CatalogDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/product/{productId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid productId)
     {
+        var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-
-        var productIdString = (string)request.HttpContext.GetRouteData().Values["productId"]!;
-        var productId = Guid.Parse(productIdString);
 
         var ct = request.HttpContext.RequestAborted;
         var row = await (

@@ -11,12 +11,13 @@ using Shipping.ServiceComposition.Events;
 
 namespace Finance.ServiceComposition.Email;
 
-public class OrderSummaryComposer(FinanceDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class OrderSummaryComposer(FinanceDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/email/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderData = await request.Bind<OrderData>();
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         // The email summary fires on OrderShipped, so by this point a
@@ -25,7 +26,7 @@ public class OrderSummaryComposer(FinanceDbContext dbContext) : ICompositionRequ
         var row = await (
             from o in dbContext.Orders.Include(o => o.Items)
             join d in dbContext.DeliveryOptions on o.DeliveryOptionId equals d.DeliveryOptionId
-            where o.OrderId == orderData.OrderId
+            where o.OrderId == orderId
             select new { Order = o, DeliveryOption = d }).SingleAsync(ct);
 
         var order = row.Order;
@@ -50,10 +51,5 @@ public class OrderSummaryComposer(FinanceDbContext dbContext) : ICompositionRequ
             order.BillingAddress.Country);
         vm.DeliveryOption = deliveryOptionModel;
         vm.TotalPrice = order.Items.Sum(s => s.EffectivePrice() * s.Quantity) + deliveryOption.Price;
-    }
-
-    class OrderData
-    {
-        [FromRoute] public Guid OrderId { get; set; }
     }
 }

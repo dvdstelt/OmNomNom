@@ -7,31 +7,25 @@ using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class AddressSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/address/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] OrderAddress details)
     {
-        var submitted = await request.Bind<OrderAddressDetails>();
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
         var slice = new ShippingAddressSlice(
-            submitted.Details.ShippingAddress.FullName,
-            submitted.Details.ShippingAddress.Street,
-            submitted.Details.ShippingAddress.ZipCode,
-            submitted.Details.ShippingAddress.Town,
-            submitted.Details.ShippingAddress.Country);
-        await workflow.Write(submitted.OrderId, ShippingAddressWorkflowSlice.Key, slice, ct);
+            details.ShippingAddress.FullName,
+            details.ShippingAddress.Street,
+            details.ShippingAddress.ZipCode,
+            details.ShippingAddress.Town,
+            details.ShippingAddress.Country);
+        await workflow.Write(orderId, ShippingAddressWorkflowSlice.Key, slice, ct);
     }
 
-    class OrderAddressDetails
+    public class OrderAddress
     {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public OrderAddress Details { get; set; } = null!;
-
-        public class OrderAddress
-        {
-            public Address ShippingAddress { get; set; } = null!;
-        }
+        public Address ShippingAddress { get; set; } = null!;
     }
 }

@@ -7,13 +7,17 @@ using ServiceComposer.AspNetCore;
 
 namespace PaymentInfo.ServiceComposition.Checkout;
 
-public class CreditCardComposer(PaymentInfoDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class CreditCardComposer(PaymentInfoDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/buy/creditcard/{customerId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid customerId)
     {
+        var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-        var customerId = Guid.Parse("01093176-1308-493a-8f67-da5d278e2375");
+        // TODO: route binds the customerId, but the real lookup is still
+        // hardcoded until authentication is wired in.
+        customerId = Guid.Parse("01093176-1308-493a-8f67-da5d278e2375");
 
         var creditCards = await dbContext.CreditCards
             .Where(s => s.CustomerId == customerId)

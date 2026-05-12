@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using PaymentInfo.Data;
 using PaymentInfo.ServiceComposition.Workflow;
@@ -9,14 +8,13 @@ using WorkflowComposer;
 
 namespace PaymentInfo.ServiceComposition.Checkout;
 
-public class SummaryComposer(PaymentInfoDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class SummaryComposer(PaymentInfoDbContext dbContext, IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpGet("/buy/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
         var row = await (
             from o in dbContext.Orders
@@ -40,7 +38,7 @@ public class SummaryComposer(PaymentInfoDbContext dbContext, IWorkflowStore work
                     .FirstOrDefaultAsync(s => s.CreditCardId == slice.CreditCardId, ct);
         }
 
-        var vm = request.GetComposedResponseModel();
+        var vm = http.HttpContext!.Request.GetComposedResponseModel();
         vm.CreditCardLastDigits = creditCard?.LastDigits;
         vm.CreditCardType = creditCard?.CardType;
     }

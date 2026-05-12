@@ -3,21 +3,20 @@ using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class ShoppingCartComposer(IWorkflowStore workflow, CatalogDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class ShoppingCartComposer(IWorkflowStore workflow, CatalogDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/cart/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
+        var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)

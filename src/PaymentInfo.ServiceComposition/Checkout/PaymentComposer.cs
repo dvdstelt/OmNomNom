@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using PaymentInfo.Data;
 using PaymentInfo.ServiceComposition.Workflow;
@@ -9,14 +8,14 @@ using WorkflowComposer;
 
 namespace PaymentInfo.ServiceComposition.Checkout;
 
-public class PaymentComposer(PaymentInfoDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class PaymentComposer(PaymentInfoDbContext dbContext, IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpGet("/buy/payment/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
+        var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
         // The slice is the user's just-selected card (synchronously

@@ -28,14 +28,16 @@ namespace Catalog.ServiceComposition.Products;
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
 //   Page, PageSize, TotalCount, TotalPages
-public class ProductsComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor http)
 {
     const int DefaultPageSize = 12;
     const int MaxPageSize = 50;
 
     [HttpGet("/products")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle()
     {
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
         var query = request.Query;
 

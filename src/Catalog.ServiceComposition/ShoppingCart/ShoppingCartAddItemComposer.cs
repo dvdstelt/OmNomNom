@@ -6,14 +6,13 @@ using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
-public class ShoppingCartAddItemComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class ShoppingCartAddItemComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/cart/addproduct/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] ProductModelBody detail)
     {
-        var productToAdd = await request.Bind<ProductModel>();
-        var orderId = productToAdd.orderId;
-        var productId = productToAdd.Detail.Id;
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         if (orderId == Guid.Empty)
@@ -21,7 +20,7 @@ public class ShoppingCartAddItemComposer(IWorkflowStore workflow) : IComposition
 
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
                    ?? CartSlice.Empty;
-        var updated = Upsert(cart, productId, productToAdd.Detail.Quantity);
+        var updated = Upsert(cart, detail.Id, detail.Quantity);
         await workflow.Write(orderId, CartWorkflowSlice.Key, updated, ct);
 
         var vm = request.GetComposedResponseModel();
@@ -47,13 +46,7 @@ public class ShoppingCartAddItemComposer(IWorkflowStore workflow) : IComposition
         return new CartSlice(lines);
     }
 
-    class ProductModel
-    {
-        [FromRoute] public Guid orderId { get; set; }
-        [FromBody] public ProductModelBody Detail { get; set; } = null!;
-    }
-
-    class ProductModelBody
+    public class ProductModelBody
     {
         public Guid Id { get; set; }
         public int Quantity { get; set; }

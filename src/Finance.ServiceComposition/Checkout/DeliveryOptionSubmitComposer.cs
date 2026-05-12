@@ -6,25 +6,19 @@ using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class DeliveryOptionSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class DeliveryOptionSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/shipping/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] SelectedDeliveryOption body)
     {
-        var submitted = await request.Bind<SelectedDeliveryOption>();
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
-        var slice = new DeliveryOptionSlice(submitted.Body.DeliveryOptionId);
-        await workflow.Write(submitted.OrderId, DeliveryOptionWorkflowSlice.Key, slice, ct);
+        var slice = new DeliveryOptionSlice(body.DeliveryOptionId);
+        await workflow.Write(orderId, DeliveryOptionWorkflowSlice.Key, slice, ct);
     }
 
-    class SelectedDeliveryOption
-    {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public BodyModel Body { get; set; } = null!;
-    }
-
-    class BodyModel
+    public class SelectedDeliveryOption
     {
         public Guid DeliveryOptionId { get; set; }
     }

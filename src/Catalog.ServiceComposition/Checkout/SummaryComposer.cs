@@ -3,19 +3,18 @@ using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class SummaryComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class SummaryComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpGet("/buy/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)

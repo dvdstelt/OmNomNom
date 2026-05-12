@@ -9,19 +9,20 @@ using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition.Email;
 
-public class OrderSummaryComposer(CatalogDbContext dbContext) : ICompositionRequestsHandler
+[CompositionHandler]
+public class OrderSummaryComposer(CatalogDbContext dbContext, IHttpContextAccessor http)
 {
     [HttpGet("/email/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderData = await request.Bind<OrderData>();
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         var rows = await (
             from o in dbContext.Orders
             from i in o.Products
             join p in dbContext.Products on i.ProductId equals p.ProductId
-            where o.OrderId == orderData.OrderId
+            where o.OrderId == orderId
             select new { OrderItem = i, Product = p }).ToListAsync(ct);
 
         var productsModel = new Dictionary<Guid, dynamic>();
@@ -38,7 +39,7 @@ public class OrderSummaryComposer(CatalogDbContext dbContext) : ICompositionRequ
 
         var vm = request.GetComposedResponseModel();
         vm.Products = productsModel.Values.ToList();
-        vm.OrderId = orderData.OrderId;
+        vm.OrderId = orderId;
     }
 
     private dynamic MapToViewModel(OrderItem orderedProduct, Product product)
@@ -50,10 +51,5 @@ public class OrderSummaryComposer(CatalogDbContext dbContext) : ICompositionRequ
         vm.ImageUrl = product.ImageUrl;
         vm.Quantity = orderedProduct.Quantity;
         return vm;
-    }
-
-    class OrderData
-    {
-        [FromRoute] public Guid OrderId { get; set; }
     }
 }
