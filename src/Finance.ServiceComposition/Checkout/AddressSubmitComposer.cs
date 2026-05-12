@@ -10,19 +10,14 @@ namespace Finance.ServiceComposition.Checkout;
 public class AddressSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/address/{orderId}")]
-    public async Task Handle(Guid orderId, [FromBody] OrderAddress details)
+    public async Task Handle(Guid orderId, [FromBody] BillingAddressForm form)
     {
         var ct = http.HttpContext!.RequestAborted;
 
         await workflow.Write(
             orderId,
             BillingAddressWorkflowSlice.Key,
-            new BillingAddressSlice(details.BillingAddress),
+            new BillingAddressSlice(form.BillingAddress),
             ct);
-    }
-
-    public class OrderAddress
-    {
-        public BillingAddressData BillingAddress { get; set; } = null!;
     }
 }

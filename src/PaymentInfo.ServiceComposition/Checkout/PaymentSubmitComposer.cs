@@ -10,16 +10,11 @@ namespace PaymentInfo.ServiceComposition.Checkout;
 public class PaymentSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/payment/{orderId}")]
-    public async Task Handle(Guid orderId, [FromBody] PaymentBody body)
+    public async Task Handle(Guid orderId, [FromBody] PaymentForm form)
     {
         var ct = http.HttpContext!.RequestAborted;
 
-        var slice = new PaymentSlice(body.CreditCardId);
+        var slice = new PaymentSlice(form.CreditCardId);
         await workflow.Write(orderId, PaymentWorkflowSlice.Key, slice, ct);
-    }
-
-    public class PaymentBody
-    {
-        public Guid CreditCardId { get; set; }
     }
 }

@@ -24,17 +24,11 @@ public class OrderSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor h
         // also reads the body. ServiceComposer enables buffering, so rewind
         // before each read so whichever composer runs second still sees JSON.
         request.Body.Position = 0;
-        var items = await JsonSerializer.DeserializeAsync<List<ShoppingCartItem>>(request.Body, JsonOptions, ct) ?? [];
+        var items = await JsonSerializer.DeserializeAsync<List<CartItemForm>>(request.Body, JsonOptions, ct) ?? [];
 
         var slice = new OrderItemsSlice(items
             .Select(i => new OrderItemLine(i.ProductId, i.Quantity))
             .ToList());
         await workflow.Write(orderId, OrderItemsWorkflowSlice.Key, slice, ct);
-    }
-
-    public class ShoppingCartItem
-    {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
     }
 }

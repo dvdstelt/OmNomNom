@@ -10,7 +10,7 @@ namespace Catalog.ServiceComposition.ShoppingCart;
 public class ShoppingCartAddItemComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/cart/addproduct/{orderId}")]
-    public async Task Handle(Guid orderId, [FromBody] ProductModelBody detail)
+    public async Task Handle(Guid orderId, [FromBody] AddProductForm form)
     {
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
@@ -20,7 +20,7 @@ public class ShoppingCartAddItemComposer(IWorkflowStore workflow, IHttpContextAc
 
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
                    ?? CartSlice.Empty;
-        var updated = Upsert(cart, detail.Id, detail.Quantity);
+        var updated = Upsert(cart, form.Id, form.Quantity);
         await workflow.Write(orderId, CartWorkflowSlice.Key, updated, ct);
 
         var vm = request.GetComposedResponseModel();
@@ -46,9 +46,4 @@ public class ShoppingCartAddItemComposer(IWorkflowStore workflow, IHttpContextAc
         return new CartSlice(lines);
     }
 
-    public class ProductModelBody
-    {
-        public Guid Id { get; set; }
-        public int Quantity { get; set; }
-    }
 }
