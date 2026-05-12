@@ -1,9 +1,7 @@
-using System.Dynamic;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
@@ -17,28 +15,28 @@ namespace Catalog.ServiceComposition.Checkout;
 //
 // Shipping is intentionally excluded: that screen renders the full
 // `CartItemList` and still needs name/imageUrl, so it stays on the
-// existing `ShoppingCartComposer` path.
-public class CartSummaryComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+// existing `ShippingScreenCartComposer` path.
+[CompositionHandler]
+public class CartSummaryComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
+    // ServiceComposer 5.x allows only one Http* attribute per method,
+    // so the address and payment screens get their own entry points
+    // that both delegate to LoadAsync. The work is identical.
     [HttpGet("/buy/address/{orderId}")]
+    public Task HandleAddress(Guid orderId) => LoadAsync(orderId);
+
     [HttpGet("/buy/payment/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public Task HandlePayment(Guid orderId) => LoadAsync(orderId);
+
+    async Task LoadAsync(Guid orderId)
     {
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
                    ?? CartSlice.Empty;
 
-        var orderedProducts = new Dictionary<Guid, dynamic>();
-        foreach (var line in cart.Items)
-        {
-            dynamic vm = new ExpandoObject();
-            vm.ProductId = line.ProductId;
-            vm.Quantity = line.Quantity;
-            orderedProducts[line.ProductId] = vm;
-        }
+        var orderedProducts = Mapper.MapToDictionary(cart);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartSummaryLoaded

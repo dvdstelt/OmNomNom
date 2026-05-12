@@ -1,37 +1,25 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
-using Shipping.Data.Models;
 using Shipping.ServiceComposition.Workflow;
 using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class AddressSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class AddressSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpPost("/buy/address/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId, [FromBody] ShippingAddressForm form)
     {
-        var submitted = await request.Bind<OrderAddressDetails>();
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
         var slice = new ShippingAddressSlice(
-            submitted.Details.ShippingAddress.FullName,
-            submitted.Details.ShippingAddress.Street,
-            submitted.Details.ShippingAddress.ZipCode,
-            submitted.Details.ShippingAddress.Town,
-            submitted.Details.ShippingAddress.Country);
-        await workflow.Write(submitted.OrderId, ShippingAddressWorkflowSlice.Key, slice, ct);
-    }
-
-    class OrderAddressDetails
-    {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public OrderAddress Details { get; set; } = null!;
-
-        public class OrderAddress
-        {
-            public Address ShippingAddress { get; set; } = null!;
-        }
+            form.ShippingAddress.FullName,
+            form.ShippingAddress.Street,
+            form.ShippingAddress.ZipCode,
+            form.ShippingAddress.Town,
+            form.ShippingAddress.Country);
+        await workflow.Write(orderId, ShippingAddressWorkflowSlice.Key, slice, ct);
     }
 }

@@ -1,20 +1,19 @@
 using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class AddressComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class AddressComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpGet("/buy/address/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
+        var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
         // The slice holds whatever the user entered earlier in this

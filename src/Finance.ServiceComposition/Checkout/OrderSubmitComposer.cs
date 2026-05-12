@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
@@ -8,40 +7,28 @@ using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class OrderSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+// Body is a raw JSON array of ShoppingCartItem; read it directly from
+// request.Body rather than via [FromBody]. See Catalog's matching
+// OrderSubmitComposer for the rationale.
+[CompositionHandler]
+public class OrderSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
+    static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     [HttpPost("/cart/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var submitted = await request.Bind<ShoppingCart>();
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
-
+        // Catalog has a matching OrderSubmitComposer on the same route that
+        // also reads the body. ServiceComposer enables buffering, so rewind
+        // before each read so whichever composer runs second still sees JSON.
         request.Body.Position = 0;
-        using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
-        var body = await reader.ReadToEndAsync(ct);
-        var shoppingCartItems = JsonSerializer.Deserialize<List<ShoppingCartItem>>(body,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
+        var items = await JsonSerializer.DeserializeAsync<List<CartItemForm>>(request.Body, JsonOptions, ct) ?? [];
 
-        var slice = new OrderItemsSlice(shoppingCartItems
+        var slice = new OrderItemsSlice(items
             .Select(i => new OrderItemLine(i.ProductId, i.Quantity))
             .ToList());
-        await workflow.Write(submitted.OrderId, OrderItemsWorkflowSlice.Key, slice, ct);
-    }
-
-    class ShoppingCart
-    {
-        [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public ShoppingCartModel Model { get; set; } = null!;
-    }
-
-    class ShoppingCartModel
-    {
-        public Guid OrderId { get; set; }
-    }
-
-    class ShoppingCartItem
-    {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
+        await workflow.Write(orderId, OrderItemsWorkflowSlice.Key, slice, ct);
     }
 }

@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
@@ -13,34 +12,31 @@ namespace Catalog.ServiceComposition.Checkout;
 // edits arrive here for the first time). Updates the cart slice;
 // SubmitOrderItems will be dispatched later by SummarySubmitComposer
 // as part of the atomic checkout submit.
-public class OrderSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
+//
+// The body is a raw JSON array of ShoppingCartItem. Read it directly
+// from request.Body instead of [FromBody] - ServiceComposer 5.2's
+// source generator can't currently encode generic parameter types
+// (List<T>, T[]) into hintNames, and we don't want to wrap the
+// frontend contract just to work around that.
+[CompositionHandler]
+public class OrderSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
-    [HttpPost("/cart/{orderId}")]
-    public async Task Handle(HttpRequest request)
-    {
-        var data = await request.Bind<ShoppingCart>();
-        var ct = request.HttpContext.RequestAborted;
+    static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
+    [HttpPost("/cart/{orderId}")]
+    public async Task Handle(Guid orderId)
+    {
+        var request = http.HttpContext!.Request;
+        var ct = request.HttpContext.RequestAborted;
+        // Finance has a matching OrderSubmitComposer on the same route that
+        // also reads the body. ServiceComposer enables buffering, so rewind
+        // before each read so whichever composer runs second still sees JSON.
         request.Body.Position = 0;
-        using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
-        var body = await reader.ReadToEndAsync(ct);
-        var items = JsonSerializer.Deserialize<List<ShoppingCartItem>>(body,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? [];
+        var items = await JsonSerializer.DeserializeAsync<List<CartItemForm>>(request.Body, JsonOptions, ct) ?? [];
 
         var slice = new CartSlice(items
             .Select(i => new CartLine(i.ProductId, i.Quantity))
             .ToList());
-        await workflow.Write(data.OrderId, CartWorkflowSlice.Key, slice, ct);
-    }
-
-    class ShoppingCart
-    {
-        [FromRoute] public Guid OrderId { get; set; }
-    }
-
-    class ShoppingCartItem
-    {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
+        await workflow.Write(orderId, CartWorkflowSlice.Key, slice, ct);
     }
 }

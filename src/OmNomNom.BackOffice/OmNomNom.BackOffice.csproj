@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <!-- Same NU1107 break as CompositionGateway: ServiceComposer caps
-           DependencyModel below 9, EF Core 10 (transitively via Catalog.Data)
-           wants 10. Pin the higher version explicitly. -->
-      <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.0" />
+      <!-- Newtonsoft.Json drives the dynamic Razor model in OrderShippedHandler / EmailContent.cshtml.
+           It used to ride in transitively via ServiceComposer.AspNetCore 2.x; 4.x+ switched to
+           System.Text.Json, so we now reference it explicitly. -->
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="NServiceBus" Version="10.1.4" />
       <PackageReference Include="NServiceBus.Extensions.Hosting" Version="4.0.1" />
-      <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
+      <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.0" />
     </ItemGroup>
 
     <ItemGroup>

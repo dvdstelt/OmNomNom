@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
                 policy.WithOrigins("https://127.0.0.1:5173", "https://localhost:5173")
                        .AllowAnyHeader();
             }));
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
 

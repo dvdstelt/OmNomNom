@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 using Shipping.Data;
@@ -11,13 +10,13 @@ using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class DeliveryOptionsComposer(ShippingDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
+[CompositionHandler]
+public class DeliveryOptionsComposer(ShippingDbContext dbContext, IWorkflowStore workflow, IHttpContextAccessor http)
 {
     [HttpGet("/buy/shipping/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
+        var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
         // Get all available delivery options

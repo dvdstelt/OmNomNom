@@ -1,7 +1,6 @@
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
 
@@ -14,14 +13,13 @@ namespace Catalog.ServiceComposition.Checkout;
 // per-boundary commands and CompleteOrder are guaranteed to
 // dispatch from checkout.db's outbox via the Checkout.Endpoint
 // processor.
-public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter submitter) : ICompositionRequestsHandler
+[CompositionHandler]
+public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter submitter, IHttpContextAccessor http)
 {
     [HttpPost("/buy/summary/{orderId}")]
-    public async Task Handle(HttpRequest request)
+    public async Task Handle(Guid orderId)
     {
-        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
-        var orderId = Guid.Parse(orderIdString);
-        var ct = request.HttpContext.RequestAborted;
+        var ct = http.HttpContext!.RequestAborted;
 
         await store.Write(orderId, CompleteOrderWorkflowSlice.Key, new CompleteOrderSlice(), ct);
         await submitter.Submit(orderId, ct);

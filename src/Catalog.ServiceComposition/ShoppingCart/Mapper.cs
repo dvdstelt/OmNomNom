@@ -12,17 +12,20 @@ public static class Mapper
 
         foreach (var line in cart.Items)
         {
-            dynamic vm = new ExpandoObject();
-            vm.ProductId = line.ProductId;
-            vm.Quantity = line.Quantity;
-
             var matchingProduct = products.Single(p => p.ProductId == line.ProductId);
-            vm.Name = matchingProduct.Name;
-            vm.ImageUrl = matchingProduct.ImageUrl;
-
-            productsViewModel[line.ProductId] = vm;
+            productsViewModel[line.ProductId] = MapToViewModel(line, matchingProduct);
         }
 
         return productsViewModel;
+    }
+
+    public static dynamic MapToViewModel(CartLine line, Product product)
+    {
+        dynamic vm = new ExpandoObject();
+        vm.ProductId = line.ProductId;
+        vm.Quantity = line.Quantity;
+        vm.Name = product.Name;
+        vm.ImageUrl = product.ImageUrl;
+        return vm;
     }
 }

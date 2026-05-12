@@ -3,7 +3,7 @@ using Catalog.Data.Models;
 
 namespace Catalog.ServiceComposition.Products;
 
-public class Mapper
+public static class Mapper
 {
     public static IDictionary<Guid, dynamic> MapToDictionary(IEnumerable<Product> products, List<InventorySnapshot> inventory)
     {
@@ -12,9 +12,7 @@ public class Mapper
         foreach (var product in products)
         {
             var inventoryItem = inventory.Single(p => p.ProductId == product.ProductId);
-            var vm = MapToViewModel(product, inventoryItem);
-
-            productsViewModel[product.ProductId] = vm;
+            productsViewModel[product.ProductId] = MapToViewModel(product, inventoryItem);
         }
 
         return productsViewModel;
