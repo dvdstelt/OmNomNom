@@ -16,14 +16,8 @@ namespace Catalog.ServiceComposition.Products;
 // ordered IDs back. Catalog has no opinion on the sort vocabulary and
 // never reads ?sort= itself.
 //
-// Query parameters:
-//   categories  comma-separated; empty -> no filter
-//   breweries   comma-separated; empty -> no filter
-//   countries   comma-separated; empty -> no filter
-//   inStock     bool, default true (0-stock items hidden)
-//   sort        consumed by subscribers; if none claims it, Catalog's default (by Name) wins
-//   page        int >= 1, default 1
-//   size        int 1-MaxPageSize, default DefaultPageSize
+// Query parameters live on ProductsQuery; the body of this handler
+// stays focused on the search/compose pipeline.
 //
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
@@ -31,34 +25,28 @@ namespace Catalog.ServiceComposition.Products;
 [CompositionHandler]
 public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor http)
 {
-    const int DefaultPageSize = 12;
     const int MaxPageSize = 50;
 
     [HttpGet("/products")]
-    public async Task Handle()
+    public async Task Handle([FromQuery] ProductsQuery query)
     {
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
-        var query = request.Query;
 
-        var categories = ReadList(query, "categories");
-        var breweries = ReadList(query, "breweries");
-        var countries = ReadList(query, "countries");
-        var inStock = ReadBool(query, "inStock", defaultValue: true);
-        var page = Math.Max(1, ReadInt(query, "page", defaultValue: 1));
-        var size = Math.Clamp(ReadInt(query, "size", defaultValue: DefaultPageSize), 1, MaxPageSize);
+        var page = Math.Max(1, query.Page);
+        var size = Math.Clamp(query.Size, 1, MaxPageSize);
 
         // 1. Filter Catalog-owned attributes. Each filter only applies
         //    when the caller supplied at least one value.
         IQueryable<Product> productsQuery = dbContext.Products;
-        if (categories.Count > 0) productsQuery = productsQuery.Where(p => categories.Contains(p.Category));
-        if (breweries.Count > 0) productsQuery = productsQuery.Where(p => breweries.Contains(p.Brewery));
-        if (countries.Count > 0) productsQuery = productsQuery.Where(p => countries.Contains(p.Country));
+        if (query.CategoryList.Count > 0) productsQuery = productsQuery.Where(p => query.CategoryList.Contains(p.Category));
+        if (query.BreweryList.Count > 0) productsQuery = productsQuery.Where(p => query.BreweryList.Contains(p.Brewery));
+        if (query.CountryList.Count > 0) productsQuery = productsQuery.Where(p => query.CountryList.Contains(p.Country));
 
         // 2. Apply the in-stock filter via a join on the snapshot.
         //    The default of true keeps zero-stock items off the list,
         //    matching what users would expect on a storefront.
-        if (inStock)
+        if (query.InStock)
         {
             productsQuery =
                 from p in productsQuery
@@ -134,28 +122,5 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
         responseModel.PageSize = size;
         responseModel.TotalCount = totalCount;
         responseModel.TotalPages = totalPages;
-    }
-
-    static List<string> ReadList(IQueryCollection query, string name)
-    {
-        if (!query.TryGetValue(name, out var values))
-            return [];
-
-        return values
-            .SelectMany(v => (v ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .ToList();
-    }
-
-    static bool ReadBool(IQueryCollection query, string name, bool defaultValue)
-    {
-        if (!query.TryGetValue(name, out var values) || values.Count == 0) return defaultValue;
-        return bool.TryParse(values[0], out var parsed) ? parsed : defaultValue;
-    }
-
-    static int ReadInt(IQueryCollection query, string name, int defaultValue)
-    {
-        if (!query.TryGetValue(name, out var values) || values.Count == 0) return defaultValue;
-        return int.TryParse(values[0], out var parsed) ? parsed : defaultValue;
     }
 }
