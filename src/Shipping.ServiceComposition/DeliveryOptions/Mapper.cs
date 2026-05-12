@@ -1,10 +1,9 @@
 using System.Dynamic;
-using Microsoft.Extensions.Options;
 using Shipping.Data.Models;
 
 namespace Shipping.ServiceComposition.DeliveryOptions;
 
-public class Mapper
+public static class Mapper
 {
     public static IDictionary<Guid, dynamic> MapToDictionary(IEnumerable<DeliveryOption> deliveryOptions)
     {
@@ -14,7 +13,7 @@ public class Mapper
         {
             deliveryOptionsViewModel[option.DeliveryOptionId] = MapToViewModel(option);
         }
-        
+
         return deliveryOptionsViewModel;
     }
 
@@ -24,7 +23,6 @@ public class Mapper
         vm.DeliveryOptionId = option.DeliveryOptionId;
         vm.Name = option.Name;
         vm.Description = option.Description;
-
         return vm;
     }
 }
