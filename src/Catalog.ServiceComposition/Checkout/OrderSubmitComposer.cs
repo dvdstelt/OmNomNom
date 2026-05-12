@@ -28,6 +28,10 @@ public class OrderSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor h
     {
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
+        // Finance has a matching OrderSubmitComposer on the same route that
+        // also reads the body. ServiceComposer enables buffering, so rewind
+        // before each read so whichever composer runs second still sees JSON.
+        request.Body.Position = 0;
         var items = await JsonSerializer.DeserializeAsync<List<ShoppingCartItem>>(request.Body, JsonOptions, ct) ?? [];
 
         var slice = new CartSlice(items
