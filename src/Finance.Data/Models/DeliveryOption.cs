@@ -1,4 +1,4 @@
-﻿namespace Finance.Data.Models;
+namespace Finance.Data.Models;
 
 public class DeliveryOption
 {

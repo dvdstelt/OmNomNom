@@ -19,6 +19,7 @@
     <Project Path="Finance.ServiceComposition/Finance.ServiceComposition.csproj" />
   </Folder>
   <Folder Name="/ITOps/">
+    <Project Path="Checkout.Endpoint/Checkout.Endpoint.csproj" />
     <Project Path="ITOps.Shared/ITOps.Shared.csproj" />
   </Folder>
   <Folder Name="/Marketing/">
@@ -44,4 +45,8 @@
   <Project Path="website/website.esproj">
     <Platform Project="AnyCPU" />
   </Project>
+  <Folder Name="/WorkflowComposer/">
+    <Project Path="WorkflowComposer/WorkflowComposer.csproj" />
+    <Project Path="WorkflowComposer.Sqlite/WorkflowComposer.Sqlite.csproj" />
+  </Folder>
 </Solution>

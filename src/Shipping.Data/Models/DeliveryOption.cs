@@ -1,4 +1,4 @@
-﻿namespace Shipping.Data.Models;
+namespace Shipping.Data.Models;
 
 public class DeliveryOption
 {

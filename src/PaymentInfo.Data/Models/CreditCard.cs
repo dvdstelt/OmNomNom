@@ -1,4 +1,4 @@
-﻿namespace PaymentInfo.Data.Models;
+namespace PaymentInfo.Data.Models;
 
 public class CreditCard
 {

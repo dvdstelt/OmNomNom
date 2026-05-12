@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Catalog.Data.Models;
 
 namespace Catalog.ServiceComposition.Products;

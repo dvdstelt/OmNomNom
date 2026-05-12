@@ -1,27 +1,35 @@
-﻿namespace ITOps.Shared.EndpointConfiguration;
+namespace ITOps.Shared.EndpointConfiguration;
 
 using System;
 using Messaging.Persistence.Sqlite;
 using NServiceBus;
+using NServiceBus.Persistence;
 
 public static class EndpointConfigurationExtensions
 {
     public static EndpointConfiguration Configure(
         this EndpointConfiguration endpointConfiguration,
         string sqliteConnectionString = null,
+        Action<PersistenceExtensions<SqlitePersistence>> configurePersistence = null,
         Action<RoutingSettings<LearningTransport>> configureRouting = null)
     {
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
         endpointConfiguration.Recoverability().Delayed(c => c.NumberOfRetries(0));
 
-        var transport = endpointConfiguration.UseTransport<LearningTransport>();
-
-        var routing = transport.Routing();
+        // Outbox in NServiceBus 10 requires ReceiveOnly so the transport
+        // doesn't try to wrap message processing in its own transaction.
+        // Harmless for endpoints that don't enable the outbox.
+        var learningTransport = new LearningTransport
+        {
+            TransportTransactionMode = TransportTransactionMode.ReceiveOnly
+        };
+        var routing = endpointConfiguration.UseTransport(learningTransport);
 
         if (sqliteConnectionString != null)
         {
             var persistence = endpointConfiguration.UsePersistence<SqlitePersistence>();
             persistence.ConnectionString(sqliteConnectionString);
+            configurePersistence?.Invoke(persistence);
         }
 
         endpointConfiguration.SendFailedMessagesTo("error");

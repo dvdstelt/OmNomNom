@@ -1,4 +1,4 @@
-﻿namespace Catalog.ServiceComposition.Events;
+namespace Catalog.ServiceComposition.Events;
 
 public class ProductsLoaded
 {

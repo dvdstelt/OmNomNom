@@ -56,6 +56,11 @@
         "Path": "PaymentInfo.Endpoint\\PaymentInfo.Endpoint.csproj",
         "Action": "Start",
         "DebugTarget": "PaymentInfo.Endpoint"
+      },
+      {
+        "Path": "Checkout.Endpoint\\Checkout.Endpoint.csproj",
+        "Action": "Start",
+        "DebugTarget": "Checkout.Endpoint"
       }
     ]
   }

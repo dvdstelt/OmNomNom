@@ -1,25 +1,26 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using Catalog.Data.Models;
+using Catalog.ServiceComposition.Workflow;
 
 namespace Catalog.ServiceComposition.ShoppingCart;
 
 public static class Mapper
 {
-    public static IDictionary<Guid, dynamic> MapToDictionary(Order order, List<Product> products)
+    public static IDictionary<Guid, dynamic> MapToDictionary(CartSlice cart, List<Product> products)
     {
         var productsViewModel = new Dictionary<Guid, dynamic>();
 
-        foreach (var product in order.Products)
+        foreach (var line in cart.Items)
         {
             dynamic vm = new ExpandoObject();
-            vm.ProductId = product.ProductId;
-            vm.Quantity = product.Quantity;
+            vm.ProductId = line.ProductId;
+            vm.Quantity = line.Quantity;
 
-            var matchingProduct = products.Single(p => p.ProductId == product.ProductId);
+            var matchingProduct = products.Single(p => p.ProductId == line.ProductId);
             vm.Name = matchingProduct.Name;
             vm.ImageUrl = matchingProduct.ImageUrl;
 
-            productsViewModel[product.ProductId] = vm;
+            productsViewModel[line.ProductId] = vm;
         }
 
         return productsViewModel;

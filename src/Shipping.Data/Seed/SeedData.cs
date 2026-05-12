@@ -1,4 +1,4 @@
-﻿using Shipping.Data.Models;
+using Shipping.Data.Models;
 
 namespace Shipping.Data.Seed;
 

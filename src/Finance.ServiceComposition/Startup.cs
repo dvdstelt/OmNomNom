@@ -1,5 +1,4 @@
 using Finance.Data;
-using Finance.ServiceComposition.Helpers;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +12,5 @@ public class Startup : IViewModelCompositionOptionsCustomization
     {
         options.Services.AddDbContext<FinanceDbContext>(opts =>
             opts.UseSqlite(SqliteStorage.GetConnectionString("finance")));
-        options.Services.AddSingleton<CacheHelper>();
     }
 }

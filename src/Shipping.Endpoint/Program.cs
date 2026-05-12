@@ -19,7 +19,7 @@ hostBuilder.Services.AddDbContext<ShippingDbContext>(options =>
 
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure(sqliteConnectionString, routing =>
+endpointConfiguration.Configure(sqliteConnectionString, configureRouting: routing =>
 {
     routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
 });

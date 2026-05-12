@@ -6,11 +6,12 @@ using ServiceComposer.AspNetCore;
 using Shipping.Data;
 using Shipping.ServiceComposition.DeliveryOptions;
 using Shipping.ServiceComposition.Events;
-using Shipping.ServiceComposition.Helpers;
+using Shipping.ServiceComposition.Workflow;
+using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class DeliveryOptionsComposer(ShippingDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class DeliveryOptionsComposer(ShippingDbContext dbContext, IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -22,25 +23,29 @@ public class DeliveryOptionsComposer(ShippingDbContext dbContext, CacheHelper ca
         // Get all available delivery options
         var deliveryOptions = await dbContext.DeliveryOptions.ToListAsync(ct);
 
-        // Try to obtain previously selected delivery option from database
-        var selectedDeliveryOption = await dbContext.Orders
-            .Where(s => s.OrderId == orderId)
-            .Select(s => s.DeliveryOptionId)
-            .FirstOrDefaultAsync(ct);
-
-        if (selectedDeliveryOption == null || selectedDeliveryOption == Guid.Empty)
+        // The slice is the user's just-selected option (synchronously
+        // written by DeliveryOptionSubmitHandler). Fall back to the DB
+        // for orders that have already been submitted previously.
+        Guid? selectedDeliveryOption = null;
+        var slice = await workflow.Read<DeliveryOptionSlice>(orderId, DeliveryOptionWorkflowSlice.Key, ct);
+        if (slice is not null)
         {
-            // If there's nothing in database, message wasn't processed.
-            // See if there's something in cache.
-            var order = await cacheHelper.GetOrder(orderId);
-            if (order.DeliveryOptionId != null && order.DeliveryOptionId != Guid.Empty)
-                selectedDeliveryOption = order.DeliveryOptionId;
+            selectedDeliveryOption = slice.DeliveryOptionId;
+        }
+        else
+        {
+            var fromDb = await dbContext.Orders
+                .Where(s => s.OrderId == orderId)
+                .Select(s => s.DeliveryOptionId)
+                .FirstOrDefaultAsync(ct);
+            if (fromDb is { } id && id != Guid.Empty)
+                selectedDeliveryOption = id;
         }
 
         var optionsModel = Mapper.MapToDictionary(deliveryOptions);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new DeliveryOptionsLoaded()
+        await context.RaiseEvent(new DeliveryOptionsLoaded
         {
             DeliveryOptions = optionsModel
         });

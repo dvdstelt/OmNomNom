@@ -1,27 +1,29 @@
-using Catalog.Endpoint.Messages.Commands;
+using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-public class SummarySubmitComposer(IMessageSession messageSession) : ICompositionRequestsHandler
+// User-facing trigger for the atomic checkout submit. Writes the
+// CompleteOrder marker slice (so it becomes part of the dispatch
+// bundle) and then asks the WorkflowSubmitter to commit the
+// outbox transaction. After this returns successfully, the
+// per-boundary commands and CompleteOrder are guaranteed to
+// dispatch from checkout.db's outbox via the Checkout.Endpoint
+// processor.
+public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter submitter) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/summary/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
-        var data = await request.Bind<SummaryData>();
+        var orderIdString = (string)request.HttpContext.GetRouteData().Values["orderId"]!;
+        var orderId = Guid.Parse(orderIdString);
+        var ct = request.HttpContext.RequestAborted;
 
-        var message = new CompleteOrder()
-        {
-            OrderId = data.OrderId
-        };
-        await messageSession.Send(message);
-    }
-
-    class SummaryData
-    {
-        [FromRoute] public Guid OrderId { get; set; }
+        await store.Write(orderId, CompleteOrderWorkflowSlice.Key, new CompleteOrderSlice(), ct);
+        await submitter.Submit(orderId, ct);
     }
 }

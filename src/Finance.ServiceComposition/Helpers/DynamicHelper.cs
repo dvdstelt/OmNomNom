@@ -1,4 +1,4 @@
-﻿namespace Finance.ServiceComposition.Helpers;
+namespace Finance.ServiceComposition.Helpers;
 
 public static class DynamicHelper
 {

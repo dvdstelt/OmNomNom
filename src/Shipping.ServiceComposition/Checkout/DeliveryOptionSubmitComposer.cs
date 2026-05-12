@@ -1,35 +1,27 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
-using Shipping.Endpoint.Messages.Commands;
-using Shipping.ServiceComposition.Helpers;
+using Shipping.ServiceComposition.Workflow;
+using WorkflowComposer;
 
 namespace Shipping.ServiceComposition.Checkout;
 
-public class DeliveryOptionSubmitComposer(IMessageSession messageSession, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class DeliveryOptionSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var submitted = await request.Bind<SelectedDeliveryOption>();
+        var ct = request.HttpContext.RequestAborted;
 
-        var order = await cacheHelper.GetOrder(submitted.OrderId);
-        order.DeliveryOptionId = submitted.Body.DeliveryOptionId;
-        await cacheHelper.StoreOrder(order);
-        
-        var message = new SubmitDeliveryOption()
-        {
-            OrderId = submitted.OrderId,
-            DeliveryOptionId = submitted.Body.DeliveryOptionId
-        };
-
-        await messageSession.Send(message);
+        var slice = new DeliveryOptionSlice(submitted.Body.DeliveryOptionId);
+        await workflow.Write(submitted.OrderId, DeliveryOptionWorkflowSlice.Key, slice, ct);
     }
 
     class SelectedDeliveryOption
     {
         [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public BodyModel Body { get; set; }
+        [FromBody] public BodyModel Body { get; set; } = null!;
     }
 
     class BodyModel

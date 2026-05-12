@@ -1,22 +1,22 @@
 using Catalog.Data;
 using Catalog.ServiceComposition.Events;
-using Catalog.ServiceComposition.Helpers;
+using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Checkout;
 
 // Powers the shipping screen, which renders the full `CartItemList`
-// (product image + name) on top of the order summary. Reads from the
-// SQLite Orders row first; if the SubmitOrderItems message hasn't been
-// processed yet, falls back to the in-flight cart in the distributed
-// cache so the page renders cleanly while the read model catches up.
+// (product image + name) on top of the order summary. Reads the cart
+// slice from WorkflowComposer; product details are joined from the
+// catalog domain DB.
 //
 // Address and payment use the leaner `CartSummaryComposer` instead.
-public class ShoppingCartComposer(CatalogDbContext dbContext, CacheHelper cacheHelper) : ICompositionRequestsHandler
+public class ShoppingCartComposer(IWorkflowStore workflow, CatalogDbContext dbContext) : ICompositionRequestsHandler
 {
     [HttpGet("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
@@ -25,17 +25,11 @@ public class ShoppingCartComposer(CatalogDbContext dbContext, CacheHelper cacheH
         var orderId = Guid.Parse(orderIdString);
         var ct = request.HttpContext.RequestAborted;
 
-        var order = await dbContext.Orders
-            .Include(o => o.Products)
-            .SingleOrDefaultAsync(s => s.OrderId == orderId, ct);
-
-        if (order == null)
-        {
-            order = await cacheHelper.GetOrder(orderId);
-        }
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
+                   ?? CartSlice.Empty;
 
         var products = await dbContext.Products.ToListAsync(ct);
-        var orderedProducts = ShoppingCart.Mapper.MapToDictionary(order, products);
+        var orderedProducts = ShoppingCart.Mapper.MapToDictionary(cart, products);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartLoaded

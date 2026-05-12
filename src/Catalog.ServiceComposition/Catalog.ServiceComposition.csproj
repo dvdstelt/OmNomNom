@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -17,6 +17,7 @@
       <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Catalog.ServiceComposition.Events\Catalog.ServiceComposition.Events.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+      <ProjectReference Include="..\WorkflowComposer\WorkflowComposer.csproj" />
     </ItemGroup>
 
 </Project>

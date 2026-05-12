@@ -1,5 +1,12 @@
+using Catalog.ServiceComposition.Workflow;
+using Finance.ServiceComposition.Workflow;
 using ITOps.Shared.EndpointConfiguration;
+using ITOps.Shared.Sqlite;
+using PaymentInfo.ServiceComposition.Workflow;
 using ServiceComposer.AspNetCore;
+using Shipping.ServiceComposition.Workflow;
+using WorkflowComposer;
+using WorkflowComposer.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,10 +31,32 @@ endpointConfiguration.Configure(configureRouting: s =>
     s.RouteToEndpoint(typeof(PaymentInfo.Endpoint.Messages.Commands.SubmitPaymentInfo).Assembly, "PaymentInfo");
 });
 endpointConfiguration.SendOnly();
-builder.UseNServiceBus(endpointConfiguration);
 
-// Add cache which is used for storing the cart for now.
-builder.Services.AddDistributedMemoryCache();
+// WorkflowComposer + SQLite store: workflow state for in-flight
+// checkouts lives in checkout.db. Per-page slice writes use plain
+// SqliteConnection; the workflow submit (added once all four service
+// boundaries have migrated) will use TransactionalSession against
+// this same file so the dispatch fan-out is atomic with the
+// "submitted" flag.
+builder.Services.AddWorkflowComposer(workflow =>
+{
+    workflow.UseSqliteStore(endpointConfiguration, new SqliteWorkflowStoreOptions
+    {
+        ConnectionString = SqliteStorage.GetConnectionString("checkout"),
+        ProcessorEndpoint = "Checkout"
+    });
+
+    workflow.RegisterSlicesFromAssembliesOf(
+        typeof(CartWorkflowSlice),
+        typeof(BillingAddressWorkflowSlice),
+        typeof(ShippingAddressWorkflowSlice),
+        typeof(PaymentWorkflowSlice));
+    // CompleteOrderWorkflowSlice lives in Catalog.ServiceComposition,
+    // already covered by typeof(CartWorkflowSlice). Listed here for
+    // discoverability since it's only written by SummarySubmitComposer.
+});
+
+builder.UseNServiceBus(endpointConfiguration);
 
 var app = builder.Build();
 

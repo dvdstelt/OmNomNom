@@ -2,6 +2,7 @@ using System.Dynamic;
 using Finance.Data;
 using Finance.Data.Models;
 using Finance.ServiceComposition.Events;
+using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,12 @@ public class OrderSummaryComposer(FinanceDbContext dbContext) : ICompositionRequ
         });
 
         var vm = request.GetComposedResponseModel();
-        vm.BillingAddress = order.BillingAddress;
+        vm.BillingAddress = new BillingAddressData(
+            order.BillingAddress.FullName,
+            order.BillingAddress.Street,
+            order.BillingAddress.ZipCode,
+            order.BillingAddress.Town,
+            order.BillingAddress.Country);
         vm.DeliveryOption = deliveryOptionModel;
         vm.TotalPrice = order.Items.Sum(s => s.EffectivePrice() * s.Quantity) + deliveryOption.Price;
     }

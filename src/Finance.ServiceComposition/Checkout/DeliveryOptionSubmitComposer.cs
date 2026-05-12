@@ -1,30 +1,27 @@
-﻿using Finance.Endpoint.Messages.Commands;
+using Finance.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
+using WorkflowComposer;
 
 namespace Finance.ServiceComposition.Checkout;
 
-public class DeliveryOptionSubmitComposer(IMessageSession messageSession) : ICompositionRequestsHandler
+public class DeliveryOptionSubmitComposer(IWorkflowStore workflow) : ICompositionRequestsHandler
 {
     [HttpPost("/buy/shipping/{orderId}")]
     public async Task Handle(HttpRequest request)
     {
         var submitted = await request.Bind<SelectedDeliveryOption>();
+        var ct = request.HttpContext.RequestAborted;
 
-        var message = new SubmitDeliveryOption()
-        {
-            OrderId = submitted.OrderId,
-            DeliveryOptionId = submitted.Body.DeliveryOptionId
-        };
-
-        await messageSession.Send(message);
+        var slice = new DeliveryOptionSlice(submitted.Body.DeliveryOptionId);
+        await workflow.Write(submitted.OrderId, DeliveryOptionWorkflowSlice.Key, slice, ct);
     }
 
     class SelectedDeliveryOption
     {
         [FromRoute] public Guid OrderId { get; set; }
-        [FromBody] public BodyModel Body { get; set; }
+        [FromBody] public BodyModel Body { get; set; } = null!;
     }
 
     class BodyModel

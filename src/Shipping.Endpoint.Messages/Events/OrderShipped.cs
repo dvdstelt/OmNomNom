@@ -1,4 +1,4 @@
-﻿namespace Shipping.Endpoint.Messages.Events;
+namespace Shipping.Endpoint.Messages.Events;
 
 public class OrderShipped
 {

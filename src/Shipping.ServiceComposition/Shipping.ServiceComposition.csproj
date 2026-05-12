@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -18,6 +18,7 @@
       <ProjectReference Include="..\Shipping.Data\Shipping.Data.csproj" />
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Shipping.ServiceComposition.Events\Shipping.ServiceComposition.Events.csproj" />
+      <ProjectReference Include="..\WorkflowComposer\WorkflowComposer.csproj" />
     </ItemGroup>
 
 </Project>

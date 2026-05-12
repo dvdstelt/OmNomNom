@@ -1,4 +1,4 @@
-﻿using ITOps.Shared.Integration;
+using ITOps.Shared.Integration;
 using NServiceBus.Logging;
 
 namespace Catalog.Data.Providers;

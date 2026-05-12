@@ -1,4 +1,4 @@
-﻿namespace Finance.ServiceComposition.Events;
+namespace Finance.ServiceComposition.Events;
 
 public class DeliveryOptionLoaded
 {
