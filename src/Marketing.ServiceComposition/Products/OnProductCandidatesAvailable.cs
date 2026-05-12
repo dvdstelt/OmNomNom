@@ -10,7 +10,7 @@ namespace Marketing.ServiceComposition.Products;
 // the result back into the event. Catalog never names a Marketing sort
 // dimension; this subscriber reads ?sort= straight off the request and
 // owns the vocabulary end to end.
-class ProductCandidatesAvailableSubscriber(MarketingDbContext dbContext) : ICompositionEventsHandler<ProductCandidatesAvailable>
+class OnProductCandidatesAvailable(MarketingDbContext dbContext) : ICompositionEventsHandler<ProductCandidatesAvailable>
 {
     public async Task Handle(ProductCandidatesAvailable @event, HttpRequest request)
     {

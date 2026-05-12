@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Products;
+namespace Catalog.ServiceComposition.Products;
 
-public class SummaryLoadedSubscriber(CatalogDbContext dbContext) : ICompositionEventsHandler<SummaryLoaded>
+public class OnSummaryLoaded(CatalogDbContext dbContext) : ICompositionEventsHandler<SummaryLoaded>
 {
     public async Task Handle(SummaryLoaded @event, HttpRequest request)
     {

@@ -6,7 +6,7 @@ using Shipping.Data;
 
 namespace Shipping.ServiceComposition.Email;
 
-public class DeliveryOptionLoadedSubscriber(ShippingDbContext dbContext) : ICompositionEventsHandler<DeliveryOptionLoaded>
+public class OnDeliveryOptionLoaded(ShippingDbContext dbContext) : ICompositionEventsHandler<DeliveryOptionLoaded>
 {
     public async Task Handle(DeliveryOptionLoaded @event, HttpRequest request)
     {
