@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>annotations</Nullable>
         <RootNamespace>WorkflowComposer.Sqlite</RootNamespace>
         <Description>SQLite + NServiceBus outbox backend for WorkflowComposer. Submit commits the workflow row and the outbox messages in one SQLite transaction via TransactionalSession.</Description>
     </PropertyGroup>
