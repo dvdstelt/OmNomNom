@@ -9,15 +9,12 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbCo
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<InventoryDelta> InventoryDeltas => Set<InventoryDelta>();
-    public DbSet<InventorySnapshot> InventorySnapshots => Set<InventorySnapshot>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Convention picks up Product.ProductId and Order.OrderId as the
-        // primary keys via the <Type>Id pattern; the rest need to be
-        // wired up explicitly.
-        modelBuilder.Entity<InventorySnapshot>().HasKey(s => s.ProductId);
-
+        // primary keys via the <Type>Id pattern; OrderItem has a
+        // composite key so it needs to be wired up explicitly.
         modelBuilder.Entity<OrderItem>().HasKey(oi => new { oi.OrderId, oi.ProductId });
 
         modelBuilder.Entity<Order>()

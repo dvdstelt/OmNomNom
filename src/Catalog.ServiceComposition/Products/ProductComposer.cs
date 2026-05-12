@@ -16,15 +16,20 @@ public class ProductComposer(CatalogDbContext dbContext, IHttpContextAccessor ht
     {
         var request = http.HttpContext!.Request;
         var vm = request.GetComposedResponseModel();
-
         var ct = request.HttpContext.RequestAborted;
-        var row = await (
-            from p in dbContext.Products
-            join s in dbContext.InventorySnapshots on p.ProductId equals s.ProductId
-            where p.ProductId == productId
-            select new { Product = p, Inventory = s }).SingleAsync(ct);
 
-        var productModel = Mapper.MapToViewModel(row.Product, row.Inventory);
+        var row = await dbContext.Products
+            .Where(p => p.ProductId == productId)
+            .Select(p => new
+            {
+                Product = p,
+                InStock = dbContext.InventoryDeltas
+                    .Where(d => d.ProductId == p.ProductId)
+                    .Sum(d => (int?)d.Delta) ?? 0
+            })
+            .SingleAsync(ct);
+
+        var productModel = Mapper.MapToViewModel(row.Product, row.InStock);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new ProductLoaded

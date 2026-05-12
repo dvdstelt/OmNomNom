@@ -122,40 +122,6 @@ public class SeedData
         };
     }
 
-    public static IEnumerable<InventorySnapshot> InventorySnapshots()
-    {
-        return new List<InventorySnapshot>
-        {
-            new() { ProductId = FremontId, EstimatedInStock = 10 },
-            new() { ProductId = MoersleutelId, EstimatedInStock = 8 },
-            new() { ProductId = BarcodeBlackYellowId, EstimatedInStock = 4 },
-            new() { ProductId = WhiteDogId, EstimatedInStock = 20 },
-            new() { ProductId = AbraxasId, EstimatedInStock = 5 },
-            new() { ProductId = BourbonCountyId, EstimatedInStock = 8 },
-            new() { ProductId = TwentyTwoId, EstimatedInStock = 25 },
-            new() { ProductId = SusanId, EstimatedInStock = 22 },
-            new() { ProductId = OudeGeuzeId, EstimatedInStock = 45 },
-            new() { ProductId = TiarnaId, EstimatedInStock = 30 },
-            new() { ProductId = BlueBerryMuffinId, EstimatedInStock = 40 },
-
-            new() { ProductId = ExtravagantChocolateId, EstimatedInStock = 12 },
-            new() { ProductId = Indulgence16Id, EstimatedInStock = 5 },
-            new() { ProductId = Indulgence28Id, EstimatedInStock = 6 },
-            new() { ProductId = KbbsId, EstimatedInStock = 2 },
-            new() { ProductId = SunflowersId, EstimatedInStock = 8 },
-            new() { ProductId = BlueSuedeShewsId, EstimatedInStock = 2 },
-            new() { ProductId = GalaxyFortPointId, EstimatedInStock = 16 },
-            new() { ProductId = MosaicFortPointId, EstimatedInStock = 18 },
-            new() { ProductId = PseudoSueId, EstimatedInStock = 24 },
-            new() { ProductId = LaTrappeQuad50Id, EstimatedInStock = 10 },
-            new() { ProductId = ChickenBroccoliId, EstimatedInStock = 20 },
-            new() { ProductId = TripleFruitBombId, EstimatedInStock = 12 },
-            new() { ProductId = JuiceLandV4Id, EstimatedInStock = 18 },
-            new() { ProductId = DoubleMosaicDreamId, EstimatedInStock = 22 },
-            new() { ProductId = CoastalSunshineId, EstimatedInStock = 6 },
-        };
-    }
-
     public static Order Orders()
     {
         return new Order
