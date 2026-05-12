@@ -8,17 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
-        <!-- ServiceComposer.AspNetCore 2.1.0 caps DependencyModel below 9.0.0;
-             EF Core 10 (transitively pulled in via the *.ServiceComposition
-             projects) wants 10.0.0+. Pin the higher version explicitly here. -->
-        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.0" />
         <!-- Required so dotnet-ef can target Marketing.Data via this project as
              startup-project (Marketing has no separate endpoint to use). -->
         <PackageReference Include="NServiceBus" Version="10.1.4" />
         <PackageReference Include="NServiceBus.Extensions.Hosting" Version="4.0.1" />
-        <PackageReference Include="ServiceComposer.AspNetCore" Version="2.1.0" />
+        <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.0" />
     </ItemGroup>
 
     <ItemGroup>
