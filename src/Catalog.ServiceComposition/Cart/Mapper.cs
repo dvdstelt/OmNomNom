@@ -2,7 +2,7 @@ using System.Dynamic;
 using Catalog.Data.Models;
 using Catalog.ServiceComposition.Workflow;
 
-namespace Catalog.ServiceComposition.ShoppingCart;
+namespace Catalog.ServiceComposition.Cart;
 
 public static class Mapper
 {

@@ -1,7 +1,7 @@
 using System.Dynamic;
 using Shipping.Data.Models;
 
-namespace Shipping.ServiceComposition.DeliveryOptions;
+namespace Shipping.ServiceComposition.Checkout;
 
 public static class Mapper
 {

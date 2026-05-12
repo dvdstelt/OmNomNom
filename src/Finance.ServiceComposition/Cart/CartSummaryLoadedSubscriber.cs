@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
-namespace Finance.ServiceComposition.Orders;
+namespace Finance.ServiceComposition.Cart;
 
 // Companion to `CartSummaryComposer` on the Catalog side: receives
 // `CartSummaryLoaded`, attaches per-item Price/Discount from Finance's
