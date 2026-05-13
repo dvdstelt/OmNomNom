@@ -25,6 +25,11 @@ async function postJson(path, body) {
 // on the .NET side. Only non-default params end up in the URL.
 const DEFAULT_PAGE_SIZE = 12;
 
+// Keys are prefixed with `query.` so they match the prefix
+// ServiceComposer's source generator emits for the [FromQuery]
+// ProductsQuery parameter on ProductsComposer.Handle. Bare keys
+// (?page=2) don't bind into the complex type and silently fall
+// back to property defaults, which previously broke pagination.
 function buildProductsQuery({
   categories = [],
   breweries = [],
@@ -34,12 +39,12 @@ function buildProductsQuery({
   size = DEFAULT_PAGE_SIZE
 } = {}) {
   const params = new URLSearchParams();
-  if (categories.length) params.set('categories', categories.join(','));
-  if (breweries.length) params.set('breweries', breweries.join(','));
-  if (countries.length) params.set('countries', countries.join(','));
-  if (sort && sort !== 'default') params.set('sort', sort);
-  if (page !== 1) params.set('page', String(page));
-  if (size !== DEFAULT_PAGE_SIZE) params.set('size', String(size));
+  if (categories.length) params.set('query.categories', categories.join(','));
+  if (breweries.length) params.set('query.breweries', breweries.join(','));
+  if (countries.length) params.set('query.countries', countries.join(','));
+  if (sort && sort !== 'default') params.set('query.sort', sort);
+  if (page !== 1) params.set('query.page', String(page));
+  if (size !== DEFAULT_PAGE_SIZE) params.set('query.size', String(size));
   const qs = params.toString();
   return qs ? `/products?${qs}` : '/products';
 }
