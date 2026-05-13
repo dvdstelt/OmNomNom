@@ -23,14 +23,7 @@ builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
-endpointConfiguration.Configure(configureRouting: s =>
-{
-    // TODO: Figure out how this can be defined per service and not globally
-    s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");
-    s.RouteToEndpoint(typeof(Catalog.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Catalog");
-    s.RouteToEndpoint(typeof(Shipping.Endpoint.Messages.Commands.SubmitDeliveryOption).Assembly, "Shipping");
-    s.RouteToEndpoint(typeof(PaymentInfo.Endpoint.Messages.Commands.SubmitPaymentInfo).Assembly, "PaymentInfo");
-});
+endpointConfiguration.Configure();
 endpointConfiguration.SendOnly();
 
 // WorkflowComposer + SQLite store: workflow state for in-flight

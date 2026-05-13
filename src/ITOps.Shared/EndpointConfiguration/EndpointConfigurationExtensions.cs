@@ -1,6 +1,8 @@
 namespace ITOps.Shared.EndpointConfiguration;
 
 using System;
+using System.Linq;
+using System.Reflection;
 using Messaging.Persistence.Sqlite;
 using NServiceBus;
 using NServiceBus.Persistence;
@@ -43,7 +45,35 @@ public static class EndpointConfigurationExtensions
         endpointConfiguration.EnableInstallers();
 
         configureRouting?.Invoke(routing);
+        ApplyDiscoveredRoutingConfigurators(routing);
 
         return endpointConfiguration;
+    }
+
+    static void ApplyDiscoveredRoutingConfigurators(RoutingSettings<LearningTransport> routing)
+    {
+        var configurators = AppDomain.CurrentDomain
+            .GetAssemblies()
+            .Where(a => !a.IsDynamic)
+            .SelectMany(GetLoadableTypes)
+            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IConfigureEndpointRouting).IsAssignableFrom(t))
+            .Select(t => (IConfigureEndpointRouting)Activator.CreateInstance(t)!);
+
+        foreach (var configurator in configurators)
+        {
+            configurator.ConfigureRouting(routing);
+        }
+    }
+
+    static Type[] GetLoadableTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            return ex.Types.Where(t => t != null).ToArray()!;
+        }
     }
 }

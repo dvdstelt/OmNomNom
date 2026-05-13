@@ -1,12 +1,15 @@
 using Catalog.Data;
+using Catalog.Endpoint.Messages.Commands;
+using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NServiceBus;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition;
 
-public class Startup : IViewModelCompositionOptionsCustomization
+public class Startup : IViewModelCompositionOptionsCustomization, IConfigureEndpointRouting
 {
     public void Customize(ViewModelCompositionOptions options)
     {
@@ -15,5 +18,10 @@ public class Startup : IViewModelCompositionOptionsCustomization
         // Cart state lives in the workflow store, not in this DB.
         options.Services.AddDbContext<CatalogDbContext>(opts =>
             opts.UseSqlite(SqliteStorage.GetConnectionString("catalog")));
+    }
+
+    public void ConfigureRouting(RoutingSettings<LearningTransport> routing)
+    {
+        routing.RouteToEndpoint(typeof(SubmitOrderItems).Assembly, "Catalog");
     }
 }
