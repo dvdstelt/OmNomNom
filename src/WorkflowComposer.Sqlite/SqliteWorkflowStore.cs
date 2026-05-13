@@ -94,6 +94,30 @@ internal sealed class SqliteWorkflowStore(
         await session.Commit(ct);
     }
 
+    public async Task<int> DeleteInactive(TimeSpan inactivity, CancellationToken ct)
+    {
+        await EnsureTable(ct);
+
+        var cutoff = DateTimeOffset.UtcNow.Subtract(inactivity).ToString("O");
+
+        await using var connection = new SqliteConnection(options.ConnectionString);
+        await connection.OpenAsync(ct);
+
+        await using var cmd = connection.CreateCommand();
+        // Group by WorkflowId so a single fresh slice keeps the whole
+        // workflow alive; only workflows whose most recent write is
+        // older than the cutoff are dropped.
+        cmd.CommandText = $@"
+            DELETE FROM {options.TableName}
+            WHERE WorkflowId IN (
+                SELECT WorkflowId FROM {options.TableName}
+                GROUP BY WorkflowId
+                HAVING MAX(UpdatedAt) < $cutoff
+            );";
+        cmd.Parameters.AddWithValue("$cutoff", cutoff);
+        return await cmd.ExecuteNonQueryAsync(ct);
+    }
+
     async Task EnsureTable(CancellationToken ct)
     {
         if (tableEnsured) return;

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace WorkflowComposer;
 
@@ -16,6 +17,13 @@ public static class ServiceCollectionExtensions
         // in-memory store would be fine as singleton, but matching the
         // store's lifetime avoids captive-dependency surprises.
         services.AddScoped<IWorkflowSubmitter, WorkflowSubmitter>();
+
+        // Capture the cleanup knobs so changes to `options` after this
+        // call no longer affect the running service.
+        services.AddSingleton(new WorkflowCleanupSettings(
+            options.InactivityThreshold,
+            options.CleanupInterval));
+        services.AddHostedService<WorkflowCleanupHostedService>();
 
         return services;
     }
