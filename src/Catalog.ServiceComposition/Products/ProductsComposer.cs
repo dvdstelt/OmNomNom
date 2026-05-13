@@ -15,8 +15,12 @@ namespace Catalog.ServiceComposition.Products;
 // ordered IDs back. Catalog has no opinion on the sort vocabulary and
 // never reads ?sort= itself.
 //
-// Query parameters live on ProductsQuery; the body of this handler
-// stays focused on the search/compose pipeline.
+// Query parameters bind as scalar [FromQuery] parameters. A complex
+// ProductsQuery type was tried but ServiceComposer's source generator
+// emits [BindFromQuery<T>("query")] for it, which makes MVC's
+// ComplexObjectModelBinder require a "query." prefix on every key -
+// the frontend sends bare ?page=, and Marketing reads ?sort= straight
+// off request.Query, so any prefix would break one or both.
 //
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
@@ -27,20 +31,34 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
     const int MaxPageSize = 50;
 
     [HttpGet("/products")]
-    public async Task Handle([FromQuery] ProductsQuery query)
+    public async Task Handle(
+        [FromQuery] string? categories,
+        [FromQuery] string? breweries,
+        [FromQuery] string? countries,
+        [FromQuery] int page,
+        [FromQuery] int size)
     {
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        var page = Math.Max(1, query.Page);
-        var size = Math.Clamp(query.Size, 1, MaxPageSize);
+        // ServiceComposer ignores C# parameter default values and its
+        // source generator rejects nullable-int parameters (the '?'
+        // breaks the generator's hintName), so treat the bound 0 - what
+        // model binding produces when ?page=/?size= is missing - as
+        // "fall back to the canonical default" before clamping.
+        var pageNumber = page > 0 ? page : 1;
+        var pageSize = Math.Clamp(size > 0 ? size : 12, 1, MaxPageSize);
+
+        var categoryList = Split(categories);
+        var breweryList = Split(breweries);
+        var countryList = Split(countries);
 
         // 1. Filter Catalog-owned attributes. Each filter only applies
         //    when the caller supplied at least one value.
         var productsQuery = dbContext.Products.AsQueryable();
-        if (query.CategoryList.Count > 0) productsQuery = productsQuery.Where(p => query.CategoryList.Contains(p.Category));
-        if (query.BreweryList.Count > 0) productsQuery = productsQuery.Where(p => query.BreweryList.Contains(p.Brewery));
-        if (query.CountryList.Count > 0) productsQuery = productsQuery.Where(p => query.CountryList.Contains(p.Country));
+        if (categoryList.Count > 0) productsQuery = productsQuery.Where(p => categoryList.Contains(p.Category));
+        if (breweryList.Count > 0) productsQuery = productsQuery.Where(p => breweryList.Contains(p.Brewery));
+        if (countryList.Count > 0) productsQuery = productsQuery.Where(p => countryList.Contains(p.Country));
 
         // 2. Materialise the filtered candidate set as IDs only. We
         //    re-query via productsQuery for the fallback page slice
@@ -57,16 +75,16 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
         var sortRequest = new ProductCandidatesAvailable
         {
             CandidateIds = candidateIds,
-            Page = page,
-            Size = size
+            Page = pageNumber,
+            Size = pageSize
         };
         await context.RaiseEvent(sortRequest);
 
         var pageIds = sortRequest.OrderedIds?.ToList()
             ?? await productsQuery
                 .OrderBy(p => p.Name)
-                .Skip((page - 1) * size)
-                .Take(size)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => p.ProductId)
                 .ToListAsync(ct);
 
@@ -102,7 +120,7 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
             Products = productsModel
         });
 
-        var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)size);
+        var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
         var responseModel = request.GetComposedResponseModel();
 
         // Drive the response array from the explicit ordered key list
@@ -113,9 +131,16 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
             .Where(productsModel.ContainsKey)
             .Select(id => productsModel[id])
             .ToList();
-        responseModel.Page = page;
-        responseModel.PageSize = size;
+        responseModel.Page = pageNumber;
+        responseModel.PageSize = pageSize;
         responseModel.TotalCount = totalCount;
         responseModel.TotalPages = totalPages;
     }
+
+    static List<string> Split(string? value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? []
+            : value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToList();
 }
