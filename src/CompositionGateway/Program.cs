@@ -1,10 +1,6 @@
-using Catalog.ServiceComposition.Workflow;
-using Finance.ServiceComposition.Workflow;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
-using PaymentInfo.ServiceComposition.Workflow;
 using ServiceComposer.AspNetCore;
-using Shipping.ServiceComposition.Workflow;
 using WorkflowComposer;
 using WorkflowComposer.Sqlite;
 
@@ -40,14 +36,7 @@ builder.Services.AddWorkflowComposer(workflow =>
         ProcessorEndpoint = "Checkout"
     });
 
-    workflow.RegisterSlicesFromAssembliesOf(
-        typeof(CartWorkflowSlice),
-        typeof(BillingAddressWorkflowSlice),
-        typeof(ShippingAddressWorkflowSlice),
-        typeof(PaymentWorkflowSlice));
-    // CompleteOrderWorkflowSlice lives in Catalog.ServiceComposition,
-    // already covered by typeof(CartWorkflowSlice). Listed here for
-    // discoverability since it's only written by SummarySubmitComposer.
+    workflow.DiscoverSlices();
 });
 
 builder.UseNServiceBus(endpointConfiguration);
