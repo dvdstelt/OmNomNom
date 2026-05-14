@@ -8,7 +8,7 @@ internal sealed class WorkflowSubmitter(
     {
         var commands = new List<object>();
 
-        foreach (var slice in slices)
+        foreach (var slice in slices.OrderBy(s => s.SubmitOrder))
         {
             var value = await store.ReadSlice(workflowId, slice.SliceKey, slice.SliceType, ct);
             if (value is null) continue;

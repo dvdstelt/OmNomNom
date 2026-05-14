@@ -3,12 +3,16 @@ using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Workflow;
 
-// Marker slice that signals the workflow is ready to be finalized.
-// Written by SummarySubmitComposer immediately before
-// IWorkflowSubmitter.Submit so the CompleteOrder command becomes
-// part of the atomic dispatch bundle. The slice carries no payload
-// of its own - the workflow id is enough to build the command.
-public sealed record CompleteOrderSlice;
+// Trigger slice that finalizes the workflow. Written by
+// SummarySubmitComposer at submit time with the cart's contents
+// copied in, so this single command carries both the line items
+// (formerly SubmitOrderItems) and the "complete it" trigger.
+// SubmitOrder is set high so the framework queues this command
+// after all per-boundary writes have been queued.
+public sealed record CompleteOrderSlice(IReadOnlyList<CartLine> Items)
+{
+    public static CompleteOrderSlice Empty { get; } = new([]);
+}
 
 public class CompleteOrderWorkflowSlice : WorkflowSlice<CompleteOrderSlice>
 {
@@ -16,6 +20,22 @@ public class CompleteOrderWorkflowSlice : WorkflowSlice<CompleteOrderSlice>
 
     public override string SliceKey => Key;
 
-    protected override object? BuildSubmitCommand(Guid orderId, CompleteOrderSlice slice) =>
-        new CompleteOrder { OrderId = orderId };
+    public override int SubmitOrder => int.MaxValue;
+
+    protected override object? BuildSubmitCommand(Guid orderId, CompleteOrderSlice slice)
+    {
+        if (slice.Items.Count == 0) return null;
+
+        return new CompleteOrder
+        {
+            OrderId = orderId,
+            Items = slice.Items
+                .Select(i => new OrderItem
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity
+                })
+                .ToList()
+        };
+    }
 }

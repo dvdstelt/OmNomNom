@@ -4,6 +4,7 @@ using Catalog.Endpoint.Messages.Commands;
 using Catalog.Endpoint.Messages.Events;
 using Microsoft.EntityFrameworkCore;
 using NServiceBus.Logging;
+using OrderItem = Catalog.Data.Models.OrderItem;
 
 namespace Catalog.Endpoint.Handlers;
 
@@ -15,9 +16,32 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
     {
         log.InfoFormat("{OrderId} - Finalizing order", message.OrderId);
 
+        // Idempotent upsert: if a row for this OrderId already exists,
+        // replace its line items rather than creating a duplicate. The
+        // composite (OrderId, ProductId) PK on OrderItem would otherwise
+        // throw on a re-delivery.
         var order = await dbContext.Orders
             .Include(o => o.Products)
-            .SingleAsync(s => s.OrderId == message.OrderId, context.CancellationToken);
+            .FirstOrDefaultAsync(o => o.OrderId == message.OrderId, context.CancellationToken);
+
+        if (order == null)
+        {
+            order = new Order { OrderId = message.OrderId };
+            dbContext.Orders.Add(order);
+        }
+        else
+        {
+            order.Products.Clear();
+        }
+
+        foreach (var item in message.Items)
+        {
+            order.Products.Add(new OrderItem
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity
+            });
+        }
 
         // Verify for each product that is being ordered if there's enough in stock
         var itemsNotFulfilled = new OrderItemsNotFulfilled

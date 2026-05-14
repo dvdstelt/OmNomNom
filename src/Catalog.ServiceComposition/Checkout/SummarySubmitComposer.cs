@@ -6,13 +6,13 @@ using WorkflowComposer;
 
 namespace Catalog.ServiceComposition.Checkout;
 
-// User-facing trigger for the atomic checkout submit. Writes the
-// CompleteOrder marker slice (so it becomes part of the dispatch
-// bundle) and then asks the WorkflowSubmitter to commit the
-// outbox transaction. After this returns successfully, the
-// per-boundary commands and CompleteOrder are guaranteed to
-// dispatch from checkout.db's outbox via the Checkout.Endpoint
-// processor.
+// User-facing trigger for the atomic checkout submit. Snapshots the
+// cart into the CompleteOrderSlice (so the items travel with the
+// trigger command instead of via a separate SubmitOrderItems hop),
+// then asks the WorkflowSubmitter to commit the outbox transaction.
+// After this returns successfully, the per-boundary commands and
+// CompleteOrder are guaranteed to dispatch from checkout.db's outbox
+// via the Checkout.Endpoint processor.
 [CompositionHandler]
 public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter submitter, IHttpContextAccessor http)
 {
@@ -21,7 +21,10 @@ public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter subm
     {
         var ct = http.HttpContext!.RequestAborted;
 
-        await store.Write(orderId, CompleteOrderWorkflowSlice.Key, new CompleteOrderSlice(), ct);
+        var cart = await store.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
+                   ?? CartSlice.Empty;
+
+        await store.Write(orderId, CompleteOrderWorkflowSlice.Key, new CompleteOrderSlice(cart.Items), ct);
         await submitter.Submit(orderId, ct);
     }
 }

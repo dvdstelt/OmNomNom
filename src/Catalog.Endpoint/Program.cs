@@ -25,15 +25,6 @@ hostBuilder.Services.AddDbContext<CatalogDbContext>(options =>
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString);
-
-// CompleteOrder and SubmitOrderItems both arrive at this endpoint
-// from a single workflow submit. NServiceBus does not guarantee
-// message ordering, so CompleteOrder might be processed before
-// SubmitOrderItems has written the Order row. Override the shared
-// "no delayed retries" default with a small backoff so
-// CompleteOrderHandler waits for the row instead of dead-lettering.
-endpointConfiguration.Recoverability().Delayed(c => c.NumberOfRetries(3));
-
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();
