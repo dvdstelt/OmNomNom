@@ -55,7 +55,7 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
     async Task<FulfillmentResult> TryFulfillAsync(Order order, CancellationToken ct)
     {
         var fulfilled = new List<OrderedItem>();
-        var notFulfilled = new List<OrderItemsNotFulfilled.OrderItem>();
+        var unfulfilled = new List<UnfulfilledItem>();
 
         foreach (var item in order.Products)
         {
@@ -63,11 +63,10 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
 
             if (inStock < item.Quantity)
             {
-                notFulfilled.Add(new OrderItemsNotFulfilled.OrderItem
+                unfulfilled.Add(new UnfulfilledItem
                 {
                     ProductId = item.ProductId,
-                    QuantityWanted = item.Quantity,
-                    QuantityInStock = inStock
+                    Quantity = item.Quantity
                 });
             }
             else
@@ -81,37 +80,38 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
             }
         }
 
-        return new FulfillmentResult(fulfilled, notFulfilled);
+        return new FulfillmentResult(fulfilled, unfulfilled);
     }
 
     async Task PublishOutcomeAsync(IMessageHandlerContext context, Guid orderId, FulfillmentResult result)
     {
-        if (result.NotFulfilled.Count > 0)
-        {
-            log.LogInformation("{OrderId} - Some items could not be fulfilled since they were out of stock.", orderId);
-            await context.Publish(new OrderItemsNotFulfilled
-            {
-                OrderId = orderId,
-                ItemsNotInStock = [.. result.NotFulfilled]
-            });
-        }
-
         if (result.Fulfilled.Count == 0)
         {
-            log.LogInformation("{OrderId} - Entire order could not be fulfilled since everything was out of stock.", orderId);
+            log.LogInformation("{OrderId} - Order cancelled: nothing was in stock.", orderId);
+            await context.Publish(new OrderCancelled
+            {
+                OrderId = orderId,
+                UnfulfilledItems = [.. result.Unfulfilled]
+            });
             return;
+        }
+
+        if (result.Unfulfilled.Count > 0)
+        {
+            log.LogInformation("{OrderId} - Order partially fulfilled: some items were out of stock.", orderId);
         }
 
         await context.Publish(new OrderAccepted { OrderId = orderId });
 
-        // OrderPlaced carries only the in-stock line items so analytics
-        // subscribers (Marketing's popularity/trending counters) reflect
-        // what was actually ordered, not what the customer asked for.
+        // OrderPlaced carries both lists: fulfilled drives Marketing's
+        // popularity counters and the shipping flow, unfulfilled lets
+        // Finance reduce the charge and the email list what was missed.
         await context.Publish(new OrderPlaced
         {
             OrderId = orderId,
             OccurredAt = DateTime.UtcNow,
-            Items = [.. result.Fulfilled]
+            Items = [.. result.Fulfilled],
+            UnfulfilledItems = [.. result.Unfulfilled]
         });
 
         log.LogInformation("{OrderId} - Order accepted", orderId);
@@ -119,5 +119,5 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
 
     sealed record FulfillmentResult(
         IReadOnlyList<OrderedItem> Fulfilled,
-        IReadOnlyList<OrderItemsNotFulfilled.OrderItem> NotFulfilled);
+        IReadOnlyList<UnfulfilledItem> Unfulfilled);
 }
