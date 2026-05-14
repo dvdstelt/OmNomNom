@@ -16,7 +16,11 @@ namespace Catalog.ServiceComposition.Products;
 // never reads ?sort= itself.
 //
 // Query parameters live on ProductsQuery; the body of this handler
-// stays focused on the search/compose pipeline.
+// stays focused on the search/compose pipeline. The empty Name on
+// [FromQuery] is load-bearing: ServiceComposer's source generator
+// would otherwise pass the parameter identifier ("query") as the
+// model-binding prefix, and MVC's ComplexObjectModelBinder would
+// then require ?query.page= instead of bare ?page=.
 //
 // The composed response carries:
 //   Products    list of dictionary values for the page (in order)
@@ -27,7 +31,7 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
     const int MaxPageSize = 50;
 
     [HttpGet("/products")]
-    public async Task Handle([FromQuery] ProductsQuery query)
+    public async Task Handle([FromQuery(Name = "")] ProductsQuery query)
     {
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
