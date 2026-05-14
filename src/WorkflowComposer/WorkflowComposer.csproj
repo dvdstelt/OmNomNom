@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>annotations</Nullable>
+        <Nullable>enable</Nullable>
         <RootNamespace>WorkflowComposer</RootNamespace>
         <Description>Composes in-flight workflow state from per-service-boundary slice contributions, and submits as one transactional bundle. Companion to ServiceComposer's read-side composition.</Description>
     </PropertyGroup>

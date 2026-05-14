@@ -7,5 +7,5 @@ namespace Catalog.ServiceComposition.Events;
 public class CartSummaryLoaded
 {
     public Guid OrderId { get; set; }
-    public IDictionary<Guid, dynamic> OrderedProducts { get; set; }
+    public IDictionary<Guid, dynamic> OrderedProducts { get; set; } = null!;
 }
