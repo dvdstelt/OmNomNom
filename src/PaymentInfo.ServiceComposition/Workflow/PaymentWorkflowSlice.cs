@@ -19,6 +19,11 @@ public class PaymentWorkflowSlice : WorkflowSlice<PaymentSlice>
 
     public override string SliceKey => Key;
 
+    protected override IReadOnlyList<string> Validate(PaymentSlice slice) =>
+        slice.CreditCardId == Guid.Empty
+            ? ["CreditCardId is required."]
+            : [];
+
     protected override object? BuildSubmitCommand(Guid orderId, PaymentSlice slice) =>
         new SubmitPaymentInfo
         {

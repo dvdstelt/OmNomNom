@@ -1,3 +1,4 @@
+using CompositionGateway;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
@@ -47,6 +48,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<WorkflowValidationExceptionMiddleware>();
 
 app.UseCors();
 

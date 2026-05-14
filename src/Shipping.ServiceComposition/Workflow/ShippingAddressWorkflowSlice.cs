@@ -19,6 +19,22 @@ public class ShippingAddressWorkflowSlice : WorkflowSlice<ShippingAddressSlice>
 
     public override string SliceKey => Key;
 
+    protected override IReadOnlyList<string> Validate(ShippingAddressSlice slice)
+    {
+        var errors = new List<string>();
+        if (string.IsNullOrWhiteSpace(slice.FullName))
+            errors.Add("FullName is required.");
+        if (string.IsNullOrWhiteSpace(slice.Street))
+            errors.Add("Street is required.");
+        if (string.IsNullOrWhiteSpace(slice.ZipCode))
+            errors.Add("ZipCode is required.");
+        if (string.IsNullOrWhiteSpace(slice.Town))
+            errors.Add("Town is required.");
+        if (string.IsNullOrWhiteSpace(slice.Country))
+            errors.Add("Country is required.");
+        return errors;
+    }
+
     protected override object? BuildSubmitCommand(Guid orderId, ShippingAddressSlice slice) =>
         new SubmitShippingAddress
         {
