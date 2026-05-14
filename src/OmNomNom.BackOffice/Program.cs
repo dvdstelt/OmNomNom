@@ -11,6 +11,7 @@ builder.Services.AddViewModelComposition(options =>
 {
     options.EnableCompositionOverControllers();
 });
+builder.Services.AddHealthChecks();
 
 // Typed HttpClient for talking to the CompositionGateway. In development
 // we skip chain validation because vite.config.js exports the ASP.NET
@@ -53,6 +54,7 @@ else
 }
 
 app.UseRouting();
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.MapCompositionHandlers();
 

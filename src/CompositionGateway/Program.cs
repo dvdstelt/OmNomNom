@@ -17,6 +17,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
 endpointConfiguration.Configure();
@@ -53,6 +54,7 @@ app.UseWorkflowComposer();
 app.UseCors();
 
 app.UseHttpsRedirection();
+app.MapHealthChecks("/health");
 app.MapCompositionHandlers();
 
 Console.Title = "Composition Gateway";
