@@ -1,6 +1,6 @@
-using WorkflowComposer;
+using Microsoft.AspNetCore.Http;
 
-namespace CompositionGateway;
+namespace WorkflowComposer;
 
 // Catches WorkflowValidationException from anywhere in the request
 // pipeline and translates it to a 400 with per-slice errors.
