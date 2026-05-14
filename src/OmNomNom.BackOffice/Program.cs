@@ -1,6 +1,5 @@
 using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
-using ITOps.Shared.Integration;
 using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
 
@@ -33,8 +32,6 @@ builder.Services.AddHttpClient("composition-gateway", client =>
         }
         return handler;
     });
-
-DataProviders.RegisterAll(builder.Services);
 
 builder.Host.UseNServiceBus(c =>
 {

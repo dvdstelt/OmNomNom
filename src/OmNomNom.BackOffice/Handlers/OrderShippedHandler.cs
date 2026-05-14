@@ -1,5 +1,4 @@
 using System.Net.Mail;
-using ITOps.Shared.Integration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
