@@ -29,6 +29,9 @@ public static class Mapper
         vm.Description = product.Description;
         vm.ImageUrl = product.ImageUrl;
         vm.Quantity = orderedProduct.Quantity;
+        // Default; Finance flips this to false for items it could not
+        // fulfil, in OnOrderEmailProductsLoaded.
+        vm.Fulfilled = true;
         return vm;
     }
 }

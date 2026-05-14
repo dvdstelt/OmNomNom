@@ -30,6 +30,14 @@ public class OrderSummaryComposer(CatalogDbContext dbContext, IHttpContextAccess
         {
             Products = productsModel
         });
+        // Email-specific second pass so per-order state (e.g. Fulfilled
+        // from Finance) can attach without polluting the generic
+        // ProductsLoaded contract.
+        await context.RaiseEvent(new OrderEmailProductsLoaded
+        {
+            OrderId = orderId,
+            Products = productsModel
+        });
 
         var vm = request.GetComposedResponseModel();
         vm.Products = productsModel.Values.ToList();
