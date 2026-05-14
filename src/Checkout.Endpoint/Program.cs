@@ -21,7 +21,6 @@ var sqliteConnectionString = SqliteStorage.GetConnectionString("checkout");
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString,
     configurePersistence: persistence => persistence.EnableTransactionalSession());
-endpointConfiguration.EnableOutbox();
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();

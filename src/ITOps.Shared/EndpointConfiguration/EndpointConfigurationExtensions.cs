@@ -30,6 +30,7 @@ public static class EndpointConfigurationExtensions
             var persistence = endpointConfiguration.UsePersistence<SqlitePersistence>();
             persistence.ConnectionString(sqliteConnectionString);
             configurePersistence?.Invoke(persistence);
+            endpointConfiguration.EnableOutbox();
         }
 
         endpointConfiguration.SendFailedMessagesTo("error");
