@@ -1,46 +1,110 @@
-@CompositionGateway_HostAddress = http://localhost:5033
+@CompositionGateway_HostAddress = https://localhost:7126
+@orderId = 08bebbee-0e7e-4368-afab-74f4720f5f4e
+@customerId = 01093176-1308-493a-8f67-da5d278e2375
+@productId = 9ea20ee6-d6bd-4654-80fb-3dd7e52792f9
+@creditCardId = be09bff7-ab1c-499d-9e40-a282de05cd88
+@deliveryOptionId = 17779198-9ae4-419c-8373-65aa4c050cf7
 
-GET {{CompositionGateway_HostAddress}}/
-Accept: application/json
-
-###
-
+### Browse: default product list
 GET {{CompositionGateway_HostAddress}}/products
 Accept: application/json
 
-###
-
-GET {{CompositionGateway_HostAddress}}/products/beer
+### Browse: filtered list. Categories/Breweries/Countries/Sort/Page/Size are query-string parameters, not path segments
+GET {{CompositionGateway_HostAddress}}/products?categories=Beer&page=1&size=12
 Accept: application/json
 
-###
-
-GET {{CompositionGateway_HostAddress}}/product/ff899e9d
+### Browse: facet sidebar data
+GET {{CompositionGateway_HostAddress}}/products/facets
 Accept: application/json
 
-###
-
-GET {{CompositionGateway_HostAddress}}/cart/123
+### Browse: single product
+GET {{CompositionGateway_HostAddress}}/product/{{productId}}
 Accept: application/json
 
-###
-
-GET {{CompositionGateway_HostAddress}}/buy/address/123
+### Cart: does this order already have a cart?
+GET {{CompositionGateway_HostAddress}}/existingCart/{{orderId}}
 Accept: application/json
 
-###
-
-GET {{CompositionGateway_HostAddress}}/buy/shipping/123
+### Cart: read cart contents
+GET {{CompositionGateway_HostAddress}}/cart/{{orderId}}
 Accept: application/json
 
-###
+### Cart: add a product (quantity is a +/- delta against the existing line)
+POST {{CompositionGateway_HostAddress}}/cart/addproduct/{{orderId}}
+Content-Type: application/json
 
-GET {{CompositionGateway_HostAddress}}/buy/payment/123
+{
+  "id": "{{productId}}",
+  "quantity": 1
+}
+
+### Cart: "Proceed to checkout" submit. Body is a raw JSON array of cart lines that replaces the cart slice
+POST {{CompositionGateway_HostAddress}}/cart/{{orderId}}
+Content-Type: application/json
+
+[
+  { "productId": "{{productId}}", "quantity": 1 }
+]
+
+### Checkout - address: read billing + shipping address screen
+GET {{CompositionGateway_HostAddress}}/buy/address/{{orderId}}
 Accept: application/json
 
-###
+### Checkout - address: submit. Body must carry BOTH envelopes because Finance reads `billingAddress` and Shipping reads `shippingAddress` from the same POST
+POST {{CompositionGateway_HostAddress}}/buy/address/{{orderId}}
+Content-Type: application/json
 
-GET {{CompositionGateway_HostAddress}}/buy/summary/123
+{
+  "billingAddress": {
+    "fullName": "Dennis van der Stelt",
+    "street": "Van Zandvlietplein 1",
+    "zipCode": "3077 AA",
+    "town": "Rotterdam",
+    "country": "The Netherlands"
+  },
+  "shippingAddress": {
+    "fullName": "Dennis van der Stelt",
+    "street": "Van Zandvlietplein 1",
+    "zipCode": "3077 AA",
+    "town": "Rotterdam",
+    "country": "The Netherlands"
+  }
+}
+
+### Checkout - shipping: read delivery options + cart
+GET {{CompositionGateway_HostAddress}}/buy/shipping/{{orderId}}
 Accept: application/json
+
+### Checkout - shipping: pick a delivery option. Shipping and Finance both read this same body
+POST {{CompositionGateway_HostAddress}}/buy/shipping/{{orderId}}
+Content-Type: application/json
+
+{
+  "deliveryOptionId": "{{deliveryOptionId}}"
+}
+
+### Checkout - payment: list the customer's saved cards
+GET {{CompositionGateway_HostAddress}}/buy/creditcard/{{customerId}}
+Accept: application/json
+
+### Checkout - payment: read payment screen
+GET {{CompositionGateway_HostAddress}}/buy/payment/{{orderId}}
+Accept: application/json
+
+### Checkout - payment: pick a stored card
+POST {{CompositionGateway_HostAddress}}/buy/payment/{{orderId}}
+Content-Type: application/json
+
+{
+  "creditCardId": "{{creditCardId}}"
+}
+
+### Checkout - summary: final review screen
+GET {{CompositionGateway_HostAddress}}/buy/summary/{{orderId}}
+Accept: application/json
+
+### Checkout - submit: triggers the atomic checkout dispatch. No body
+POST {{CompositionGateway_HostAddress}}/buy/summary/{{orderId}}
+Content-Type: application/json
 
 ###
