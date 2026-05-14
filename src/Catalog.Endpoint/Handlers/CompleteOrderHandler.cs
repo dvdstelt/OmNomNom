@@ -3,18 +3,17 @@ using Catalog.Data.Models;
 using Catalog.Endpoint.Messages.Commands;
 using Catalog.Endpoint.Messages.Events;
 using Microsoft.EntityFrameworkCore;
-using NServiceBus.Logging;
+using Microsoft.Extensions.Logging;
 using OrderItem = Catalog.Data.Models.OrderItem;
 
 namespace Catalog.Endpoint.Handlers;
 
-public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<CompleteOrder>
+public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOrderHandler> log)
+    : IHandleMessages<CompleteOrder>
 {
-    static ILog log = LogManager.GetLogger<CompleteOrderHandler>();
-
     public async Task Handle(CompleteOrder message, IMessageHandlerContext context)
     {
-        log.InfoFormat("{OrderId} - Finalizing order", message.OrderId);
+        log.LogInformation("{OrderId} - Finalizing order", message.OrderId);
 
         // Idempotent upsert: if a row for this OrderId already exists,
         // replace its line items rather than creating a duplicate. The
@@ -85,14 +84,14 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
 
         if (itemsNotFulfilled.ItemsNotInStock.Count > 0)
         {
-            log.InfoFormat("{OrderId} - Some items could not be fulfilled since they were out of stock.", message.OrderId);
+            log.LogInformation("{OrderId} - Some items could not be fulfilled since they were out of stock.", message.OrderId);
             await context.Publish(itemsNotFulfilled);
         }
 
         if (itemsNotFulfilled.ItemsNotInStock.Count == order.Products.Count)
         {
             // Nothing could be fulfilled. What to do?
-            log.InfoFormat("{OrderId} - Entire order could not be fulfilled since everything was out of stock.", message.OrderId);
+            log.LogInformation("{OrderId} - Entire order could not be fulfilled since everything was out of stock.", message.OrderId);
             return;
         }
 
@@ -113,6 +112,6 @@ public class CompleteOrderHandler(CatalogDbContext dbContext) : IHandleMessages<
             Items = fulfilledItems
         });
 
-        log.InfoFormat("{OrderId} - Order accepted", message.OrderId);
+        log.LogInformation("{OrderId} - Order accepted", message.OrderId);
     }
 }
