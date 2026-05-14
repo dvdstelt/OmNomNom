@@ -13,7 +13,7 @@ public class ShippingPolicy : Saga<ShippingPolicyData>,
     IHandleMessages<ShipOrderReply>
 {
     static ILog log = LogManager.GetLogger<ShippingPolicy>();
-    
+
     protected override void ConfigureHowToFindSaga(SagaPropertyMapper<ShippingPolicyData> mapper)
     {
         mapper.MapSaga(s => s.OrderId)
@@ -43,23 +43,23 @@ public class ShippingPolicy : Saga<ShippingPolicyData>,
         {
             log.InfoFormat("{OrderId} - Continue with processing", Data.OrderId);
 
-            var requestMessge = new ShipOrderRequest();
-            requestMessge.OrderId = Data.OrderId;
-            await context.Send(requestMessge);
+            var requestMessage = new ShipOrderRequest();
+            requestMessage.OrderId = Data.OrderId;
+            await context.Send(requestMessage);
         }
     }
 
     public async Task Handle(ShipOrderReply message, IMessageHandlerContext context)
     {
         log.InfoFormat("{OrderId} - ShipOrderReply received", Data.OrderId);
-        
+
         var @event = new OrderShipped();
         @event.OrderId = Data.OrderId;
 
         await context.Publish(@event);
 
         log.InfoFormat("{OrderId} - OrderShipped published", Data.OrderId);
-        
+
         // Can we actually mark this as complete? Or would there be more process?
         MarkAsComplete();
     }

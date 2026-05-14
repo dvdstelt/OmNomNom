@@ -1,10 +1,6 @@
-using Catalog.ServiceComposition.Workflow;
-using Finance.ServiceComposition.Workflow;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
-using PaymentInfo.ServiceComposition.Workflow;
 using ServiceComposer.AspNetCore;
-using Shipping.ServiceComposition.Workflow;
 using WorkflowComposer;
 using WorkflowComposer.Sqlite;
 
@@ -23,14 +19,7 @@ builder.Services.AddViewModelComposition();
 builder.Services.AddControllers();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
-endpointConfiguration.Configure(configureRouting: s =>
-{
-    // TODO: Figure out how this can be defined per service and not globally
-    s.RouteToEndpoint(typeof(Finance.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Finance");
-    s.RouteToEndpoint(typeof(Catalog.Endpoint.Messages.Commands.SubmitOrderItems).Assembly, "Catalog");
-    s.RouteToEndpoint(typeof(Shipping.Endpoint.Messages.Commands.SubmitDeliveryOption).Assembly, "Shipping");
-    s.RouteToEndpoint(typeof(PaymentInfo.Endpoint.Messages.Commands.SubmitPaymentInfo).Assembly, "PaymentInfo");
-});
+endpointConfiguration.Configure();
 endpointConfiguration.SendOnly();
 
 // WorkflowComposer + SQLite store: workflow state for in-flight
@@ -47,14 +36,7 @@ builder.Services.AddWorkflowComposer(workflow =>
         ProcessorEndpoint = "Checkout"
     });
 
-    workflow.RegisterSlicesFromAssembliesOf(
-        typeof(CartWorkflowSlice),
-        typeof(BillingAddressWorkflowSlice),
-        typeof(ShippingAddressWorkflowSlice),
-        typeof(PaymentWorkflowSlice));
-    // CompleteOrderWorkflowSlice lives in Catalog.ServiceComposition,
-    // already covered by typeof(CartWorkflowSlice). Listed here for
-    // discoverability since it's only written by SummarySubmitComposer.
+    workflow.DiscoverSlices();
 });
 
 builder.UseNServiceBus(endpointConfiguration);
