@@ -13,12 +13,6 @@ public interface IWorkflowSlice
     // The CLR type the framework should (de)serialize for this slice.
     Type SliceType { get; }
 
-    // Determines the order in which slices' commands are enqueued at
-    // submit time. Lower values go first; ties keep DI order. Use a
-    // high value for finalizer-style slices (e.g. CompleteOrder) so
-    // the per-boundary writes are queued before the trigger.
-    int SubmitOrder => 0;
-
     // Validate the persisted slice at submit time. Return an empty
     // list when valid, or one or more human-readable errors when not.
     // If *any* slice returns errors, the framework throws
@@ -39,8 +33,6 @@ public abstract class WorkflowSlice<TSlice> : IWorkflowSlice
     public abstract string SliceKey { get; }
 
     public Type SliceType => typeof(TSlice);
-
-    public virtual int SubmitOrder => 0;
 
     public IReadOnlyList<string> Validate(object slice) =>
         Validate((TSlice)slice);

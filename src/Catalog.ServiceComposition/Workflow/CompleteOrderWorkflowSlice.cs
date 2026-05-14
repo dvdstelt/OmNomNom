@@ -7,8 +7,6 @@ namespace Catalog.ServiceComposition.Workflow;
 // SummarySubmitComposer at submit time with the cart's contents
 // copied in, so this single command carries both the line items
 // (formerly SubmitOrderItems) and the "complete it" trigger.
-// SubmitOrder is set high so the framework queues this command
-// after all per-boundary writes have been queued.
 public sealed record CompleteOrderSlice(IReadOnlyList<CartLine> Items)
 {
     public static CompleteOrderSlice Empty { get; } = new([]);
@@ -19,8 +17,6 @@ public class CompleteOrderWorkflowSlice : WorkflowSlice<CompleteOrderSlice>
     public const string Key = "Catalog.CompleteOrder";
 
     public override string SliceKey => Key;
-
-    public override int SubmitOrder => int.MaxValue;
 
     protected override IReadOnlyList<string> Validate(CompleteOrderSlice slice)
     {

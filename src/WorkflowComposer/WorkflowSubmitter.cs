@@ -9,7 +9,7 @@ internal sealed class WorkflowSubmitter(
         var loaded = new List<(IWorkflowSlice slice, object value)>();
         var errors = new Dictionary<string, IReadOnlyList<string>>();
 
-        foreach (var slice in slices.OrderBy(s => s.SubmitOrder))
+        foreach (var slice in slices)
         {
             var value = await store.ReadSlice(workflowId, slice.SliceKey, slice.SliceType, ct);
             if (value is null) continue;
