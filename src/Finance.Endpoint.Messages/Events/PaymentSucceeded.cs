@@ -1,4 +1,4 @@
-namespace PaymentInfo.Endpoint.Messages.Events;
+namespace Finance.Endpoint.Messages.Events;
 
 public class PaymentSucceeded
 {

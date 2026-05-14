@@ -1,8 +1,8 @@
 using Catalog.Endpoint.Messages.Events;
+using Finance.Endpoint.Messages.Events;
 using NServiceBus.Logging;
-using PaymentInfo.Endpoint.Messages.Events;
 
-namespace PaymentInfo.Endpoint.Handlers;
+namespace Finance.Endpoint.Handlers;
 
 public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 {
