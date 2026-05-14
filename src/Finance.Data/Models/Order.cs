@@ -21,4 +21,10 @@ public class OrderItem : IPriced
     public int Quantity { get; set; }
     public decimal Price { get; set; }
     public decimal Discount { get; set; }
+
+    // Defaults to true at submit time; flipped to false by
+    // OrderPlacedHandler / OrderCancelledHandler for items Catalog
+    // could not fulfil. The customer is only charged for items where
+    // this is true.
+    public bool Fulfilled { get; set; } = true;
 }

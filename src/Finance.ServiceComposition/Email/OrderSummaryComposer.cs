@@ -51,6 +51,15 @@ public class OrderSummaryComposer(FinanceDbContext dbContext, IHttpContextAccess
             billingAddress.Town,
             billingAddress.Country);
         vm.DeliveryOption = deliveryOptionModel;
-        vm.TotalPrice = order.Items.Sum(s => s.EffectivePrice() * s.Quantity) + deliveryOption.Price;
+
+        // Customer is only charged for items that were actually
+        // fulfilled. If nothing shipped, only the delivery fee would
+        // remain, so suppress it too - a fully cancelled order has a
+        // total of zero.
+        var fulfilledTotal = order.Items
+            .Where(i => i.Fulfilled)
+            .Sum(s => s.EffectivePrice() * s.Quantity);
+        var anyFulfilled = order.Items.Any(i => i.Fulfilled);
+        vm.TotalPrice = anyFulfilled ? fulfilledTotal + deliveryOption.Price : 0m;
     }
 }
