@@ -1,6 +1,7 @@
 using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
+using OmNomNom.Website.Helpers;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddViewModelComposition(options =>
     options.EnableCompositionOverControllers();
 });
 builder.Services.AddHealthChecks();
+builder.Services.AddScoped<OrderEmailSender>();
 
 // Typed HttpClient for talking to the CompositionGateway. In development
 // we skip chain validation because vite.config.js exports the ASP.NET

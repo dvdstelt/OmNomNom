@@ -31,6 +31,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Catalog.Data\Catalog.Data.csproj" />
+      <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
       <ProjectReference Include="..\Shipping.Endpoint.Messages\Shipping.Endpoint.Messages.csproj" />
     </ItemGroup>

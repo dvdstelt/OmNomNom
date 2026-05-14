@@ -1,0 +1,175 @@
+@using System.Globalization
+@model dynamic
+@{
+    Layout = null;
+
+    Func<decimal, string> formatMoney = v =>
+        "$" + v.ToString("0.00", CultureInfo.InvariantCulture);
+
+    // For a cancelled order every line is unfulfilled. We still iterate
+    // so the email lists everything the customer asked for - that's
+    // what makes the apology useful.
+    var rows = new List<(string Name, string ImageUrl, string Description, int Qty)>();
+    foreach (var item in Model.products)
+    {
+        int qty = (int?)item.quantity ?? 0;
+        string desc = (string?)item.description ?? "";
+        if (desc.Length > 60) desc = desc.Substring(0, 60).TrimEnd() + "...";
+        rows.Add((
+            (string)item.name,
+            (string)item.imageUrl,
+            desc,
+            qty));
+    }
+
+    string fullName = (string?)Model.billingAddress.fullName ?? "friend";
+    string orderId = (string?)Model.orderId ?? "";
+    string replaceUrl = $"https://localhost:5173/replace-items/{orderId}";
+}<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    <title>OmNomNom - Order cancelled</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, table, td, p, a, h1, h2, h3, h4 {
+            -webkit-font-smoothing: antialiased;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            outline: none;
+        }
+        a { text-decoration: none; }
+
+        @@media only screen and (max-width: 620px) {
+            .email-container { width: 100% !important; }
+            .stack-cell { display: block !important; width: 100% !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #1a1714; font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif; color: #f0e6d8; line-height: 1.6;">
+<center style="width: 100%; background-color: #1a1714;">
+
+    <div style="display: none; max-height: 0; max-width: 0; overflow: hidden; opacity: 0; mso-hide: all; font-family: 'Outfit', sans-serif;">
+        Your order was cancelled - nothing was in stock. You haven&rsquo;t been charged.
+    </div>
+
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #1a1714;">
+        <tr>
+            <td align="center" style="padding: 32px 12px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="email-container" style="max-width: 600px; width: 100%;">
+
+                    <!-- Brand header -->
+                    <tr>
+                        <td style="padding: 0 4px 24px 4px; text-align: left;">
+                            <span style="font-family: 'Fraunces', Georgia, serif; font-weight: 900; font-size: 28px; color: #f0e6d8; letter-spacing: -0.5px;">&#127866; OmNomNom</span>
+                            <div style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #7a6f62; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px;">Because beer is good, but beers are better</div>
+                        </td>
+                    </tr>
+
+                    <!-- Hero card -->
+                    <tr>
+                        <td style="background-color: #2a2520; border: 1px solid #d45a5a; border-radius: 14px; padding: 40px 36px;">
+                            <div style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #d45a5a; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 12px;">Order cancelled</div>
+                            <h1 style="font-family: 'Fraunces', Georgia, serif; font-weight: 900; font-size: 32px; color: #f5ead6; margin: 0 0 8px 0; line-height: 1.15;">Hey @fullName,</h1>
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 16px; color: #a89b8a; margin: 0;">We&rsquo;re sorry &mdash; nothing on your order was in stock when we tried to pack it, so we cancelled the order and haven&rsquo;t charged you anything.</p>
+                        </td>
+                    </tr>
+
+                    <tr><td style="height: 16px; line-height: 16px; font-size: 0;">&nbsp;</td></tr>
+
+                    <!-- Items we couldn't fulfil -->
+                    <tr>
+                        <td style="background-color: #2a2520; border: 1px solid #3a3530; border-radius: 14px; padding: 28px 28px 16px 28px;">
+                            <h2 style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 18px; color: #f5ead6; margin: 0 0 4px 0; letter-spacing: -0.2px;">What you wanted</h2>
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 13px; color: #a89b8a; margin: 0 0 16px 0;">None of these were available when we went to pack the order.</p>
+
+                            @foreach (var row in rows)
+                            {
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                    <tr>
+                                        <td valign="middle" width="84" style="padding: 16px 0; border-bottom: 1px solid #3a3530;">
+                                            <img src="https://localhost:5173/products/@row.ImageUrl" alt="@row.Name" width="72" height="72" style="display: block; width: 72px; height: 72px; border-radius: 10px; background-color: #1f1b17; border: 0; opacity: 0.55;">
+                                        </td>
+                                        <td valign="middle" style="padding: 16px 16px; border-bottom: 1px solid #3a3530;">
+                                            <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: #f0e6d8; margin: 0 0 4px 0;">@row.Name</div>
+                                            <div style="font-family: 'Outfit', sans-serif; font-size: 13px; color: #7a6f62; margin: 0 0 6px 0;">@row.Description</div>
+                                            <div style="font-family: 'Outfit', sans-serif; font-size: 12px; color: #a89b8a;">Qty <span style="color: #f0e6d8; font-weight: 600;">@row.Qty</span></div>
+                                        </td>
+                                        <td valign="middle" align="right" style="padding: 16px 0; white-space: nowrap; border-bottom: 1px solid #3a3530;">
+                                            <div style="font-family: 'Outfit', sans-serif; font-size: 12px; color: #d45a5a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Out of stock</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr><td style="height: 16px; line-height: 16px; font-size: 0;">&nbsp;</td></tr>
+
+                    <!-- Replace-items CTA -->
+                    <tr>
+                        <td style="background-color: #2a2520; border: 1px solid #3a3530; border-radius: 14px; padding: 28px 28px;">
+                            <h2 style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 18px; color: #f5ead6; margin: 0 0 8px 0; letter-spacing: -0.2px;">Pick something else</h2>
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 14px; color: #a89b8a; margin: 0 0 20px 0;">If you&rsquo;d like to swap your missed items for something of equal value, you have <strong style="color: #f5ead6;">6 hours</strong> from when this email was sent to put together a replacement order.</p>
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="background-color: #d4883e; border-radius: 8px;">
+                                        <a href="@replaceUrl" style="display: inline-block; padding: 12px 24px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: #1a1714; text-decoration: none;">Choose replacements &rarr;</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr><td style="height: 16px; line-height: 16px; font-size: 0;">&nbsp;</td></tr>
+
+                    <!-- Total card -->
+                    <tr>
+                        <td style="background-color: #2a2520; border: 1px solid #3a3530; border-radius: 14px; padding: 24px 28px;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding: 0; font-family: 'Fraunces', Georgia, serif; font-size: 18px; color: #f5ead6; font-weight: 700;">Charged</td>
+                                    <td align="right" style="padding: 0; font-family: 'Fraunces', Georgia, serif; font-size: 22px; color: #5a9e6f; font-weight: 900; letter-spacing: -0.3px;">@formatMoney(0m)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr><td style="height: 32px; line-height: 32px; font-size: 0;">&nbsp;</td></tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 0 8px 16px 8px; text-align: center;">
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 13px; color: #7a6f62; margin: 0 0 8px 0;">Sorry we couldn&rsquo;t deliver this time around.</p>
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 12px; color: #7a6f62; margin: 0;">
+                                <a href="https://compilesoftware.nl/" style="color: #d4883e; text-decoration: none;">CompileSoftware</a>
+                                <span style="color: #3a3530;">&nbsp;&middot;&nbsp;</span>
+                                <a href="https://bloggingabout.net/" style="color: #d4883e; text-decoration: none;">BloggingAbout.NET</a>
+                            </p>
+                            <p style="font-family: 'Outfit', sans-serif; font-size: 11px; color: #3a3530; margin: 16px 0 0 0;">Must be 21+ to purchase. &copy; 2026 OmNomNom Craft Beer Co.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</center>
+</body>
+</html>
