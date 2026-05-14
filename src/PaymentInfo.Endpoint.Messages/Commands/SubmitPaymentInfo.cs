@@ -1,8 +1,8 @@
 namespace PaymentInfo.Endpoint.Messages.Commands;
 
-public class SubmitPaymentInfo
+public sealed record SubmitPaymentInfo
 {
-    public Guid OrderId { get; set; }
-    public Guid CustomerId { get; set; }
-    public Guid CreditCardId { get; set; }
+    public required Guid OrderId { get; init; }
+    public required Guid CustomerId { get; init; }
+    public required Guid CreditCardId { get; init; }
 }

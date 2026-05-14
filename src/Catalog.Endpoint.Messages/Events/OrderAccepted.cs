@@ -1,6 +1,6 @@
 namespace Catalog.Endpoint.Messages.Events;
 
-public class OrderAccepted
+public sealed record OrderAccepted
 {
-    public Guid OrderId { get; set; }
+    public required Guid OrderId { get; init; }
 }

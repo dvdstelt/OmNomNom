@@ -1,15 +1,14 @@
 namespace Catalog.Endpoint.Messages.Events;
 
-public class OrderItemsNotFulfilled
+public sealed record OrderItemsNotFulfilled
 {
-    public Guid OrderId { get; set; }
-    public List<OrderItem> ItemsNotInStock { get; set; } = new();
-    
-    public class OrderItem
+    public required Guid OrderId { get; init; }
+    public required List<OrderItem> ItemsNotInStock { get; init; }
+
+    public sealed record OrderItem
     {
-        public Guid ProductId { get; set; }
-        public int QuantityWanted { get; set; }
-        public int QuantityInStock { get; set; }
+        public required Guid ProductId { get; init; }
+        public required int QuantityWanted { get; init; }
+        public required int QuantityInStock { get; init; }
     }
 }
-

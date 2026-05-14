@@ -1,13 +1,13 @@
 namespace Catalog.Endpoint.Messages.Commands;
 
-public class CompleteOrder
+public sealed record CompleteOrder
 {
-    public Guid OrderId { get; set; }
-    public List<OrderItem> Items { get; set; } = new();
+    public required Guid OrderId { get; init; }
+    public required List<OrderItem> Items { get; init; }
 }
 
-public class OrderItem
+public sealed record OrderItem
 {
-    public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
+    public required Guid ProductId { get; init; }
+    public required int Quantity { get; init; }
 }

@@ -45,7 +45,8 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
         // Verify for each product that is being ordered if there's enough in stock
         var itemsNotFulfilled = new OrderItemsNotFulfilled
         {
-            OrderId = message.OrderId
+            OrderId = message.OrderId,
+            ItemsNotInStock = []
         };
         var fulfilledItems = new List<OrderedItem>();
 

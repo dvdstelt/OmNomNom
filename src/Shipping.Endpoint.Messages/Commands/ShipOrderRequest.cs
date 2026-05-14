@@ -1,6 +1,6 @@
 namespace Shipping.Endpoint.Messages.Commands;
 
-public class ShipOrderRequest
+public sealed record ShipOrderRequest
 {
-    public Guid OrderId { get; set; }
+    public required Guid OrderId { get; init; }
 }

@@ -1,9 +1,9 @@
 namespace PaymentInfo.Endpoint.Messages.Events;
 
-public class FraudDetection
+public sealed record FraudDetection
 {
-    public Guid CustomerId { get; set; }
-    public Guid OrderId { get; set; }
-    public Guid CreditCardId { get; set; }
-    public string FraudMessage { get; set; }
+    public required Guid CustomerId { get; init; }
+    public required Guid OrderId { get; init; }
+    public required Guid CreditCardId { get; init; }
+    public required string FraudMessage { get; init; }
 }

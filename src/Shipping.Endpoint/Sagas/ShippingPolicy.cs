@@ -41,8 +41,7 @@ public class ShippingPolicy(ILogger<ShippingPolicy> log) : Saga<ShippingPolicyDa
         {
             log.LogInformation("{OrderId} - Continue with processing", Data.OrderId);
 
-            var requestMessage = new ShipOrderRequest();
-            requestMessage.OrderId = Data.OrderId;
+            var requestMessage = new ShipOrderRequest { OrderId = Data.OrderId };
             await context.Send(requestMessage);
         }
     }
@@ -51,8 +50,7 @@ public class ShippingPolicy(ILogger<ShippingPolicy> log) : Saga<ShippingPolicyDa
     {
         log.LogInformation("{OrderId} - ShipOrderReply received", Data.OrderId);
 
-        var @event = new OrderShipped();
-        @event.OrderId = Data.OrderId;
+        var @event = new OrderShipped { OrderId = Data.OrderId };
 
         await context.Publish(@event);
 

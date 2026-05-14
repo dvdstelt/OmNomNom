@@ -1,6 +1,6 @@
 namespace Finance.Endpoint.Messages.Events;
 
-public class PaymentSucceeded
+public sealed record PaymentSucceeded
 {
-    public Guid OrderId { get; set; }
+    public required Guid OrderId { get; init; }
 }
