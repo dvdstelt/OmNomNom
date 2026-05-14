@@ -5,6 +5,12 @@ public class Order
     public Guid OrderId { get; set; }
 
     public List<OrderItem> Products { get; set; } = [];
+
+    public void ReplaceItems(IEnumerable<OrderItem> items)
+    {
+        Products.Clear();
+        Products.AddRange(items);
+    }
 }
 
 public class OrderItem
