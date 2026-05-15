@@ -23,23 +23,38 @@ public class OnSummaryLoaded(FinanceDbContext dbContext, IWorkflowStore workflow
 
         if (order == null)
         {
-            // Finance hasn't processed SubmitOrderItems yet - fall
-            // back to the in-flight slice. The slice carries no
-            // prices (those are domain-owned and only get populated
-            // by Finance's handler), so the totals come out as 0
-            // until the message is dispatched and processed.
+            // Finance hasn't processed SubmitOrderItems yet - on this
+            // branch that's the normal pre-submit state, since
+            // SubmitOrderItems is now dispatched together with
+            // CompleteOrder when the customer clicks "Place order".
+            // Fall back to the in-flight slice and stitch in the
+            // current per-product Price/Discount from Finance.Products
+            // so the summary shows real per-line and grand totals
+            // instead of zeros. The eventually-persisted OrderItem will
+            // be the snapshot at submit time; this is the preview.
             var slice = await workflow.Read<OrderItemsSlice>(orderId, OrderItemsWorkflowSlice.Key, ct);
             order = new Order { OrderId = orderId };
-            if (slice is not null)
+            if (slice is not null && slice.Items.Count > 0)
             {
+                var productIds = slice.Items.Select(i => i.ProductId).ToList();
+                var prices = await dbContext.Products
+                    .Where(p => productIds.Contains(p.ProductId))
+                    .ToDictionaryAsync(p => p.ProductId, ct);
+
                 foreach (var line in slice.Items)
                 {
-                    order.Items.Add(new OrderItem
+                    var item = new OrderItem
                     {
                         OrderId = orderId,
                         ProductId = line.ProductId,
                         Quantity = line.Quantity
-                    });
+                    };
+                    if (prices.TryGetValue(line.ProductId, out var product))
+                    {
+                        item.Price = product.Price;
+                        item.Discount = product.Discount;
+                    }
+                    order.Items.Add(item);
                 }
             }
         }
