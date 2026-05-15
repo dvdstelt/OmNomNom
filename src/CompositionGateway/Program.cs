@@ -15,8 +15,27 @@ builder.Services.AddCors(options =>
                        .AllowAnyHeader();
             }));
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddViewModelComposition();
-builder.Services.AddControllers();
+builder.Services.AddViewModelComposition(options =>
+{
+    // Required so composers can call request.SetActionResult(...) to
+    // short-circuit a composed response (e.g. returning 410 Gone when
+    // a cart slice has been reaped). ServiceComposer 5.2 refuses to
+    // honour an action result unless output formatters are wired in.
+    options.ResponseSerialization.UseOutputFormatters = true;
+});
+builder.Services.AddControllers()
+    .AddJsonOptions(json =>
+    {
+        // Output formatters serialize ExpandoObject keys verbatim;
+        // composers assign PascalCase (vm.Products = ...) but the
+        // SvelteKit frontend reads camelCase. Make the formatter
+        // lowercase the first letter so the wire shape stays the
+        // same as ServiceComposer's own writer used to produce.
+        json.JsonSerializerOptions.PropertyNamingPolicy =
+            System.Text.Json.JsonNamingPolicy.CamelCase;
+        json.JsonSerializerOptions.DictionaryKeyPolicy =
+            System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddHealthChecks();
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
