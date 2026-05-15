@@ -82,9 +82,9 @@ public static class SeedData
     {
         return new List<DeliveryOption>
         {
-            new() { DeliveryOptionId = StandardId, Price = 2 },
-            new() { DeliveryOptionId = ExpeditedId, Price = 6 },
-            new() { DeliveryOptionId = PriorityId, Price = 14 },
+            new() { DeliveryOptionId = StandardId, Price = 2, FreeShippingThreshold = 50m },
+            new() { DeliveryOptionId = ExpeditedId, Price = 6, FreeShippingThreshold = 75m },
+            new() { DeliveryOptionId = PriorityId, Price = 14, FreeShippingThreshold = null },
         };
     }
 

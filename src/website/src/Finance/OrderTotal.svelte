@@ -3,10 +3,12 @@
     label = 'Order Total',
     amount = 0,
     emphasized = false,
-    discount = false
+    discount = false,
+    freeWhenZero = false
   } = $props();
   let format = (value) => {
     const n = Number(value ?? 0);
+    if (freeWhenZero && n <= 0) return 'FREE';
     return (n < 0 ? '-$' : '$') + Math.abs(n).toFixed(2);
   };
 </script>

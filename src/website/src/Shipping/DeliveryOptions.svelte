@@ -1,6 +1,9 @@
 <script>
   let { options = [], selectedId = $bindable(null), onSelect = () => {} } = $props();
-  let format = (value) => '$' + Number(value ?? 0).toFixed(2);
+  let format = (value) => {
+    const n = Number(value ?? 0);
+    return n <= 0 ? 'FREE' : '$' + n.toFixed(2);
+  };
 
   function pick(id) {
     selectedId = id;

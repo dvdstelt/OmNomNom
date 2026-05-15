@@ -119,7 +119,7 @@
               {#if summary.deliveryOption.deliveryOptionDescription}
                 <div>{summary.deliveryOption.deliveryOptionDescription}</div>
               {/if}
-              <div>${Number(summary.deliveryOption.price ?? 0).toFixed(2)}</div>
+              <div>{Number(summary.deliveryOption.price ?? 0) <= 0 ? 'FREE' : '$' + Number(summary.deliveryOption.price).toFixed(2)}</div>
             </div>
           </div>
         {/if}

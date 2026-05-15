@@ -46,7 +46,7 @@
       <OrderTotal label="Discount" amount={-discountTotal} discount />
     {/if}
     {#if shippingPrice !== null}
-      <OrderTotal label="Shipping" amount={shippingPrice} />
+      <OrderTotal label="Shipping" amount={shippingPrice} freeWhenZero />
     {/if}
     <OrderTotal label="Order Total" amount={total} emphasized />
     {#if children}

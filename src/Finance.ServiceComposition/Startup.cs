@@ -1,5 +1,6 @@
 using Finance.Data;
 using Finance.Endpoint.Messages.Commands;
+using Finance.ServiceComposition.Helpers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ public class Startup : IViewModelCompositionOptionsCustomization, IConfigureEndp
     {
         options.Services.AddDbContext<FinanceDbContext>(opts =>
             opts.UseSqlite(SqliteStorage.GetConnectionString("finance")));
+        options.Services.AddScoped<OrderSubtotalReader>();
     }
 
     public void ConfigureRouting(RoutingSettings<LearningTransport> routing)
