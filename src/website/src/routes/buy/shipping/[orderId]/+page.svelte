@@ -7,6 +7,7 @@
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import DeliveryOptions from '../../../../Shipping/DeliveryOptions.svelte';
   import CartItemList from '../../../../Catalog/CartItemList.svelte';
+  import ExpiredCartNotice from '../../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   let deliveryOptions = $state([]);
@@ -14,6 +15,7 @@
   let selectedDeliveryOptionId = $state(null);
   let loading = $state(true);
   let saving = $state(false);
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -30,6 +32,8 @@
       cartItems = data?.cartItems ?? [];
       selectedDeliveryOptionId =
         data?.selectedDeliveryOption ?? deliveryOptions[0]?.deliveryOptionId ?? null;
+    } catch (e) {
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
@@ -60,6 +64,8 @@
 
       {#if loading}
         <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
+      {:else if cartExpired}
+        <ExpiredCartNotice />
       {:else}
         <div class="form-section">
           <h2>Delivery Speed</h2>

@@ -3,10 +3,10 @@ namespace Catalog.Data.Models;
 public class Product
 {
     public Guid ProductId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string ImageUrl { get; set; }
-    public string Category { get; set; }
-    public string Brewery { get; set; }
-    public string Country { get; set; }
+    public string Name { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
+    public string Category { get; set; } = null!;
+    public string Brewery { get; set; } = null!;
+    public string Country { get; set; } = null!;
 }

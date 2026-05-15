@@ -33,8 +33,15 @@ public class CartSummaryComposer(IWorkflowStore workflow, IHttpContextAccessor h
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
-                   ?? CartSlice.Empty;
+        // Address and payment screens both come *after* the cart was
+        // populated; a missing slice means the workflow store reaped
+        // it. 410 lets the SPA tell the customer to start over.
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct);
+        if (cart is null)
+        {
+            request.SetActionResult(new StatusCodeResult(StatusCodes.Status410Gone));
+            return;
+        }
 
         var orderedProducts = Mapper.MapToDictionary(cart);
 

@@ -1,7 +1,7 @@
 using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
-using ITOps.Shared.Integration;
 using ITOps.Shared.Sqlite;
+using OmNomNom.Website.Helpers;
 using ServiceComposer.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +12,8 @@ builder.Services.AddViewModelComposition(options =>
 {
     options.EnableCompositionOverControllers();
 });
+builder.Services.AddHealthChecks();
+builder.Services.AddScoped<OrderEmailSender>();
 
 // Typed HttpClient for talking to the CompositionGateway. In development
 // we skip chain validation because vite.config.js exports the ASP.NET
@@ -34,8 +36,6 @@ builder.Services.AddHttpClient("composition-gateway", client =>
         return handler;
     });
 
-DataProviders.RegisterAll(builder.Services);
-
 builder.Host.UseNServiceBus(c =>
 {
     var endpointConfiguration = new EndpointConfiguration("OmNomNomBackOffice");
@@ -56,6 +56,7 @@ else
 }
 
 app.UseRouting();
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.MapCompositionHandlers();
 

@@ -1,11 +1,11 @@
 namespace Finance.Endpoint.Messages.Commands;
 
-public class SubmitBillingAddress
+public sealed record SubmitBillingAddress
 {
-    public Guid OrderId { get; set; }
-    public string FullName { get; set; }
-    public string Street { get; set; }
-    public string ZipCode { get; set; }
-    public string Town { get; set; }
-    public string Country { get; set; }
+    public required Guid OrderId { get; init; }
+    public required string FullName { get; init; }
+    public required string Street { get; init; }
+    public required string ZipCode { get; init; }
+    public required string Town { get; init; }
+    public required string Country { get; init; }
 }

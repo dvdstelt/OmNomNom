@@ -4,10 +4,11 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>annotations</Nullable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Catalog.Endpoint.Messages\Catalog.Endpoint.Messages.csproj" />
       <ProjectReference Include="..\Finance.Data\Finance.Data.csproj" />
       <ProjectReference Include="..\Finance.Endpoint.Messages\Finance.Endpoint.Messages.csproj" />
     </ItemGroup>

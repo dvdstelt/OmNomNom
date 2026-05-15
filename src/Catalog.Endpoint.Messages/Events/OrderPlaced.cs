@@ -1,18 +1,28 @@
 namespace Catalog.Endpoint.Messages.Events;
 
 // Published when an order is finalised by Catalog (alongside
-// OrderAccepted). Carries the fulfilled line items so projection
+// OrderAccepted). Carries both the fulfilled line items (so projection
 // subscribers - notably Marketing's popularity/trending counters -
-// have everything they need without reading from Catalog.
-public class OrderPlaced
+// have everything they need without reading from Catalog) and the
+// items that were ordered but could not be fulfilled, so Finance can
+// adjust the charged amount and the email can list them to the
+// customer.
+public sealed record OrderPlaced
 {
-    public Guid OrderId { get; set; }
-    public DateTime OccurredAt { get; set; }
-    public List<OrderedItem> Items { get; set; } = [];
+    public required Guid OrderId { get; init; }
+    public required DateTime OccurredAt { get; init; }
+    public required List<OrderedItem> Items { get; init; }
+    public required List<UnfulfilledItem> UnfulfilledItems { get; init; }
 }
 
-public class OrderedItem
+public sealed record OrderedItem
 {
-    public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
+    public required Guid ProductId { get; init; }
+    public required int Quantity { get; init; }
+}
+
+public sealed record UnfulfilledItem
+{
+    public required Guid ProductId { get; init; }
+    public required int Quantity { get; init; }
 }

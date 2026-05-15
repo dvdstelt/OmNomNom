@@ -14,6 +14,11 @@ public class DeliveryOptionWorkflowSlice : WorkflowSlice<DeliveryOptionSlice>
 
     public override string SliceKey => Key;
 
+    protected override IReadOnlyList<string> Validate(DeliveryOptionSlice slice) =>
+        slice.DeliveryOptionId == Guid.Empty
+            ? ["DeliveryOptionId is required."]
+            : [];
+
     protected override object? BuildSubmitCommand(Guid orderId, DeliveryOptionSlice slice) =>
         new SubmitDeliveryOption
         {

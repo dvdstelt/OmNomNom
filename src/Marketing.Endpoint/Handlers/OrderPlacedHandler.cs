@@ -2,7 +2,7 @@ using Catalog.Endpoint.Messages.Events;
 using Marketing.Data;
 using Marketing.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using NServiceBus.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Marketing.Endpoint.Handlers;
 
@@ -23,10 +23,9 @@ namespace Marketing.Endpoint.Handlers;
 //
 // No idempotency dedup here - the NServiceBus Outbox is the next thing
 // being added and will handle exactly-once for us.
-public class OrderPlacedHandler(MarketingDbContext dbContext) : IHandleMessages<OrderPlaced>
+public class OrderPlacedHandler(MarketingDbContext dbContext, ILogger<OrderPlacedHandler> log)
+    : IHandleMessages<OrderPlaced>
 {
-    static readonly ILog log = LogManager.GetLogger<OrderPlacedHandler>();
-
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {
         if (message.Items.Count == 0)
@@ -55,8 +54,8 @@ public class OrderPlacedHandler(MarketingDbContext dbContext) : IHandleMessages<
                 // Catalog and Marketing have diverged on which products exist.
                 // Activity is preserved in the log, but OrderCount silently
                 // understates this product's popularity until someone reseeds.
-                log.ErrorFormat(
-                    "OrderPlaced for unknown ProductId {0} (OrderId {1}); activity logged but OrderCount not bumped. Marketing seed is out of sync with Catalog.",
+                log.LogError(
+                    "OrderPlaced for unknown ProductId {ProductId} (OrderId {OrderId}); activity logged but OrderCount not bumped. Marketing seed is out of sync with Catalog.",
                     item.ProductId,
                     message.OrderId);
             }

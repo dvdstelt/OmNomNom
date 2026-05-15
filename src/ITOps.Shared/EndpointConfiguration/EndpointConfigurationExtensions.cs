@@ -11,9 +11,9 @@ public static class EndpointConfigurationExtensions
 {
     public static EndpointConfiguration Configure(
         this EndpointConfiguration endpointConfiguration,
-        string sqliteConnectionString = null,
-        Action<PersistenceExtensions<SqlitePersistence>> configurePersistence = null,
-        Action<RoutingSettings<LearningTransport>> configureRouting = null)
+        string? sqliteConnectionString = null,
+        Action<PersistenceExtensions<SqlitePersistence>>? configurePersistence = null,
+        Action<RoutingSettings<LearningTransport>>? configureRouting = null)
     {
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
         endpointConfiguration.Recoverability().Delayed(c => c.NumberOfRetries(0));

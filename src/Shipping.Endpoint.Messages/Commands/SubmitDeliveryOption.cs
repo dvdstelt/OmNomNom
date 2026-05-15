@@ -1,7 +1,7 @@
 namespace Shipping.Endpoint.Messages.Commands;
 
-public class SubmitDeliveryOption
+public sealed record SubmitDeliveryOption
 {
-    public Guid OrderId { get; set; }
-    public Guid DeliveryOptionId { get; set; }
+    public required Guid OrderId { get; init; }
+    public required Guid DeliveryOptionId { get; init; }
 }

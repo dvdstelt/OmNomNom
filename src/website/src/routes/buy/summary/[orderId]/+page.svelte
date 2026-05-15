@@ -7,6 +7,7 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../../Catalog/CartItemList.svelte';
+  import ExpiredCartNotice from '../../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
   import CreditCardSummary from '../../../../PaymentInfo/CreditCardSummary.svelte';
 
@@ -14,6 +15,10 @@
   let address = $state(null);
   let loading = $state(true);
   let placing = $state(false);
+  // The summary composer returns 410 Gone when the cart workflow slice
+  // has been reaped (no activity for 20 minutes). Distinguish that from
+  // a generic load failure so we can tell the user to start over.
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -34,6 +39,8 @@
       ]);
       summary = summaryData;
       address = addressData;
+    } catch (e) {
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
@@ -45,6 +52,10 @@
       await gateway.placeOrder(routeOrderId);
       orderIdStore.clear();
       await goto('/');
+    } catch (e) {
+      // Cart was reaped between summary load and submit click;
+      // surface the expired view instead of falling through silently.
+      if (e?.status === 410) cartExpired = true;
     } finally {
       placing = false;
     }
@@ -60,6 +71,8 @@
 <main class="page-container">
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
+  {:else if cartExpired}
+    <ExpiredCartNotice />
   {:else if !summary}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       Could not load order.

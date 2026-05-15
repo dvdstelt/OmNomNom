@@ -13,6 +13,12 @@ public interface IWorkflowSlice
     // The CLR type the framework should (de)serialize for this slice.
     Type SliceType { get; }
 
+    // Validate the persisted slice at submit time. Return an empty
+    // list when valid, or one or more human-readable errors when not.
+    // If *any* slice returns errors, the framework throws
+    // WorkflowValidationException and no commands are dispatched.
+    IReadOnlyList<string> Validate(object slice) => [];
+
     // Translate the persisted slice into the message that gets sent
     // to the boundary's endpoint when the workflow submits. Return
     // null to skip (e.g., the slice was never written).
@@ -27,6 +33,11 @@ public abstract class WorkflowSlice<TSlice> : IWorkflowSlice
     public abstract string SliceKey { get; }
 
     public Type SliceType => typeof(TSlice);
+
+    public IReadOnlyList<string> Validate(object slice) =>
+        Validate((TSlice)slice);
+
+    protected virtual IReadOnlyList<string> Validate(TSlice slice) => [];
 
     public object? BuildSubmitCommand(Guid workflowId, object slice) =>
         BuildSubmitCommand(workflowId, (TSlice)slice);

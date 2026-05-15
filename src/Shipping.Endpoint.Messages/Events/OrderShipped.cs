@@ -1,6 +1,6 @@
 namespace Shipping.Endpoint.Messages.Events;
 
-public class OrderShipped
+public sealed record OrderShipped
 {
-    public Guid OrderId { get; set; }
+    public required Guid OrderId { get; init; }
 }

@@ -16,8 +16,19 @@ public class SummaryComposer(IWorkflowStore workflow, IHttpContextAccessor http)
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
-                   ?? CartSlice.Empty;
+        // Reaching the summary page with no cart slice means the
+        // workflow store reaped it (WorkflowCleanupHostedService runs
+        // every 5 minutes and removes slices idle for >20 minutes), or
+        // the orderId in the URL is bogus. Either way, falling back to
+        // an empty cart would silently submit an empty order on
+        // "Place order" - so we 410 Gone and let the SPA tell the user
+        // the session expired.
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct);
+        if (cart is null)
+        {
+            request.SetActionResult(new StatusCodeResult(StatusCodes.Status410Gone));
+            return;
+        }
 
         var productsModel = Mapper.MapToDictionary(cart);
 

@@ -22,6 +22,6 @@ public class Startup : IViewModelCompositionOptionsCustomization, IConfigureEndp
 
     public void ConfigureRouting(RoutingSettings<LearningTransport> routing)
     {
-        routing.RouteToEndpoint(typeof(SubmitOrderItems).Assembly, "Catalog");
+        routing.RouteToEndpoint(typeof(CompleteOrder).Assembly, "Catalog");
     }
 }

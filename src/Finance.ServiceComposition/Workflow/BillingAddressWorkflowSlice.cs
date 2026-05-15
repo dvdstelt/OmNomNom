@@ -27,6 +27,27 @@ public class BillingAddressWorkflowSlice : WorkflowSlice<BillingAddressSlice>
 
     public override string SliceKey => Key;
 
+    protected override IReadOnlyList<string> Validate(BillingAddressSlice slice)
+    {
+        var errors = new List<string>();
+        if (slice.Address is null)
+        {
+            errors.Add("Address is required.");
+            return errors;
+        }
+        if (string.IsNullOrWhiteSpace(slice.Address.FullName))
+            errors.Add("FullName is required.");
+        if (string.IsNullOrWhiteSpace(slice.Address.Street))
+            errors.Add("Street is required.");
+        if (string.IsNullOrWhiteSpace(slice.Address.ZipCode))
+            errors.Add("ZipCode is required.");
+        if (string.IsNullOrWhiteSpace(slice.Address.Town))
+            errors.Add("Town is required.");
+        if (string.IsNullOrWhiteSpace(slice.Address.Country))
+            errors.Add("Country is required.");
+        return errors;
+    }
+
     // Slice -> command is one of the two boundary copies we still
     // pay explicitly. SubmitBillingAddress intentionally doesn't
     // reference BillingAddressData so the wire contract can evolve

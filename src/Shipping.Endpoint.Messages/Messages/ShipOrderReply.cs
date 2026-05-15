@@ -1,5 +1,3 @@
 namespace Shipping.Endpoint.Messages.Messages;
 
-public class ShipOrderReply
-{
-}
+public sealed record ShipOrderReply;

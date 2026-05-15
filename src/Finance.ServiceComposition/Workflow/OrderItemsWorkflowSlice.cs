@@ -21,11 +21,24 @@ public class OrderItemsWorkflowSlice : WorkflowSlice<OrderItemsSlice>
 
     public override string SliceKey => Key;
 
-    protected override object? BuildSubmitCommand(Guid orderId, OrderItemsSlice slice)
+    protected override IReadOnlyList<string> Validate(OrderItemsSlice slice)
     {
-        if (slice.Items.Count == 0) return null;
+        var errors = new List<string>();
+        if (slice.Items.Count == 0)
+            errors.Add("Order items must contain at least one item.");
+        for (var i = 0; i < slice.Items.Count; i++)
+        {
+            var line = slice.Items[i];
+            if (line.ProductId == Guid.Empty)
+                errors.Add($"Item {i}: ProductId is required.");
+            if (line.Quantity <= 0)
+                errors.Add($"Item {i}: Quantity must be greater than zero.");
+        }
+        return errors;
+    }
 
-        return new SubmitOrderItems
+    protected override object? BuildSubmitCommand(Guid orderId, OrderItemsSlice slice) =>
+        new SubmitOrderItems
         {
             OrderId = orderId,
             Items = slice.Items
@@ -36,5 +49,4 @@ public class OrderItemsWorkflowSlice : WorkflowSlice<OrderItemsSlice>
                 })
                 .ToList()
         };
-    }
 }
