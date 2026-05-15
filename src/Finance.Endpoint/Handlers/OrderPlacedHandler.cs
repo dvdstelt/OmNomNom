@@ -1,30 +1,59 @@
 using Catalog.Endpoint.Messages.Events;
 using Finance.Data;
+using Finance.Data.Models;
+using Finance.Endpoint.Messages.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Finance.Endpoint.Handlers;
 
-// Marks any line items Catalog could not fulfil as Fulfilled=false so
-// totals computed from the Order (in the email composer and anywhere
-// else) only charge the customer for what actually shipped.
+// Sole entry point for billing an accepted order. Receives the full
+// fulfilment outcome from Catalog so the charge can be computed
+// against the items that actually shipped, never against the original
+// cart, then publishes PaymentSucceeded once the amount is committed
+// to the Order. There is no separate OrderAcceptedHandler -
+// publishing PaymentSucceeded on OrderAccepted would race this
+// handler and bill the customer for items Catalog could not fulfil.
 public class OrderPlacedHandler(FinanceDbContext dbContext) : IHandleMessages<OrderPlaced>
 {
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {
-        if (message.UnfulfilledItems.Count == 0)
-            return;
+        var ct = context.CancellationToken;
+
+        var order = await dbContext.Orders
+            .Include(o => o.Items)
+            .SingleAsync(o => o.OrderId == message.OrderId, ct);
 
         var unfulfilledIds = message.UnfulfilledItems.Select(i => i.ProductId).ToHashSet();
-
-        var items = await dbContext.OrderItems
-            .Where(i => i.OrderId == message.OrderId && unfulfilledIds.Contains(i.ProductId))
-            .ToListAsync(context.CancellationToken);
-
-        foreach (var item in items)
+        foreach (var item in order.Items)
         {
-            item.Fulfilled = false;
+            if (unfulfilledIds.Contains(item.ProductId))
+                item.Fulfilled = false;
         }
 
-        await dbContext.SaveChangesAsync(context.CancellationToken);
+        order.ChargedAmount = await ComputeChargedAmountAsync(order, ct);
+
+        await dbContext.SaveChangesAsync(ct);
+
+        await context.Publish(new PaymentSucceeded { OrderId = message.OrderId });
+    }
+
+    async Task<decimal> ComputeChargedAmountAsync(Order order, CancellationToken ct)
+    {
+        var itemsTotal = order.Items
+            .Where(i => i.Fulfilled)
+            .Sum(i => i.EffectivePrice() * i.Quantity);
+
+        // Shipping is only charged when at least one line shipped. A
+        // partial order still pays the full delivery fee - we packed
+        // and dispatched a box, just with fewer items in it.
+        if (itemsTotal == 0 || order.DeliveryOptionId is null)
+            return itemsTotal;
+
+        var deliveryPrice = await dbContext.DeliveryOptions
+            .Where(d => d.DeliveryOptionId == order.DeliveryOptionId)
+            .Select(d => d.Price)
+            .SingleAsync(ct);
+
+        return itemsTotal + deliveryPrice;
     }
 }

@@ -10,6 +10,14 @@ public class Order
     // its half-formed state.
     public Address? BillingAddress { get; set; }
     public Guid? DeliveryOptionId { get; set; }
+
+    // The amount Finance committed to charge for this order. Set by
+    // OrderPlacedHandler once the fulfilment outcome is known and the
+    // billed amount can be computed from the fulfilled lines plus
+    // shipping. Stays at 0 for cancelled orders. The email composer
+    // reads this rather than recomputing on the fly so the displayed
+    // total matches what was billed.
+    public decimal ChargedAmount { get; set; }
 }
 
 public class OrderItem : IPriced
