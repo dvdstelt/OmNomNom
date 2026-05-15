@@ -21,10 +21,6 @@ Accept: application/json
 GET {{CompositionGateway_HostAddress}}/product/{{productId}}
 Accept: application/json
 
-### Cart: does this order already have a cart?
-GET {{CompositionGateway_HostAddress}}/existingCart/{{orderId}}
-Accept: application/json
-
 ### Cart: read cart contents
 GET {{CompositionGateway_HostAddress}}/cart/{{orderId}}
 Accept: application/json
