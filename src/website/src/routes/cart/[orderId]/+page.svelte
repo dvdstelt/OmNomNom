@@ -8,10 +8,12 @@
 
   import CheckoutProgress from '../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../Catalog/CartItemList.svelte';
+  import ExpiredCartNotice from '../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../Finance/OrderSummaryCard.svelte';
 
   let items = $state([]);
   let loading = $state(true);
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -20,6 +22,8 @@
     try {
       const data = await gateway.getCart(routeOrderId);
       items = data?.cartItems ?? [];
+    } catch (e) {
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
@@ -75,6 +79,8 @@
 <main class="page-container">
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading cart…</p>
+  {:else if cartExpired}
+    <ExpiredCartNotice />
   {:else}
     <div class="checkout-layout">
       <div class="checkout-main">

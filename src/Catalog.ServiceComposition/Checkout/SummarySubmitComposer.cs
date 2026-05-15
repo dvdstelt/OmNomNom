@@ -19,10 +19,19 @@ public class SummarySubmitComposer(IWorkflowStore store, IWorkflowSubmitter subm
     [HttpPost("/buy/summary/{orderId}")]
     public async Task Handle(Guid orderId)
     {
-        var ct = http.HttpContext!.RequestAborted;
+        var request = http.HttpContext!.Request;
+        var ct = request.HttpContext.RequestAborted;
 
-        var cart = await store.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
-                   ?? CartSlice.Empty;
+        // Defensive 410: the GET-side composer also 410s on a missing
+        // slice, but the cart could have been reaped *between* the
+        // summary loading and the customer clicking "Place order".
+        // Without this we'd silently submit an empty order.
+        var cart = await store.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct);
+        if (cart is null)
+        {
+            request.SetActionResult(new StatusCodeResult(StatusCodes.Status410Gone));
+            return;
+        }
 
         await store.Write(orderId, CompleteOrderWorkflowSlice.Key, new CompleteOrderSlice(cart.Items), ct);
         await submitter.Submit(orderId, ct);

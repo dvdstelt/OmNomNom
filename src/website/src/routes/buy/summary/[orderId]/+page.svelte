@@ -7,6 +7,7 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import CartItemList from '../../../../Catalog/CartItemList.svelte';
+  import ExpiredCartNotice from '../../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
   import CreditCardSummary from '../../../../PaymentInfo/CreditCardSummary.svelte';
 
@@ -39,18 +40,11 @@
       summary = summaryData;
       address = addressData;
     } catch (e) {
-      if (e?.status === 410) {
-        cartExpired = true;
-        orderIdStore.clear();
-      }
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
   });
-
-  async function startOver() {
-    await goto('/');
-  }
 
   async function placeOrder() {
     placing = true;
@@ -58,6 +52,10 @@
       await gateway.placeOrder(routeOrderId);
       orderIdStore.clear();
       await goto('/');
+    } catch (e) {
+      // Cart was reaped between summary load and submit click;
+      // surface the expired view instead of falling through silently.
+      if (e?.status === 410) cartExpired = true;
     } finally {
       placing = false;
     }
@@ -74,16 +72,7 @@
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
   {:else if cartExpired}
-    <div style="text-align: center; padding: 64px 24px;">
-      <h1 class="page-title">Your session expired</h1>
-      <p style="color: var(--color-text-muted); margin: 16px 0 32px;">
-        It&rsquo;s been a while since you last touched this cart, so we cleared it.
-        Pick your beers again and we&rsquo;ll get you back to checkout.
-      </p>
-      <button type="button" class="btn-primary" onclick={startOver}>
-        Start a new cart
-      </button>
-    </div>
+    <ExpiredCartNotice />
   {:else if !summary}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       Could not load order.

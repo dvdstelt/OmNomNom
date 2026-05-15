@@ -24,8 +24,16 @@ public class ShippingScreenCartComposer(IWorkflowStore workflow, CatalogDbContex
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
-                   ?? CartSlice.Empty;
+        // No way to reach the shipping screen without a cart; treat a
+        // missing slice as the WorkflowCleanupHostedService having
+        // reaped it and 410 so the SPA can show the expired-session
+        // view instead of an empty list.
+        var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct);
+        if (cart is null)
+        {
+            request.SetActionResult(new StatusCodeResult(StatusCodes.Status410Gone));
+            return;
+        }
 
         var products = await dbContext.Products.ToListAsync(ct);
         var orderedProducts = Cart.Mapper.MapToDictionary(cart, products);

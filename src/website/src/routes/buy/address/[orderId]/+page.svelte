@@ -6,6 +6,7 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import AddressFormFields from '../../../../Shipping/AddressFormFields.svelte';
+  import ExpiredCartNotice from '../../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   const blankAddress = {
@@ -23,6 +24,7 @@
   let cartItems = $state([]);
   let loading = $state(true);
   let saving = $state(false);
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -39,6 +41,8 @@
       if (data?.billingAddress) billingAddress = { ...blankAddress, ...data.billingAddress };
       billingSameAsShipping = addressesMatch(shippingAddress, billingAddress);
       cartItems = data?.cartItems ?? [];
+    } catch (e) {
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
@@ -71,6 +75,8 @@
 
       {#if loading}
         <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
+      {:else if cartExpired}
+        <ExpiredCartNotice />
       {:else}
         <div class="form-section">
           <h2>Shipping Address</h2>

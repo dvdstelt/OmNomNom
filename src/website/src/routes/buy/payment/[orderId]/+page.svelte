@@ -6,6 +6,7 @@
 
   import CheckoutProgress from '../../../../Branding/CheckoutProgress.svelte';
   import CreditCardPicker from '../../../../PaymentInfo/CreditCardPicker.svelte';
+  import ExpiredCartNotice from '../../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../../Finance/OrderSummaryCard.svelte';
 
   // Hard-coded customer for the demo
@@ -17,6 +18,7 @@
   let shippingPrice = $state(0);
   let loading = $state(true);
   let saving = $state(false);
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -30,6 +32,8 @@
       selectedCardId = paymentData?.creditCardId || cards[0]?.cardId || null;
       cartItems = paymentData?.cartItems ?? [];
       shippingPrice = paymentData?.deliveryOption?.price ?? 0;
+    } catch (e) {
+      if (e?.status === 410) cartExpired = true;
     } finally {
       loading = false;
     }
@@ -60,6 +64,8 @@
 
       {#if loading}
         <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
+      {:else if cartExpired}
+        <ExpiredCartNotice />
       {:else}
         <div class="form-section">
           <h2>Your credit and debit cards</h2>
