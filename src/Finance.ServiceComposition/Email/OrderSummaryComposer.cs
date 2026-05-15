@@ -1,5 +1,6 @@
 using System.Dynamic;
 using Finance.Data;
+using Finance.Data.Domain;
 using Finance.Data.Models;
 using Finance.ServiceComposition.Events;
 using Finance.ServiceComposition.Workflow;
@@ -33,8 +34,13 @@ public class OrderSummaryComposer(FinanceDbContext dbContext, IHttpContextAccess
         var deliveryOption = row.DeliveryOption;
         var billingAddress = order.BillingAddress!;
 
+        // Match the OrderPlacedHandler view: fulfilled items only.
+        var itemsSubtotal = order.Items
+            .Where(i => i.Fulfilled)
+            .Sum(i => i.EffectivePrice() * i.Quantity);
+
         dynamic deliveryOptionModel = new ExpandoObject();
-        deliveryOptionModel.Price = deliveryOption.Price;
+        deliveryOptionModel.Price = ShippingFees.EffectivePrice(deliveryOption, itemsSubtotal);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new DeliveryOptionLoaded()

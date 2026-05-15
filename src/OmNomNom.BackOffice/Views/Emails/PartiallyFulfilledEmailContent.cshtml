@@ -7,6 +7,8 @@
         "$" + v.ToString("0.00", CultureInfo.InvariantCulture);
     Func<decimal, string> formatSigned = v =>
         (v < 0 ? "-$" : "$") + Math.Abs(v).ToString("0.00", CultureInfo.InvariantCulture);
+    Func<decimal, string> formatShipping = v =>
+        v <= 0m ? "FREE" : formatMoney(v);
 
     // Two passes over the products: fulfilled lines drive the
     // shipped-items list and the totals breakdown; unfulfilled lines
@@ -180,7 +182,7 @@
                                         <div style="font-family: 'Outfit', sans-serif; font-size: 13px; color: #7a6f62; margin: 0;">@deliveryDescription</div>
                                     </td>
                                     <td valign="middle" align="right" style="padding: 16px 0; white-space: nowrap;">
-                                        <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px; color: #f0e6d8; line-height: 1;">@formatMoney(shippingPrice)</div>
+                                        <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px; color: #f0e6d8; line-height: 1;">@formatShipping(shippingPrice)</div>
                                     </td>
                                 </tr>
                             </table>
@@ -254,7 +256,7 @@
                                 }
                                 <tr>
                                     <td style="padding: 8px 0; font-family: 'Outfit', sans-serif; font-size: 14px; color: #a89b8a;">Shipping</td>
-                                    <td align="right" style="padding: 8px 0; font-family: 'Outfit', sans-serif; font-size: 14px; color: #f0e6d8; font-weight: 500;">@formatMoney(shippingPrice)</td>
+                                    <td align="right" style="padding: 8px 0; font-family: 'Outfit', sans-serif; font-size: 14px; color: #f0e6d8; font-weight: 500;">@formatShipping(shippingPrice)</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="border-top: 1px solid #3a3530; padding: 0; line-height: 0; font-size: 0;">&nbsp;</td>
