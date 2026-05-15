@@ -14,6 +14,10 @@
   let address = $state(null);
   let loading = $state(true);
   let placing = $state(false);
+  // The summary composer returns 410 Gone when the cart workflow slice
+  // has been reaped (no activity for 20 minutes). Distinguish that from
+  // a generic load failure so we can tell the user to start over.
+  let cartExpired = $state(false);
 
   let routeOrderId = $derived(page.params.orderId);
 
@@ -34,10 +38,19 @@
       ]);
       summary = summaryData;
       address = addressData;
+    } catch (e) {
+      if (e?.status === 410) {
+        cartExpired = true;
+        orderIdStore.clear();
+      }
     } finally {
       loading = false;
     }
   });
+
+  async function startOver() {
+    await goto('/');
+  }
 
   async function placeOrder() {
     placing = true;
@@ -60,6 +73,17 @@
 <main class="page-container">
   {#if loading}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">Loading…</p>
+  {:else if cartExpired}
+    <div style="text-align: center; padding: 64px 24px;">
+      <h1 class="page-title">Your session expired</h1>
+      <p style="color: var(--color-text-muted); margin: 16px 0 32px;">
+        It&rsquo;s been a while since you last touched this cart, so we cleared it.
+        Pick your beers again and we&rsquo;ll get you back to checkout.
+      </p>
+      <button type="button" class="btn-primary" onclick={startOver}>
+        Start a new cart
+      </button>
+    </div>
   {:else if !summary}
     <p style="color: var(--color-text-muted); padding: 48px 0; text-align: center;">
       Could not load order.

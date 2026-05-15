@@ -7,7 +7,14 @@ const BASE = 'https://localhost:7126';
 
 async function getJson(path) {
   const response = await fetch(`${BASE}${path}`);
-  if (!response.ok) throw new Error(`GET ${path} failed: ${response.status}`);
+  if (!response.ok) {
+    // Attach the status so callers can branch on specific failures
+    // (e.g. 410 Gone from the summary composer when the cart slice
+    // has been reaped) instead of treating every non-2xx the same.
+    const error = new Error(`GET ${path} failed: ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
   return response.json();
 }
 
