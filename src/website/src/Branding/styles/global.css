@@ -672,6 +672,33 @@ img {
     cursor: pointer;
     padding: 0;
   }
+
+  /* OrderSummaryCard is a duplicate running total on cart / address /
+     shipping / payment at phone widths. Hide it once we're in the
+     mobile UI mode (same breakpoint as the filter sheet so the page
+     feels consistent — without this the summary still showed in the
+     601-699px band where everything else had gone mobile). The summary
+     page opts out by passing children (the Place Order button) — see
+     OrderSummaryCard.svelte. */
+  .order-summary-mobile-hidden {
+    display: none;
+  }
+
+  /* The cart page renders OrderTotalLine as a mobile-only substitute
+     for the hidden sidebar so the customer still sees the running
+     total before tapping Proceed. Hidden by default outside this
+     media query. */
+  .order-total-line {
+    display: flex;
+  }
+
+  /* Generic escape hatch for blocks that callers want gone at phone
+     widths. Currently used by the shipping page's "Shipping from
+     OmNomNom" items review, which duplicates the cart contents and
+     adds scrolling between Delivery Speed and Continue. */
+  .mobile-hidden {
+    display: none;
+  }
 }
 
 /* Multi-select trigger reuses .filter-select; the wrapper just owns
@@ -1564,11 +1591,21 @@ img {
   color: var(--color-danger);
   font-weight: 500;
   transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
 }
 
 .cart-remove-btn:hover {
   opacity: 0.8;
+}
+.cart-remove-btn:hover .cart-remove-text {
   text-decoration: underline;
+}
+
+/* Icon is hidden on desktop (the text label takes over); the mobile
+   media query flips this so the trash glyph replaces the label. */
+.cart-remove-icon {
+  display: none;
 }
 
 .cart-item-subtotal {
@@ -2192,6 +2229,33 @@ img {
   }
 }
 
+/* Mobile-only Order Total pill that sits below the cart items when the
+   OrderSummary sidebar is hidden. Hidden by default; the mobile media
+   query flips display to flex. Styling lives here so the appearance is
+   shared with anywhere else we ever surface OrderTotalLine. */
+.order-total-line {
+  display: none;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 16px 18px;
+  margin-top: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+.order-total-line-label {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.order-total-line-amount {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-cream);
+}
+
 @media (max-width: 600px) {
   .beer-grid {
     grid-template-columns: 1fr;
@@ -2201,12 +2265,91 @@ img {
     grid-template-columns: 1fr;
   }
 
+  /* Mobile cart item: flatten the .cart-item-details and
+     .cart-item-controls wrappers with display: contents so the inner
+     name / price / qty / Remove can be placed directly via grid-area
+     on .cart-item. The bottom row holds qty-stepper, the trash button
+     (right next to +), and the subtotal pushed to the right edge.
+     Sizing qty and remove as auto columns prevents the stepper from
+     stretching past the + button. */
   .cart-item {
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 80px auto auto 1fr;
+    grid-template-areas:
+      "image name     name      name"
+      "image price    price     price"
+      "image qty      remove    subtotal";
+    column-gap: 12px;
+    row-gap: 4px;
+    padding: 16px;
+  }
+
+  .cart-item-image {
+    /* The image element was 100px and overflowed the now-80px column,
+       eating the column gap so the title sat flush against the image. */
+    width: 80px;
+    height: 80px;
+    grid-area: image;
+  }
+
+  .cart-item-details,
+  .cart-item-controls {
+    display: contents;
+  }
+
+  .cart-item-name {
+    grid-area: name;
+  }
+
+  .cart-item-price {
+    grid-area: price;
+  }
+
+  .qty-control,
+  .cart-item-qty {
+    grid-area: qty;
+    justify-self: start;
   }
 
   .cart-item-subtotal {
-    grid-column: 2;
+    grid-area: subtotal;
+    justify-self: end;
+    align-self: center;
+  }
+
+  /* The text label loses to the trash glyph at mobile widths so the
+     control fits next to the + button. */
+  .cart-remove-btn {
+    grid-area: remove;
+    justify-self: start;
+    align-self: center;
+    padding: 6px;
+    line-height: 0;
+  }
+  .cart-remove-text {
+    display: none;
+  }
+  .cart-remove-icon {
+    display: block;
+  }
+
+  /* Mobile progress bar: 5 labelled steps overflowed the viewport at
+     phone widths. Hide labels (each circle is still numbered), shrink
+     the circle, and drop the label-compensating margin on connectors. */
+  .progress-bar-container {
+    padding: 14px 12px;
+  }
+  .step-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  .step-label {
+    display: none;
+  }
+  .step-connector {
+    min-width: 0;
+    margin: 0 6px;
+    margin-bottom: 0;
   }
 
   .page-title {

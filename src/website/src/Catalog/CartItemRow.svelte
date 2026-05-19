@@ -37,8 +37,33 @@
             +
           </button>
         </div>
-        <button type="button" class="cart-remove-btn" onclick={() => onRemove(item.productId)}>
-          Remove
+        <button
+          type="button"
+          class="cart-remove-btn"
+          onclick={() => onRemove(item.productId)}
+          aria-label="Remove {item.name} from cart"
+        >
+          <!-- Text label is hidden on mobile via CSS; the trash glyph
+               takes its place so the action fits next to the qty stepper. -->
+          <span class="cart-remove-text">Remove</span>
+          <svg
+            class="cart-remove-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            width="20"
+            height="20"
+            aria-hidden="true"
+          >
+            <path d="M3 6h18" />
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+          </svg>
         </button>
       </div>
     {:else}

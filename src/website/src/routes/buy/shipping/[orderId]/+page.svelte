@@ -73,7 +73,12 @@
         </div>
 
         {#if cartItems.length > 0}
-          <div class="form-section">
+          <!-- Items review on the shipping page duplicates what the
+               customer already saw in the cart. Helpful as desktop
+               context next to the delivery picker, but on mobile it's
+               just another scroll between Delivery Speed and Continue;
+               hidden under the mobile breakpoint via .mobile-hidden. -->
+          <div class="form-section mobile-hidden">
             <h2>Shipping from OmNomNom</h2>
             <CartItemList items={cartItems} editable={false} />
           </div>

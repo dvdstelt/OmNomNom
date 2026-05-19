@@ -10,6 +10,7 @@
   import CartItemList from '../../../Catalog/CartItemList.svelte';
   import ExpiredCartNotice from '../../../Catalog/ExpiredCartNotice.svelte';
   import OrderSummaryCard from '../../../Finance/OrderSummaryCard.svelte';
+  import OrderTotalLine from '../../../Finance/OrderTotalLine.svelte';
 
   let items = $state([]);
   let loading = $state(true);
@@ -92,6 +93,11 @@
           onRemove={removeItem}
         />
         {#if items.length > 0}
+          <!-- Mobile-only fallback for the (hidden) OrderSummary sidebar
+               so the customer still sees a running total before tapping
+               Proceed. CSS pins this to mobile widths; desktop continues
+               to use the sidebar card. -->
+          <OrderTotalLine {items} />
           <div class="btn-group">
             <button type="button" class="btn-secondary" onclick={discardCart}>
               Discard Cart
