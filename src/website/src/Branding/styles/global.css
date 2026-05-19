@@ -1573,9 +1573,17 @@ img {
   transition: all 0.2s;
 }
 
-.qty-btn:hover {
+.qty-btn:hover:not(:disabled) {
   background: var(--color-surface-hover);
   color: var(--color-primary);
+}
+
+.qty-btn:disabled {
+  /* + button is capped at the live in-stock figure. Muted styling
+     plus the not-allowed cursor signals why the customer can't keep
+     pressing it. */
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .qty-value {

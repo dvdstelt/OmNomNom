@@ -32,10 +32,24 @@ public class ShoppingCartComposer(IWorkflowStore workflow, CatalogDbContext dbCo
         }
 
         var productIds = cart.Items.Select(s => s.ProductId).ToList();
-        var products = await dbContext.Products
+        // Pull each cart-line product together with its live in-stock
+        // count (sum of the InventoryDelta ledger, same calculation
+        // ProductsComposer uses). The frontend caps its + button on
+        // this so the customer can't queue more units than exist.
+        var productRows = await dbContext.Products
             .Where(s => productIds.Contains(s.ProductId))
+            .Select(p => new
+            {
+                Product = p,
+                InStock = dbContext.InventoryDeltas
+                    .Where(d => d.ProductId == p.ProductId)
+                    .Sum(d => (int?)d.Delta) ?? 0
+            })
             .ToListAsync(ct);
-        var orderedProducts = Mapper.MapToDictionary(cart, products);
+        var productLookup = productRows.ToDictionary(
+            x => x.Product.ProductId,
+            x => (x.Product, x.InStock));
+        var orderedProducts = Mapper.MapToDictionary(cart, productLookup);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartLoaded

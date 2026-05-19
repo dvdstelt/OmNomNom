@@ -3,6 +3,13 @@
   import LineSubtotal from '../Finance/LineSubtotal.svelte';
 
   let { item, editable = true, onQuantityChange = () => {}, onRemove = () => {} } = $props();
+
+  // The cart endpoint surfaces the live in-stock count per line. Cap
+  // the + button at that figure so the customer can't queue more units
+  // than exist; if the API ever omits inStock fall back to a generous
+  // ceiling rather than blocking all increments.
+  let stockLimit = $derived(item?.inStock ?? Number.POSITIVE_INFINITY);
+  let canIncrease = $derived(item.quantity < stockLimit);
 </script>
 
 <div class="cart-item" data-product-id={item.productId}>
@@ -33,6 +40,7 @@
             class="qty-btn"
             onclick={() => onQuantityChange(item.productId, item.quantity + 1)}
             aria-label="Increase quantity"
+            disabled={!canIncrease}
           >
             +
           </button>
