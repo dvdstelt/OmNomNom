@@ -153,6 +153,12 @@ img {
   font-size: 38px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
   grid-row: 1 / 3;
+  /* The grid container is `align-items: end` so the wordmark sits flush
+     with the tagline below it. Override here so the mug glyph centers
+     against the full text block (wordmark + tagline) instead of dropping
+     to the bottom of its row span, which made the wordmark look like it
+     was floating high in the header. */
+  align-self: center;
 }
 
 .logo-text {
@@ -178,6 +184,17 @@ img {
 }
 
 @media (max-width: 699px) {
+  /* Tagline is hidden on mobile, so the grid collapses to one visible
+     row. The icon's emoji glyph has a tall descender area which pushed
+     it visually below the wordmark even with align-self: center. Switch
+     to a plain flex row at mobile: icon and wordmark land on the same
+     baseline with no row-span math. */
+  .logo {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
   .logo-tagline {
     display: none;
   }
@@ -478,6 +495,13 @@ img {
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Sort sits as a direct sibling of `.filter-dropdowns` under
+     `.filters-row` (which uses `justify-content: space-between` and
+     `flex-wrap: wrap`). margin-left:auto keeps the group pinned to the
+     right edge whether it shares the row with filters or wraps onto a
+     line of its own — so changing the Type selection no longer shoves
+     the layout around. */
+  margin-left: auto;
 }
 
 .sort-group.has-filters {
@@ -521,12 +545,150 @@ img {
   box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
+/* Mobile filter sheet: the inline three-dropdown row becomes a single
+   `Filters` button on phones; tapping it slides a bottom sheet up with
+   the same three controls. All styles below are hidden on desktop and
+   only activate under the mobile breakpoint further down. */
+.filter-toggle,
+.filter-sheet-head,
+.filter-sheet-backdrop {
+  display: none;
+}
+
+@media (max-width: 699px) {
+  /* Mobile-only trigger chip. Reuses the .filter-select look but is a
+     plain button so it doesn't carry the native <select> caret glyph. */
+  .filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .filter-toggle:hover,
+  .filter-toggle:focus-visible {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    outline: none;
+  }
+
+  /* The inline dropdowns row collapses by default on mobile, then
+     re-appears as a bottom sheet when .is-open is toggled. */
+  .filter-dropdowns {
+    display: none;
+  }
+  .filter-dropdowns.is-open {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    padding: 16px 20px 24px;
+    background: var(--color-surface);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.35);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* Sheet header (title + close). Hidden on desktop above; shown here. */
+  .filter-dropdowns.is-open .filter-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .filter-sheet-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  .filter-sheet-close {
+    background: none;
+    border: 0;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+  }
+  .filter-sheet-close:hover {
+    color: var(--color-primary);
+  }
+
+  /* Each control sits on its own full-width row inside the sheet. */
+  .filter-dropdowns.is-open .multiselect,
+  .filter-dropdowns.is-open .filter-select,
+  .filter-dropdowns.is-open .multiselect-trigger {
+    width: 100%;
+  }
+
+  /* .multiselect is normally `display: inline-flex` so the absolute
+     popup floats over the page next to the trigger. Inside the sheet
+     we render the popup inline (below the trigger), so the wrapper
+     needs to stack its children vertically. */
+  .filter-dropdowns.is-open .multiselect {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Type's checkbox popup is normally an absolutely-positioned overlay
+     anchored to the trigger. Inside the sheet that would float over the
+     other controls; flow it inline instead so the sheet just grows
+     (scrolls) when Type is open. */
+  .filter-dropdowns.is-open .multiselect-popup {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-top: 6px;
+    max-height: 240px;
+    box-shadow: none;
+  }
+
+  /* Backdrop sits below the sheet (z-index 199) but above the page. */
+  .filter-sheet-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+    background: rgba(0, 0, 0, 0.5);
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
 /* Multi-select trigger reuses .filter-select; the wrapper just owns
    the popup positioning and a small "× clear" affordance when there
    are selections. */
 .multiselect {
   position: relative;
   display: inline-flex;
+}
+
+/* The trigger is a <button>, so its default text-align is `center`.
+   That looks identical to the native <select> when the chip auto-sizes
+   to its label on desktop, but inside the mobile sheet the chip stretches
+   to full width and the centered label no longer matches the left-aligned
+   <select> options below it. Match the <select> behaviour everywhere. */
+.multiselect-trigger {
+  text-align: left;
 }
 
 .multiselect-trigger.has-selection {
