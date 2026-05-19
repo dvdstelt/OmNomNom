@@ -2,8 +2,13 @@
 // this URL — every per-service composer contributes its slice of each
 // response server-side, and microviews consume slices passed down by the
 // Branding page that owns the route.
+//
+// Calls go same-origin under `/api/...` and are forwarded to the gateway
+// by Vite's dev proxy (see vite.config.js). Same-origin keeps mobile
+// testing simple: the phone only has to trust the Vite cert once and
+// CORS never enters the picture.
 
-const BASE = 'https://localhost:7126';
+const BASE = '/api';
 
 async function getJson(path) {
   const response = await fetch(`${BASE}${path}`);
