@@ -1,9 +1,7 @@
 <script>
+  import ShippingPrice from '../Finance/ShippingPrice.svelte';
+
   let { options = [], selectedId = $bindable(null), onSelect = () => {} } = $props();
-  let format = (value) => {
-    const n = Number(value ?? 0);
-    return n <= 0 ? 'FREE' : '$' + n.toFixed(2);
-  };
 
   function pick(id) {
     selectedId = id;
@@ -26,7 +24,7 @@
         <div class="shipping-option-name">{option.name}</div>
         <div class="shipping-option-delivery">{option.description}</div>
       </div>
-      <div class="shipping-option-price">{format(option.price)}</div>
+      <div class="shipping-option-price"><ShippingPrice amount={option.price} /></div>
     </label>
   {/each}
 </div>

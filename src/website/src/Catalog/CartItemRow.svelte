@@ -1,9 +1,8 @@
 <script>
   import Price from '../Finance/Price.svelte';
-  import { effectivePrice } from '../Finance/effectivePrice.js';
+  import LineSubtotal from '../Finance/LineSubtotal.svelte';
 
   let { item, editable = true, onQuantityChange = () => {}, onRemove = () => {} } = $props();
-  let format = (value) => '$' + Number(value ?? 0).toFixed(2);
 </script>
 
 <div class="cart-item" data-product-id={item.productId}>
@@ -47,6 +46,6 @@
     {/if}
   </div>
   <div class="cart-item-subtotal">
-    {format(effectivePrice(item) * item.quantity)}
+    <LineSubtotal {item} />
   </div>
 </div>
