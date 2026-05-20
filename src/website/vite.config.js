@@ -52,15 +52,38 @@ if (trustResult.status !== 0) {
   );
 }
 
+// Gateway URL the Vite proxy forwards `/api/*` to. The gateway itself
+// stays bound to localhost; only Vite is reachable on the LAN, so the
+// phone only ever sees one origin and one (click-through) cert. The
+// frontend calls same-origin `/api/...` paths via lib/api/gateway.js;
+// the rewrite below strips `/api` before forwarding so the gateway's
+// own routes (`/products`, `/cart/<id>`, `/buy/...`) stay unchanged.
+const GATEWAY_TARGET = 'https://localhost:7126';
+
 export default defineConfig({
   plugins: [sveltekit()],
   server: {
-    host: 'localhost',
+    // host: true binds to 0.0.0.0 so the dev server is reachable from
+    // other devices on the LAN (e.g. a phone) for mobile testing.
+    // Browse to https://<dev-machine-ip>:5173 and click through the
+    // localhost cert warning once per device.
+    host: true,
     port: 5173,
     strictPort: true,
     https: {
       key: fs.readFileSync(keyFilePath),
       cert: fs.readFileSync(certFilePath)
+    },
+    proxy: {
+      '/api': {
+        target: GATEWAY_TARGET,
+        changeOrigin: true,
+        // The gateway cert is the .NET dev cert: valid for `localhost`
+        // only. Vite -> gateway is loopback so we can safely skip TLS
+        // verification on that hop without exposing anything.
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   }
 });

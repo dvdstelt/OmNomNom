@@ -40,6 +40,8 @@ npm run dev   # Vite dev server on port 5173 (SvelteKit)
 npm run build
 ```
 
+The dev server binds to `0.0.0.0`, so other devices on the LAN (e.g. a phone for mobile testing) can reach it at `https://<dev-machine-ip>:5173`. The frontend calls the gateway through Vite's proxy at `/api/*`, so the gateway itself stays bound to `localhost` and no CORS configuration is needed. Trust the dev cert once per device (click-through is fine).
+
 ## Architecture
 
 ### Service Decomposition

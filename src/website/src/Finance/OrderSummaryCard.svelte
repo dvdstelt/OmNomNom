@@ -38,7 +38,13 @@
   let total = $derived(totalOverride ?? computedTotal);
 </script>
 
-<aside>
+<!-- Hidden on mobile unless the caller passes children. On the summary
+     page the Place-Order button lives inside this card as children, so
+     the card must stay visible. The other checkout pages (cart, address,
+     shipping, payment) include the card purely as a running-total
+     sidebar, which competes for scarce vertical space on a phone — the
+     user will see the final total on the summary step regardless. -->
+<aside class:order-summary-mobile-hidden={!children}>
   <div class="sidebar-card">
     <h3 class="sidebar-title">Order Summary</h3>
     <OrderTotal label="Items" amount={itemsSubtotal} />

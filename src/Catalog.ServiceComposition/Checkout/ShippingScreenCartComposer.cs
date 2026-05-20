@@ -1,4 +1,5 @@
 using Catalog.Data;
+using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
@@ -35,8 +36,15 @@ public class ShippingScreenCartComposer(IWorkflowStore workflow, CatalogDbContex
             return;
         }
 
-        var products = await dbContext.Products.ToListAsync(ct);
-        var orderedProducts = Cart.Mapper.MapToDictionary(cart, products);
+        // Items here aren't editable (the shipping page renders them as
+        // a static list), but the Cart mapper now requires an InStock
+        // figure per line — pass 0 since this surface doesn't need it.
+        var productIds = cart.Items.Select(i => i.ProductId).ToList();
+        var productLookup = (await dbContext.Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToListAsync(ct))
+            .ToDictionary(p => p.ProductId, p => (Product: p, InStock: 0));
+        var orderedProducts = Cart.Mapper.MapToDictionary(cart, productLookup);
 
         var context = request.GetCompositionContext();
         await context.RaiseEvent(new CartLoaded
