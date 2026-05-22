@@ -6,6 +6,7 @@ using OrderItem = Finance.Data.Models.OrderItem;
 
 namespace Finance.Endpoint.Handlers;
 
+[Handler]
 public class SubmitOrderItemsHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitOrderItems>
 {
     public async Task Handle(SubmitOrderItems message, IMessageHandlerContext context)

@@ -1,5 +1,6 @@
 using Finance.Data;
 using Finance.Data.Seed;
+using Finance.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,17 @@ var sqliteConnectionString = SqliteStorage.GetConnectionString("finance");
 hostBuilder.Services.AddDbContext<FinanceDbContext>(options =>
     options.UseSqlite(sqliteConnectionString));
 
-// Configure NServiceBus
+// Configure NServiceBus. Handlers are registered explicitly via the
+// source-generated AddHandler<T>() path (NServiceBus 10.2); reflection
+// scanning still finds them too and the registrations dedupe.
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString);
-hostBuilder.UseNServiceBus(endpointConfiguration);
+endpointConfiguration.AddHandler<OrderCancelledHandler>();
+endpointConfiguration.AddHandler<OrderPlacedHandler>();
+endpointConfiguration.AddHandler<SubmitBillingAddressHandler>();
+endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
+endpointConfiguration.AddHandler<SubmitOrderItemsHandler>();
+hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();

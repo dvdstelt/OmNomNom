@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Finance.Endpoint.Handlers;
 
+[Handler]
 public class SubmitDeliveryOptionHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitDeliveryOption>
 {
     public async Task Handle(SubmitDeliveryOption message, IMessageHandlerContext context)
