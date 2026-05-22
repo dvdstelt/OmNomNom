@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Seed;
+using PaymentInfo.Endpoint.Handlers;
 
 const string EndpointName = "PaymentInfo";
 
@@ -18,7 +19,8 @@ hostBuilder.Services.AddDbContext<PaymentInfoDbContext>(options =>
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString);
-hostBuilder.UseNServiceBus(endpointConfiguration);
+endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
+hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
