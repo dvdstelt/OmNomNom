@@ -33,7 +33,11 @@ endpointConfiguration.Configure(sqliteConnectionString);
 // via reflection-based assembly scanning.
 endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
-hostBuilder.UseNServiceBus(endpointConfiguration);
+// AddNServiceBusEndpoint (NServiceBus 10.2+) replaces UseNServiceBus from
+// NServiceBus.Extensions.Hosting. It is the multi-host-aware registration
+// surface; called without an identifier here, it behaves as a single-endpoint
+// host with standard (non-keyed) DI registration.
+hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
