@@ -7,7 +7,7 @@ namespace OmNomNom.Website.Handlers;
 // never happens, so OrderShipped never fires - we send a dedicated
 // cancellation email instead.
 [Handler]
-public class OrderCancelledHandler(OrderEmailSender emailSender) : IHandleMessages<OrderCancelled>
+public class OrderCancelledHandler(OrderEmailSender emailSender)
 {
     public async Task Handle(OrderCancelled message, IMessageHandlerContext context)
     {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Finance.Endpoint.Handlers;
 
 [Handler]
-public class SubmitBillingAddressHandler(FinanceDbContext dbContext) : IHandleMessages<SubmitBillingAddress>
+public class SubmitBillingAddressHandler(FinanceDbContext dbContext)
 {
     public async Task Handle(SubmitBillingAddress message, IMessageHandlerContext context)
     {

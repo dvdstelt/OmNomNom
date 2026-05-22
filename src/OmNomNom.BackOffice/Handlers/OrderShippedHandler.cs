@@ -4,7 +4,7 @@ using Shipping.Endpoint.Messages.Events;
 namespace OmNomNom.Website.Handlers;
 
 [Handler]
-public class OrderShippedHandler(OrderEmailSender emailSender) : IHandleMessages<OrderShipped>
+public class OrderShippedHandler(OrderEmailSender emailSender)
 {
     public async Task Handle(OrderShipped message, IMessageHandlerContext context)
     {

@@ -15,7 +15,7 @@ namespace Finance.Endpoint.Handlers;
 // publishing PaymentSucceeded on OrderAccepted would race this
 // handler and bill the customer for items Catalog could not fulfil.
 [Handler]
-public class OrderPlacedHandler(FinanceDbContext dbContext) : IHandleMessages<OrderPlaced>
+public class OrderPlacedHandler(FinanceDbContext dbContext)
 {
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {

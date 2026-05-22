@@ -4,7 +4,7 @@ using Shipping.Endpoint.Messages.Messages;
 namespace Shipping.Endpoint.Handlers;
 
 [Handler]
-public class ShipOrderRequestHandler : IHandleMessages<ShipOrderRequest>
+public class ShipOrderRequestHandler
 {
     public async Task Handle(ShipOrderRequest message, IMessageHandlerContext context)
     {

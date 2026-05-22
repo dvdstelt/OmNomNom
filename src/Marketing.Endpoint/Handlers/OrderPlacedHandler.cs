@@ -25,7 +25,6 @@ namespace Marketing.Endpoint.Handlers;
 // being added and will handle exactly-once for us.
 [Handler]
 public class OrderPlacedHandler(MarketingDbContext dbContext, ILogger<OrderPlacedHandler> log)
-    : IHandleMessages<OrderPlaced>
 {
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {
