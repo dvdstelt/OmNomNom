@@ -25,6 +25,6 @@ public static class CheckoutEndpointHost
         endpointConfiguration.Configure(sqliteConnectionString,
             configurePersistence: persistence => persistence.EnableTransactionalSession());
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
     }
 }

@@ -30,7 +30,7 @@ public static class MarketingEndpointHost
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<OrderPlacedHandler>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
 
         // Background recompute that keeps Marketing.Product.Trending honest as
         // seeded events age out of the 30-day window.

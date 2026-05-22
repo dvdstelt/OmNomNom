@@ -36,7 +36,7 @@ public static class ShippingEndpointHost
         endpointConfiguration.AddSaga<ShippingPolicy>();
         endpointConfiguration.AddSaga<ReturnPolicy>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
     }
 
     public static async Task InitializeDatabaseAsync(IHost host)

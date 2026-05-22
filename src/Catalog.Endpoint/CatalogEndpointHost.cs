@@ -32,7 +32,7 @@ public static class CatalogEndpointHost
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
     }
 
     public static async Task InitializeDatabaseAsync(IHost host)

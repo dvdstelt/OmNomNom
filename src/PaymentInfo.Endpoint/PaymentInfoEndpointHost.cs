@@ -27,7 +27,7 @@ public static class PaymentInfoEndpointHost
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
     }
 
     public static async Task InitializeDatabaseAsync(IHost host)

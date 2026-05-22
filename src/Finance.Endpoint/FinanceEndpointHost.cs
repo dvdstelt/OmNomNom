@@ -31,7 +31,7 @@ public static class FinanceEndpointHost
         endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
         endpointConfiguration.AddHandler<SubmitOrderItemsHandler>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
     }
 
     public static async Task InitializeDatabaseAsync(IHost host)
