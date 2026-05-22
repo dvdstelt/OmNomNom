@@ -7,6 +7,7 @@ using Shipping.Endpoint.Messages.Messages;
 
 namespace Shipping.Endpoint.Sagas;
 
+[Saga]
 public class ShippingPolicy(ILogger<ShippingPolicy> log) : Saga<ShippingPolicyData>,
     IAmStartedByMessages<OrderAccepted>,
     IAmStartedByMessages<PaymentSucceeded>,

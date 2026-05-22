@@ -5,8 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shipping.Data;
 using Shipping.Data.Seed;
+using Shipping.Endpoint.Handlers;
 using Shipping.Endpoint.Messages.Commands;
 using Shipping.Endpoint.Messages.Events;
+using Shipping.Endpoint.Sagas;
 
 const string EndpointName = "Shipping";
 
@@ -23,7 +25,12 @@ endpointConfiguration.Configure(sqliteConnectionString, configureRouting: routin
 {
     routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
 });
-hostBuilder.UseNServiceBus(endpointConfiguration);
+endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
+endpointConfiguration.AddHandler<SubmitShippingAddressHandler>();
+endpointConfiguration.AddHandler<ShipOrderRequestHandler>();
+endpointConfiguration.AddSaga<ShippingPolicy>();
+endpointConfiguration.AddSaga<ReturnPolicy>();
+hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 var host = hostBuilder.Build();
 var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();

@@ -2,6 +2,7 @@ using Shipping.Endpoint.Messages.Events;
 
 namespace Shipping.Endpoint.Sagas;
 
+[Saga]
 public class ReturnPolicy : Saga<ReturnPolicy.ReturnPolicyData>,
     IAmStartedByMessages<OrderShipped>
 {
