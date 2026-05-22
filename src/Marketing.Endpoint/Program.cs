@@ -3,6 +3,7 @@ using ITOps.Shared.Sqlite;
 using Marketing.Data;
 using Marketing.Data.Seed;
 using Marketing.Endpoint;
+using Marketing.Endpoint.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +22,8 @@ hostBuilder.Services.AddDbContext<MarketingDbContext>(options =>
 // rest via the shared .learningtransport folder.
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString);
-hostBuilder.UseNServiceBus(endpointConfiguration);
+endpointConfiguration.AddHandler<OrderPlacedHandler>();
+hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 // Background recompute that keeps Marketing.Product.Trending honest as
 // seeded events age out of the 30-day window.
