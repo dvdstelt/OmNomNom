@@ -1,5 +1,6 @@
 using Catalog.Data;
 using Catalog.Data.Seed;
+using Catalog.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,13 @@ hostBuilder.Services.AddDbContext<CatalogDbContext>(options =>
 // Configure NServiceBus
 var endpointConfiguration = new EndpointConfiguration(EndpointName);
 endpointConfiguration.Configure(sqliteConnectionString);
+
+// Explicit handler registration (NServiceBus 10.2+). The call is
+// intercepted by the source generator, so convention-based handlers
+// (no IHandleMessages<T>) are wired up at compile time rather than
+// via reflection-based assembly scanning.
+endpointConfiguration.AddHandler<CompleteOrderHandler>();
+
 hostBuilder.UseNServiceBus(endpointConfiguration);
 
 var host = hostBuilder.Build();

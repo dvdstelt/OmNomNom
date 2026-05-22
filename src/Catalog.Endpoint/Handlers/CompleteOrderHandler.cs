@@ -8,8 +8,12 @@ using OrderItem = Catalog.Data.Models.OrderItem;
 
 namespace Catalog.Endpoint.Handlers;
 
+// Convention-based handler (NServiceBus 10.2+): the [Handler] marker
+// plus a public Handle(message, IMessageHandlerContext) shape is enough.
+// No IHandleMessages<T> interface needed; registration happens via the
+// source-generated path triggered by AddHandler<T>() in Program.cs.
+[Handler]
 public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOrderHandler> log)
-    : IHandleMessages<CompleteOrder>
 {
     public async Task Handle(CompleteOrder message, IMessageHandlerContext context)
     {
