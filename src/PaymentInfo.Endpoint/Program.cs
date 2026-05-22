@@ -1,35 +1,12 @@
-using ITOps.Shared.EndpointConfiguration;
-using ITOps.Shared.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PaymentInfo.Data;
-using PaymentInfo.Data.Seed;
-using PaymentInfo.Endpoint.Handlers;
+using PaymentInfo.Endpoint;
 
-const string EndpointName = "PaymentInfo";
-
-HostApplicationBuilder hostBuilder = Host.CreateApplicationBuilder(args);
-
-var sqliteConnectionString = SqliteStorage.GetConnectionString("paymentinfo");
-
-hostBuilder.Services.AddDbContext<PaymentInfoDbContext>(options =>
-    options.UseSqlite(sqliteConnectionString));
-
-// Configure NServiceBus
-var endpointConfiguration = new EndpointConfiguration(EndpointName);
-endpointConfiguration.Configure(sqliteConnectionString);
-endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
-hostBuilder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+var hostBuilder = Host.CreateApplicationBuilder(args);
+PaymentInfoEndpointHost.Register(hostBuilder);
 
 var host = hostBuilder.Build();
-var hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
-Console.Title = hostEnvironment.ApplicationName;
+Console.Title = host.Services.GetRequiredService<IHostEnvironment>().ApplicationName;
 
-using (var scope = host.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<PaymentInfoDbContext>();
-    await DatabaseInitializer.InitializeAsync(dbContext);
-}
-
+await PaymentInfoEndpointHost.InitializeDatabaseAsync(host);
 await host.RunAsync();
