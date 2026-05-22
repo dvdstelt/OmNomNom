@@ -12,7 +12,6 @@
         <!-- Required so dotnet-ef can target Marketing.Data via this project as
              startup-project (Marketing has no separate endpoint to use). -->
         <PackageReference Include="NServiceBus" Version="10.2.0" />
-        <PackageReference Include="NServiceBus.Extensions.Hosting" Version="4.0.1" />
         <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.1" />
     </ItemGroup>
 
