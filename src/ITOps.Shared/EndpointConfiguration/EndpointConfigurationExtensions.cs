@@ -9,6 +9,16 @@ using NServiceBus.Persistence;
 
 public static class EndpointConfigurationExtensions
 {
+    static EndpointConfigurationExtensions()
+    {
+        // Opt in to NSB's V2 deterministic host-ID algorithm. Without this
+        // switch every endpoint logs a warning at startup nudging us off the
+        // MD5-based generator. Safe to flip here because OmNomNom doesn't
+        // talk to ServiceControl/ServicePulse, so a one-time host-ID change
+        // has no downstream effect.
+        AppContext.SetSwitch("NServiceBus.Core.Hosting.UseV2DeterministicGuid", true);
+    }
+
     public static EndpointConfiguration Configure(
         this EndpointConfiguration endpointConfiguration,
         string? sqliteConnectionString = null,
