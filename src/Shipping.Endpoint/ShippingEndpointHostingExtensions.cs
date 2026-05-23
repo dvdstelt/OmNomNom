@@ -3,9 +3,8 @@ using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Shipping.Data;
 using Shipping.Data.Seed;
-using Shipping.Endpoint.Handlers;
+using Shipping.Endpoint;
 using Shipping.Endpoint.Messages.Commands;
-using Shipping.Endpoint.Sagas;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -29,11 +28,8 @@ public static class ShippingEndpointHostingExtensions
         {
             routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
         });
-        endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
-        endpointConfiguration.AddHandler<SubmitShippingAddressHandler>();
-        endpointConfiguration.AddHandler<ShipOrderRequestHandler>();
-        endpointConfiguration.AddSaga<ShippingPolicy>();
-        endpointConfiguration.AddSaga<ReturnPolicy>();
+
+        endpointConfiguration.Handlers.Shipping.AddAll();
 
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;

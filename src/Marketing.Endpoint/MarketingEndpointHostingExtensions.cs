@@ -28,7 +28,8 @@ public static class MarketingEndpointHostingExtensions
         var endpointConfiguration = new EndpointConfiguration("Marketing");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
-        endpointConfiguration.AddHandler<OrderPlacedHandler>();
+
+        endpointConfiguration.Handlers.Marketing.AddAll();
 
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
 

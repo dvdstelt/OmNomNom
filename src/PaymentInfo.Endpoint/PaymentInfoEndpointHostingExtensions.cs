@@ -3,7 +3,7 @@ using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Seed;
-using PaymentInfo.Endpoint.Handlers;
+using PaymentInfo.Endpoint;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,7 +24,8 @@ public static class PaymentInfoEndpointHostingExtensions
         var endpointConfiguration = new EndpointConfiguration("PaymentInfo");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
-        endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
+
+        endpointConfiguration.Handlers.PaymentInfo.AddAll();
 
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;

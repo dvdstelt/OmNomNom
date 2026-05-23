@@ -1,5 +1,6 @@
 using Catalog.Data;
 using Catalog.Data.Seed;
+using Catalog.Endpoint;
 using Catalog.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
@@ -28,6 +29,9 @@ public static class CatalogEndpointHostingExtensions
         var endpointConfiguration = new EndpointConfiguration("Catalog");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
+
+        endpointConfiguration.Handlers.Catalog.AddAll();
+
         endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
