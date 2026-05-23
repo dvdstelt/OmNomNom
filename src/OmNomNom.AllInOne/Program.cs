@@ -31,36 +31,26 @@
 //  Powered by NServiceBus 10.2's AddNServiceBusEndpoint (PR #7633): each
 //  endpoint configuration gets its own keyed DI scope, distinct LearningTransport
 //  instance, and slot-scoped logging. Assembly scanning is disabled in every
-//  <X>EndpointHost so the configs don't pick up each other's [Handler] types
-//  from the shared load context.
+//  AddXEndpoint() extension so the configs don't pick up each other's [Handler]
+//  types from the shared load context. Each endpoint also registers an
+//  IHostedLifecycleService database seeder, so EnsureCreatedAsync + seed runs
+//  in StartingAsync before the message pumps come online - no explicit
+//  initializer calls needed below.
 // ============================================================================
 
-using Catalog.Endpoint;
-using Checkout.Endpoint;
-using Finance.Endpoint;
-using Marketing.Endpoint;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PaymentInfo.Endpoint;
-using Shipping.Endpoint;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 
-CatalogEndpointHost.Register(hostBuilder);
-FinanceEndpointHost.Register(hostBuilder);
-MarketingEndpointHost.Register(hostBuilder);
-ShippingEndpointHost.Register(hostBuilder);
-PaymentInfoEndpointHost.Register(hostBuilder);
-CheckoutEndpointHost.Register(hostBuilder);
+hostBuilder.Services
+    .AddCatalogEndpoint()
+    .AddFinanceEndpoint()
+    .AddMarketingEndpoint()
+    .AddShippingEndpoint()
+    .AddPaymentInfoEndpoint()
+    .AddCheckoutEndpoint();
 
 var host = hostBuilder.Build();
 Console.Title = "OmNomNom AllInOne";
-
-await CatalogEndpointHost.InitializeDatabaseAsync(host);
-await FinanceEndpointHost.InitializeDatabaseAsync(host);
-await MarketingEndpointHost.InitializeDatabaseAsync(host);
-await ShippingEndpointHost.InitializeDatabaseAsync(host);
-await PaymentInfoEndpointHost.InitializeDatabaseAsync(host);
-// Checkout has no domain database to seed; its SQLite file holds only
-// NServiceBus persistence and TransactionalSession tables.
-
 await host.RunAsync();

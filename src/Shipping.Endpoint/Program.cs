@@ -1,12 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Shipping.Endpoint;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
-ShippingEndpointHost.Register(hostBuilder);
+hostBuilder.Services.AddShippingEndpoint();
 
 var host = hostBuilder.Build();
 Console.Title = host.Services.GetRequiredService<IHostEnvironment>().ApplicationName;
-
-await ShippingEndpointHost.InitializeDatabaseAsync(host);
 await host.RunAsync();

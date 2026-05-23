@@ -2,29 +2,29 @@ using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Shipping.Data;
 using Shipping.Data.Seed;
 using Shipping.Endpoint.Handlers;
 using Shipping.Endpoint.Messages.Commands;
 using Shipping.Endpoint.Sagas;
 
-namespace Shipping.Endpoint;
+namespace Microsoft.Extensions.DependencyInjection;
 
-// Shared registration entry point - see CatalogEndpointHost for the
-// rationale behind the disabled assembly scanner.
-public static class ShippingEndpointHost
+// Shared registration entry point - see CatalogEndpointHostingExtensions
+// for the rationale behind the disabled assembly scanner and the
+// hosted database seeder.
+public static class ShippingEndpointHostingExtensions
 {
-    const string EndpointName = "Shipping";
-
-    public static void Register(IHostApplicationBuilder builder)
+    public static IServiceCollection AddShippingEndpoint(this IServiceCollection services)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("shipping");
 
-        builder.Services.AddDbContext<ShippingDbContext>(options =>
+        services.AddDbContext<ShippingDbContext>(options =>
             options.UseSqlite(sqliteConnectionString));
 
-        var endpointConfiguration = new EndpointConfiguration(EndpointName);
+        services.AddHostedService<ShippingDatabaseSeeder>();
+
+        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Shipping");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString, configureRouting: routing =>
         {
@@ -36,13 +36,16 @@ public static class ShippingEndpointHost
         endpointConfiguration.AddSaga<ShippingPolicy>();
         endpointConfiguration.AddSaga<ReturnPolicy>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
+        services.AddNServiceBusEndpoint(endpointConfiguration, "Shipping");
+        return services;
     }
+}
 
-    public static async Task InitializeDatabaseAsync(IHost host)
+sealed class ShippingDatabaseSeeder(IServiceProvider services) : DatabaseSeederHostedService(services)
+{
+    protected override async Task SeedAsync(IServiceProvider scopedServices, CancellationToken cancellationToken)
     {
-        using var scope = host.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ShippingDbContext>();
-        await DatabaseInitializer.InitializeAsync(dbContext);
+        var dbContext = scopedServices.GetRequiredService<ShippingDbContext>();
+        await DatabaseInitializer.InitializeAsync(dbContext, cancellationToken);
     }
 }

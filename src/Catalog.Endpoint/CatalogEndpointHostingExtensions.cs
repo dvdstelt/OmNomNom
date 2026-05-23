@@ -5,9 +5,8 @@ using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace Catalog.Endpoint;
+namespace Microsoft.Extensions.DependencyInjection;
 
 // Single registration entry point shared by Catalog's own Program.cs (Compound A,
 // each endpoint in its own process) and OmNomNom.AllInOne (Compound B, every
@@ -16,29 +15,32 @@ namespace Catalog.Endpoint;
 // doesn't try to register Finance/Shipping/etc. handlers into the Catalog
 // endpoint configuration. Standalone Catalog is unaffected: it only loads its
 // own handler types.
-public static class CatalogEndpointHost
+public static class CatalogEndpointHostingExtensions
 {
-    const string EndpointName = "Catalog";
-
-    public static void Register(IHostApplicationBuilder builder)
+    public static IServiceCollection AddCatalogEndpoint(this IServiceCollection services)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("catalog");
 
-        builder.Services.AddDbContext<CatalogDbContext>(options =>
+        services.AddDbContext<CatalogDbContext>(options =>
             options.UseSqlite(sqliteConnectionString));
 
-        var endpointConfiguration = new EndpointConfiguration(EndpointName);
+        services.AddHostedService<CatalogDatabaseSeeder>();
+
+        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Catalog");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
-        builder.Services.AddNServiceBusEndpoint(endpointConfiguration, EndpointName);
+        services.AddNServiceBusEndpoint(endpointConfiguration, "Catalog");
+        return services;
     }
+}
 
-    public static async Task InitializeDatabaseAsync(IHost host)
+sealed class CatalogDatabaseSeeder(IServiceProvider services) : DatabaseSeederHostedService(services)
+{
+    protected override async Task SeedAsync(IServiceProvider scopedServices, CancellationToken cancellationToken)
     {
-        using var scope = host.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-        await DatabaseInitializer.InitializeAsync(dbContext);
+        var dbContext = scopedServices.GetRequiredService<CatalogDbContext>();
+        await DatabaseInitializer.InitializeAsync(dbContext, cancellationToken);
     }
 }
