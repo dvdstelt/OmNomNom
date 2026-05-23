@@ -43,13 +43,14 @@ using Microsoft.Extensions.Hosting;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 
-hostBuilder.Services
-    .AddCatalogEndpoint()
-    .AddFinanceEndpoint()
-    .AddMarketingEndpoint()
-    .AddShippingEndpoint()
-    .AddPaymentInfoEndpoint()
-    .AddCheckoutEndpoint();
+var services = hostBuilder.Services;
+
+services.AddCatalogEndpoint();
+services.AddFinanceEndpoint();
+services.AddMarketingEndpoint();
+services.AddShippingEndpoint();
+services.AddPaymentInfoEndpoint();
+services.AddCheckoutEndpoint();
 
 var host = hostBuilder.Build();
 Console.Title = "OmNomNom AllInOne";
