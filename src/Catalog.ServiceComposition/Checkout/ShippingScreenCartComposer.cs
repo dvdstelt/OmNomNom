@@ -1,5 +1,4 @@
 using Catalog.Data;
-using Catalog.Data.Models;
 using Catalog.ServiceComposition.Events;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;

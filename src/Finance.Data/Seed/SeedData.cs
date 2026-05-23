@@ -90,7 +90,7 @@ public static class SeedData
 
     public static Order Orders()
     {
-        return new Order()
+        return new Order
         {
             OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e"),
             DeliveryOptionId = ExpeditedId,

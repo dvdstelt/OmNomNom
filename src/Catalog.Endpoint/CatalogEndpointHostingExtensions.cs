@@ -4,7 +4,6 @@ using Catalog.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -26,12 +25,12 @@ public static class CatalogEndpointHostingExtensions
 
         services.AddHostedService<CatalogDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Catalog");
+        var endpointConfiguration = new EndpointConfiguration("Catalog");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Catalog");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

@@ -2,7 +2,6 @@ using Catalog.Data;
 using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 

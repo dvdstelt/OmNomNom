@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using ServiceComposer.AspNetCore;
@@ -32,9 +33,9 @@ builder.Services.AddControllers()
         // lowercase the first letter so the wire shape stays the
         // same as ServiceComposer's own writer used to produce.
         json.JsonSerializerOptions.PropertyNamingPolicy =
-            System.Text.Json.JsonNamingPolicy.CamelCase;
+            JsonNamingPolicy.CamelCase;
         json.JsonSerializerOptions.DictionaryKeyPolicy =
-            System.Text.Json.JsonNamingPolicy.CamelCase;
+            JsonNamingPolicy.CamelCase;
     });
 builder.Services.AddHealthChecks();
 

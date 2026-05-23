@@ -1,16 +1,12 @@
-namespace ITOps.Shared.EndpointConfiguration;
-
-using System;
-using System.Linq;
 using System.Reflection;
 using Messaging.Persistence.Sqlite;
-using NServiceBus;
-using NServiceBus.Persistence;
+
+namespace ITOps.Shared.EndpointConfiguration;
 
 public static class EndpointConfigurationExtensions
 {
-    public static EndpointConfiguration Configure(
-        this EndpointConfiguration endpointConfiguration,
+    public static NServiceBus.EndpointConfiguration Configure(
+        this NServiceBus.EndpointConfiguration endpointConfiguration,
         string? sqliteConnectionString = null,
         Action<PersistenceExtensions<SqlitePersistence>>? configurePersistence = null,
         Action<RoutingSettings<LearningTransport>>? configureRouting = null)

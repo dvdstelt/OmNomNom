@@ -1,7 +1,6 @@
 using Messaging.Persistence.Sqlite;
 using Messaging.Persistence.Sqlite.TransactionalSession;
 using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
 using NServiceBus.TransactionalSession;
 
 namespace WorkflowComposer.Sqlite;

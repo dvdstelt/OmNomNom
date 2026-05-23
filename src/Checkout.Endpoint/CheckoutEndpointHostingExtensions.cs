@@ -1,7 +1,6 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Messaging.Persistence.Sqlite.TransactionalSession;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -19,12 +18,12 @@ public static class CheckoutEndpointHostingExtensions
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("checkout");
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Checkout");
+        var endpointConfiguration = new EndpointConfiguration("Checkout");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString,
             configurePersistence: persistence => persistence.EnableTransactionalSession());
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Checkout");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

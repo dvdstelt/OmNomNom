@@ -65,6 +65,6 @@ public class ShippingPolicy(ILogger<ShippingPolicy> log) : Saga<ShippingPolicyDa
 public class ShippingPolicyData : ContainSagaData
 {
     public Guid OrderId { get; set; }
-    public bool PaymentSucceeded { get; set; } = false;
-    public bool OrderAccepted { get; set; } = false;
+    public bool PaymentSucceeded { get; set; }
+    public bool OrderAccepted { get; set; }
 }

@@ -2,7 +2,6 @@ using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
 using PaymentInfo.Data;
 using PaymentInfo.Endpoint.Messages.Commands;
 using ServiceComposer.AspNetCore;

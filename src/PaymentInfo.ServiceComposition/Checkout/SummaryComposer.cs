@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PaymentInfo.Data;
+using PaymentInfo.Data.Models;
 using PaymentInfo.ServiceComposition.Workflow;
 using ServiceComposer.AspNetCore;
 using WorkflowComposer;
@@ -23,7 +24,7 @@ public class SummaryComposer(PaymentInfoDbContext dbContext, IWorkflowStore work
             select new { Order = o, CreditCard = c })
             .FirstOrDefaultAsync(ct);
 
-        Data.Models.CreditCard? creditCard;
+        CreditCard? creditCard;
         if (row != null)
         {
             creditCard = row.CreditCard;

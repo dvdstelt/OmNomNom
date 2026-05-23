@@ -5,7 +5,6 @@ using Marketing.Data.Seed;
 using Marketing.Endpoint;
 using Marketing.Endpoint.Handlers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -26,12 +25,12 @@ public static class MarketingEndpointHostingExtensions
         // Marketing only subscribes to events, so no command routing is needed -
         // LearningTransport's pub/sub handles the rest via the shared
         // .learningtransport folder.
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Marketing");
+        var endpointConfiguration = new EndpointConfiguration("Marketing");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<OrderPlacedHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Marketing");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
 
         // Background recompute that keeps Marketing.Product.Trending honest as
         // seeded events age out of the 30-day window.

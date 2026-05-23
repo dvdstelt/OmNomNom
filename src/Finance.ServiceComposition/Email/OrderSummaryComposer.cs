@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
-using Shipping.ServiceComposition.Events;
 
 namespace Finance.ServiceComposition.Email;
 
@@ -43,7 +42,7 @@ public class OrderSummaryComposer(FinanceDbContext dbContext, IHttpContextAccess
         deliveryOptionModel.Price = ShippingFees.EffectivePrice(deliveryOption, itemsSubtotal);
 
         var context = request.GetCompositionContext();
-        await context.RaiseEvent(new DeliveryOptionLoaded()
+        await context.RaiseEvent(new DeliveryOptionLoaded
         {
             DeliveryOptionId = deliveryOption.DeliveryOptionId,
             DeliveryOption = deliveryOptionModel

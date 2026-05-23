@@ -1,7 +1,7 @@
-namespace ITOps.Shared.EndpointConfiguration;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+namespace ITOps.Shared.EndpointConfiguration;
 
 // Base class for per-endpoint database seeders. Each endpoint's
 // AddXEndpoint(...) extension registers a concrete subclass as a hosted

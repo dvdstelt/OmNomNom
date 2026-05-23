@@ -1,7 +1,6 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Seed;
 using PaymentInfo.Endpoint.Handlers;
@@ -22,12 +21,12 @@ public static class PaymentInfoEndpointHostingExtensions
 
         services.AddHostedService<PaymentInfoDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("PaymentInfo");
+        var endpointConfiguration = new EndpointConfiguration("PaymentInfo");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "PaymentInfo");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

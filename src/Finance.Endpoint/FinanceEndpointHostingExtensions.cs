@@ -4,7 +4,6 @@ using Finance.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +21,7 @@ public static class FinanceEndpointHostingExtensions
 
         services.AddHostedService<FinanceDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Finance");
+        var endpointConfiguration = new EndpointConfiguration("Finance");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
         endpointConfiguration.AddHandler<OrderCancelledHandler>();
@@ -31,7 +30,7 @@ public static class FinanceEndpointHostingExtensions
         endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
         endpointConfiguration.AddHandler<SubmitOrderItemsHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Finance");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

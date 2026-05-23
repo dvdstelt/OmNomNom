@@ -1,7 +1,6 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Shipping.Data;
 using Shipping.Data.Seed;
 using Shipping.Endpoint.Handlers;
@@ -24,7 +23,7 @@ public static class ShippingEndpointHostingExtensions
 
         services.AddHostedService<ShippingDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Shipping");
+        var endpointConfiguration = new EndpointConfiguration("Shipping");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString, configureRouting: routing =>
         {
@@ -36,7 +35,7 @@ public static class ShippingEndpointHostingExtensions
         endpointConfiguration.AddSaga<ShippingPolicy>();
         endpointConfiguration.AddSaga<ReturnPolicy>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Shipping");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }
