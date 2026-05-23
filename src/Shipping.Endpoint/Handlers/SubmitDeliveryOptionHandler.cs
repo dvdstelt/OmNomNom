@@ -5,7 +5,8 @@ using Shipping.Endpoint.Messages.Commands;
 
 namespace Shipping.Endpoint.Handlers;
 
-public class SubmitDeliveryOptionHandler(ShippingDbContext dbContext) : IHandleMessages<SubmitDeliveryOption>
+[Handler]
+public class SubmitDeliveryOptionHandler(ShippingDbContext dbContext)
 {
     public async Task Handle(SubmitDeliveryOption message, IMessageHandlerContext context)
     {

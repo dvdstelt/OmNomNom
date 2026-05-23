@@ -41,6 +41,7 @@
     <Project Path="Shipping.ServiceComposition/Shipping.ServiceComposition.csproj" />
   </Folder>
   <Project Path="CompositionGateway/CompositionGateway.csproj" />
+  <Project Path="OmNomNom.AllInOne/OmNomNom.AllInOne.csproj" />
   <Project Path="OmNomNom.BackOffice/OmNomNom.BackOffice.csproj" />
   <Project Path="website/website.esproj">
     <Platform Project="AnyCPU" />

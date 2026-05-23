@@ -3,7 +3,8 @@ using Shipping.Endpoint.Messages.Events;
 
 namespace OmNomNom.Website.Handlers;
 
-public class OrderShippedHandler(OrderEmailSender emailSender) : IHandleMessages<OrderShipped>
+[Handler]
+public class OrderShippedHandler(OrderEmailSender emailSender)
 {
     public async Task Handle(OrderShipped message, IMessageHandlerContext context)
     {

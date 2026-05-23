@@ -23,8 +23,8 @@ namespace Marketing.Endpoint.Handlers;
 //
 // No idempotency dedup here - the NServiceBus Outbox is the next thing
 // being added and will handle exactly-once for us.
+[Handler]
 public class OrderPlacedHandler(MarketingDbContext dbContext, ILogger<OrderPlacedHandler> log)
-    : IHandleMessages<OrderPlaced>
 {
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {

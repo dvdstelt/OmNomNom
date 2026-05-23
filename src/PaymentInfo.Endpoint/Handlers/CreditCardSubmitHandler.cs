@@ -6,7 +6,8 @@ using PaymentInfo.Endpoint.Messages.Events;
 
 namespace PaymentInfo.Endpoint.Handlers;
 
-public class SubmitPaymentInfoHandler(PaymentInfoDbContext dbContext) : IHandleMessages<SubmitPaymentInfo>
+[Handler]
+public class SubmitPaymentInfoHandler(PaymentInfoDbContext dbContext)
 {
     public async Task Handle(SubmitPaymentInfo message, IMessageHandlerContext context)
     {

@@ -1,0 +1,13 @@
+<Project>
+
+    <ItemGroup>
+        <!--
+            Opt every endpoint in the solution into NServiceBus 10.2's V2 deterministic
+            host-ID algorithm (XxHash128, replaces MD5). Setting it here as a runtime
+            host configuration option keeps it declarative and applies to every Exe
+            project under src/ without per-project duplication.
+        -->
+        <RuntimeHostConfigurationOption Include="NServiceBus.Core.Hosting.UseV2DeterministicGuid" Value="true" />
+    </ItemGroup>
+
+</Project>
