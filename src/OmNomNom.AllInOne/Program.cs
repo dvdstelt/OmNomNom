@@ -38,8 +38,14 @@
 //  initializer calls needed below.
 // ============================================================================
 
+using Catalog.Endpoint;
+using Checkout.Endpoint;
+using Finance.Endpoint;
+using Marketing.Endpoint;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PaymentInfo.Endpoint;
+using Shipping.Endpoint;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 

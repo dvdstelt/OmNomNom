@@ -2,11 +2,10 @@ using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Marketing.Data;
 using Marketing.Data.Seed;
-using Marketing.Endpoint;
-using Marketing.Endpoint.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Marketing.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the

@@ -1,12 +1,11 @@
 using Catalog.Data;
 using Catalog.Data.Seed;
-using Catalog.Endpoint;
-using Catalog.Endpoint.Handlers;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Catalog.Endpoint;
 
 // Single registration entry point shared by Catalog's own Program.cs (Compound A,
 // each endpoint in its own process) and OmNomNom.AllInOne (Compound B, every
@@ -31,8 +30,6 @@ public static class CatalogEndpointHostingExtensions
         endpointConfiguration.Configure(sqliteConnectionString);
 
         endpointConfiguration.Handlers.Catalog.AddAll();
-
-        endpointConfiguration.AddHandler<CompleteOrderHandler>();
 
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;

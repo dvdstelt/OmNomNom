@@ -1,8 +1,9 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Messaging.Persistence.Sqlite.TransactionalSession;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Checkout.Endpoint;
 
 // Checkout has no business handlers - it is the processor for the gateway's
 // TransactionalSession. It receives the control message the gateway sends on

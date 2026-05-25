@@ -1,11 +1,11 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Seed;
-using PaymentInfo.Endpoint;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace PaymentInfo.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the

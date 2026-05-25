@@ -1,12 +1,12 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Shipping.Data;
 using Shipping.Data.Seed;
-using Shipping.Endpoint;
 using Shipping.Endpoint.Messages.Commands;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Shipping.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the
