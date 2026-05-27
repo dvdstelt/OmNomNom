@@ -104,8 +104,8 @@ public static class SeedData
             },
             Items =
             [
-                new() { ProductId = MoersleutelId, Price = 12m, Quantity = 2 },
-                new() { ProductId = SusanId, Price = 9m, Quantity = 1 }
+                new() { ProductId = MoersleutelId, Price = 12m, BillableQuantity = 2 },
+                new() { ProductId = SusanId, Price = 9m, BillableQuantity = 1 }
             ]
         };
     }

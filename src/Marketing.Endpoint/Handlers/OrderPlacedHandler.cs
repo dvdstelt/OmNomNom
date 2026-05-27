@@ -41,13 +41,13 @@ public class OrderPlacedHandler(MarketingDbContext dbContext, ILogger<OrderPlace
             dbContext.OrderActivity.Add(new OrderActivity
             {
                 ProductId = item.ProductId,
-                Quantity = item.Quantity,
+                Quantity = item.FulfilledQuantity,
                 OccurredAt = message.OccurredAt
             });
 
             if (products.TryGetValue(item.ProductId, out var product))
             {
-                product.OrderCount += item.Quantity;
+                product.OrderCount += item.FulfilledQuantity;
             }
             else
             {

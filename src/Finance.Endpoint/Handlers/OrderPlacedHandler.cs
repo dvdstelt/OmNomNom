@@ -43,7 +43,7 @@ public class OrderPlacedHandler(FinanceDbContext dbContext)
     {
         var itemsTotal = order.Items
             .Where(i => i.Fulfilled)
-            .Sum(i => i.EffectivePrice() * i.Quantity);
+            .Sum(i => i.EffectivePrice() * i.BillableQuantity);
 
         // Shipping is only charged when at least one line shipped. A
         // partial order still pays the full delivery fee - we packed

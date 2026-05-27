@@ -26,7 +26,7 @@ public class OrderItem : IPriced
     // parent Order's key when items are added through the navigation.
     public Guid OrderId { get; set; }
     public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
+    public int BillableQuantity { get; set; }
     public decimal Price { get; set; }
     public decimal Discount { get; set; }
 

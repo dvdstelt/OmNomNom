@@ -39,7 +39,7 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
         var items = message.Items.Select(i => new OrderItem
         {
             ProductId = i.ProductId,
-            Quantity = i.Quantity
+            OrderedQuantity = i.OrderedQuantity
         });
 
         if (order == null)
@@ -65,21 +65,21 @@ public class CompleteOrderHandler(CatalogDbContext dbContext, ILogger<CompleteOr
         {
             var inStock = await dbContext.InventoryDeltas.CurrentStockAsync(item.ProductId, ct);
 
-            if (inStock < item.Quantity)
+            if (inStock < item.OrderedQuantity)
             {
                 unfulfilled.Add(new UnfulfilledItem
                 {
                     ProductId = item.ProductId,
-                    Quantity = item.Quantity
+                    ShortfallQuantity = item.OrderedQuantity
                 });
             }
             else
             {
-                dbContext.InventoryDeltas.Add(Inventory.Reserve(item.ProductId, item.Quantity));
+                dbContext.InventoryDeltas.Add(Inventory.Reserve(item.ProductId, item.OrderedQuantity));
                 fulfilled.Add(new OrderedItem
                 {
                     ProductId = item.ProductId,
-                    Quantity = item.Quantity
+                    FulfilledQuantity = item.OrderedQuantity
                 });
             }
         }

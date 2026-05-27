@@ -45,7 +45,7 @@ public class OrderItemsWorkflowSlice : WorkflowSlice<OrderItemsSlice>
                 .Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    Quantity = i.Quantity
+                    OrderedQuantity = i.Quantity
                 })
                 .ToList()
         };
