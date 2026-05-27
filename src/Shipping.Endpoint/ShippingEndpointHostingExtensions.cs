@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shipping.Data;
 using Shipping.Data.Seed;
-using Shipping.Endpoint.Handlers;
 using Shipping.Endpoint.Messages.Commands;
-using Shipping.Endpoint.Sagas;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Shipping.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the
@@ -24,19 +22,16 @@ public static class ShippingEndpointHostingExtensions
 
         services.AddHostedService<ShippingDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Shipping");
+        var endpointConfiguration = new EndpointConfiguration("Shipping");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString, configureRouting: routing =>
         {
             routing.RouteToEndpoint(typeof(ShipOrderRequest).Assembly, "Shipping");
         });
-        endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
-        endpointConfiguration.AddHandler<SubmitShippingAddressHandler>();
-        endpointConfiguration.AddHandler<ShipOrderRequestHandler>();
-        endpointConfiguration.AddSaga<ShippingPolicy>();
-        endpointConfiguration.AddSaga<ReturnPolicy>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Shipping");
+        endpointConfiguration.Handlers.Shipping.AddAll();
+
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

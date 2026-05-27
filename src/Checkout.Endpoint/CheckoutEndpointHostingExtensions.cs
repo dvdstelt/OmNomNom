@@ -3,7 +3,7 @@ using ITOps.Shared.Sqlite;
 using Messaging.Persistence.Sqlite.TransactionalSession;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Checkout.Endpoint;
 
 // Checkout has no business handlers - it is the processor for the gateway's
 // TransactionalSession. It receives the control message the gateway sends on
@@ -19,12 +19,12 @@ public static class CheckoutEndpointHostingExtensions
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("checkout");
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Checkout");
+        var endpointConfiguration = new EndpointConfiguration("Checkout");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString,
             configurePersistence: persistence => persistence.EnableTransactionalSession());
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Checkout");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

@@ -4,7 +4,6 @@ using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
 using ServiceComposer.AspNetCore;
 
 namespace Catalog.ServiceComposition;

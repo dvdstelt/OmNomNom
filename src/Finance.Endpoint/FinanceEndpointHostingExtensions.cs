@@ -6,7 +6,7 @@ using ITOps.Shared.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Finance.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the
@@ -22,16 +22,18 @@ public static class FinanceEndpointHostingExtensions
 
         services.AddHostedService<FinanceDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("Finance");
+        var endpointConfiguration = new EndpointConfiguration("Finance");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
+
+        // Instead of registering all handlers, you can also be specific about which handlers to include.
         endpointConfiguration.AddHandler<OrderCancelledHandler>();
         endpointConfiguration.AddHandler<OrderPlacedHandler>();
         endpointConfiguration.AddHandler<SubmitBillingAddressHandler>();
         endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
         endpointConfiguration.AddHandler<SubmitOrderItemsHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "Finance");
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PaymentInfo.Data;
 using PaymentInfo.Data.Seed;
-using PaymentInfo.Endpoint.Handlers;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace PaymentInfo.Endpoint;
 
 // Shared registration entry point - see CatalogEndpointHostingExtensions
 // for the rationale behind the disabled assembly scanner and the
@@ -22,12 +21,13 @@ public static class PaymentInfoEndpointHostingExtensions
 
         services.AddHostedService<PaymentInfoDatabaseSeeder>();
 
-        var endpointConfiguration = new NServiceBus.EndpointConfiguration("PaymentInfo");
+        var endpointConfiguration = new EndpointConfiguration("PaymentInfo");
         endpointConfiguration.AssemblyScanner().Disable = true;
         endpointConfiguration.Configure(sqliteConnectionString);
-        endpointConfiguration.AddHandler<SubmitPaymentInfoHandler>();
 
-        services.AddNServiceBusEndpoint(endpointConfiguration, "PaymentInfo");
+        endpointConfiguration.Handlers.PaymentInfo.AddAll();
+
+        services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
 }

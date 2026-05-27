@@ -1,7 +1,6 @@
-using System.Reflection;
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
-using Microsoft.Extensions.DependencyInjection;
+using OmNomNom.Website;
 using OmNomNom.Website.Handlers;
 using OmNomNom.Website.Helpers;
 using ServiceComposer.AspNetCore;
@@ -40,8 +39,9 @@ builder.Services.AddHttpClient("composition-gateway", client =>
 
 var endpointConfiguration = new EndpointConfiguration("OmNomNomBackOffice");
 endpointConfiguration.Configure(SqliteStorage.GetConnectionString("backoffice"));
-endpointConfiguration.AddHandler<OrderCancelledHandler>();
-endpointConfiguration.AddHandler<OrderShippedHandler>();
+
+endpointConfiguration.Handlers.BackOffice.AddAll();
+
 builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
 
 var app = builder.Build();

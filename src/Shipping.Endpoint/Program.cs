@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shipping.Endpoint;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 hostBuilder.Services.AddShippingEndpoint();

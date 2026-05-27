@@ -38,18 +38,25 @@
 //  initializer calls needed below.
 // ============================================================================
 
+using Catalog.Endpoint;
+using Checkout.Endpoint;
+using Finance.Endpoint;
+using Marketing.Endpoint;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PaymentInfo.Endpoint;
+using Shipping.Endpoint;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 
-hostBuilder.Services
-    .AddCatalogEndpoint()
-    .AddFinanceEndpoint()
-    .AddMarketingEndpoint()
-    .AddShippingEndpoint()
-    .AddPaymentInfoEndpoint()
-    .AddCheckoutEndpoint();
+var services = hostBuilder.Services;
+
+services.AddCatalogEndpoint();
+services.AddFinanceEndpoint();
+services.AddMarketingEndpoint();
+services.AddShippingEndpoint();
+services.AddPaymentInfoEndpoint();
+services.AddCheckoutEndpoint();
 
 var host = hostBuilder.Build();
 Console.Title = "OmNomNom AllInOne";

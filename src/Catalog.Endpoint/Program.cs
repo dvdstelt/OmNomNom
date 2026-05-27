@@ -1,3 +1,4 @@
+using Catalog.Endpoint;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

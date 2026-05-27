@@ -2,7 +2,6 @@ using System.Text.Json;
 using Messaging.Persistence.Sqlite;
 using Messaging.Persistence.Sqlite.TransactionalSession;
 using Microsoft.Data.Sqlite;
-using NServiceBus;
 using NServiceBus.TransactionalSession;
 
 namespace WorkflowComposer.Sqlite;
