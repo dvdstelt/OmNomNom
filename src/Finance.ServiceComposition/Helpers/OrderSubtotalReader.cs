@@ -44,7 +44,7 @@ public class OrderSubtotalReader(FinanceDbContext dbContext, IWorkflowStore work
             {
                 OrderId = orderId,
                 ProductId = line.ProductId,
-                Quantity = line.Quantity
+                BillableQuantity = line.Quantity
             };
             if (prices.TryGetValue(line.ProductId, out var product))
             {
@@ -60,6 +60,6 @@ public class OrderSubtotalReader(FinanceDbContext dbContext, IWorkflowStore work
     public async Task<decimal> GetItemsSubtotalAsync(Guid orderId, CancellationToken ct)
     {
         var order = await GetOrderWithItemsAsync(orderId, ct);
-        return order.Items.Sum(i => i.EffectivePrice() * i.Quantity);
+        return order.Items.Sum(i => i.EffectivePrice() * i.BillableQuantity);
     }
 }

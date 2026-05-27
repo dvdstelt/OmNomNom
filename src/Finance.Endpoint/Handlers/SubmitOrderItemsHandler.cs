@@ -38,7 +38,7 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext)
             order.Items.Add(new OrderItem
             {
                 ProductId = item.ProductId,
-                Quantity = item.Quantity,
+                BillableQuantity = item.OrderedQuantity,
                 Price = product.Price,
                 Discount = product.Discount
             });

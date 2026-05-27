@@ -129,8 +129,8 @@ public class SeedData
             OrderId = Guid.Parse("08bebbee-0e7e-4368-afab-74f4720f5f4e"),
             Products =
             [
-                new() { Quantity = 2, ProductId = MoersleutelId },
-                new() { Quantity = 1, ProductId = SusanId }
+                new() { OrderedQuantity = 2, ProductId = MoersleutelId },
+                new() { OrderedQuantity = 1, ProductId = SusanId }
             ]
         };
     }

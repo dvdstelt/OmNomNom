@@ -36,7 +36,7 @@ public class OrderSummaryComposer(FinanceDbContext dbContext, IHttpContextAccess
         // Match the OrderPlacedHandler view: fulfilled items only.
         var itemsSubtotal = order.Items
             .Where(i => i.Fulfilled)
-            .Sum(i => i.EffectivePrice() * i.Quantity);
+            .Sum(i => i.EffectivePrice() * i.BillableQuantity);
 
         dynamic deliveryOptionModel = new ExpandoObject();
         deliveryOptionModel.Price = ShippingFees.EffectivePrice(deliveryOption, itemsSubtotal);

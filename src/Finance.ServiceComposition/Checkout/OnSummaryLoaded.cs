@@ -21,7 +21,7 @@ public class OnSummaryLoaded(OrderSubtotalReader orderReader) : ICompositionEven
             if (matchingProduct is null) continue;
             product.Value.Price = matchingProduct.Price;
             product.Value.Discount = matchingProduct.Discount;
-            totalPrice += matchingProduct.EffectivePrice() * matchingProduct.Quantity;
+            totalPrice += matchingProduct.EffectivePrice() * matchingProduct.BillableQuantity;
         }
 
         var vm = request.GetComposedResponseModel();

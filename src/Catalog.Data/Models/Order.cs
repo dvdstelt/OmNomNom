@@ -16,9 +16,9 @@ public class Order
 public class OrderItem
 {
     // Composite PK with ProductId; one row per product per order, since
-    // adding the same product again increments Quantity rather than
-    // creating a duplicate row.
+    // adding the same product again increments OrderedQuantity rather
+    // than creating a duplicate row.
     public Guid OrderId { get; set; }
     public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
+    public int OrderedQuantity { get; set; }
 }

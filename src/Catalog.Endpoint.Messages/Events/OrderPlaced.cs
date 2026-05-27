@@ -18,11 +18,11 @@ public sealed record OrderPlaced
 public sealed record OrderedItem
 {
     public required Guid ProductId { get; init; }
-    public required int Quantity { get; init; }
+    public required int FulfilledQuantity { get; init; }
 }
 
 public sealed record UnfulfilledItem
 {
     public required Guid ProductId { get; init; }
-    public required int Quantity { get; init; }
+    public required int ShortfallQuantity { get; init; }
 }
