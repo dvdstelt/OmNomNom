@@ -11,7 +11,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
         <!-- Required so dotnet-ef can target Marketing.Data via this project as
              startup-project (Marketing has no separate endpoint to use). -->
-        <PackageReference Include="NServiceBus" Version="10.2.2" />
+        <PackageReference Include="NServiceBus" Version="10.2.3" />
         <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.1" />
     </ItemGroup>
 
