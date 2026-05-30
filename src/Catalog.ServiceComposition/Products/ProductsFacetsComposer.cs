@@ -18,11 +18,11 @@ public class ProductsFacetsComposer(CatalogDbContext dbContext, IHttpContextAcce
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        var categories = await dbContext.Products
-            .Select(p => p.Category)
-            .Where(c => c != null && c != "")
+        var beerStyles = await dbContext.Products
+            .Select(p => p.BeerStyle)
+            .Where(s => s != null && s != "")
             .Distinct()
-            .OrderBy(c => c)
+            .OrderBy(s => s)
             .ToListAsync(ct);
 
         var breweries = await dbContext.Products
@@ -40,7 +40,7 @@ public class ProductsFacetsComposer(CatalogDbContext dbContext, IHttpContextAcce
             .ToListAsync(ct);
 
         var vm = request.GetComposedResponseModel();
-        vm.Categories = categories;
+        vm.BeerStyles = beerStyles;
         vm.Breweries = breweries;
         vm.Countries = countries;
     }

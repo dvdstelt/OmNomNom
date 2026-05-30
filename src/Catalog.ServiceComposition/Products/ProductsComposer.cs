@@ -8,7 +8,7 @@ using ServiceComposer.AspNetCore;
 namespace Catalog.ServiceComposition.Products;
 
 // Server-side product search. Catalog owns the result set and applies
-// filters on Catalog-owned fields (category/brewery/country).
+// filters on Catalog-owned fields (beer style/brewery/country).
 // Sorting on signals Catalog doesn't own is delegated by raising
 // ProductCandidatesAvailable: any subscriber that owns a sort signal
 // (e.g. Marketing) reads its own request parameters and writes the
@@ -42,7 +42,7 @@ public class ProductsComposer(CatalogDbContext dbContext, IHttpContextAccessor h
         // 1. Filter Catalog-owned attributes. Each filter only applies
         //    when the caller supplied at least one value.
         var productsQuery = dbContext.Products.AsQueryable();
-        if (query.CategoryList.Count > 0) productsQuery = productsQuery.Where(p => query.CategoryList.Contains(p.Category));
+        if (query.BeerStyleList.Count > 0) productsQuery = productsQuery.Where(p => query.BeerStyleList.Contains(p.BeerStyle));
         if (query.BreweryList.Count > 0) productsQuery = productsQuery.Where(p => query.BreweryList.Contains(p.Brewery));
         if (query.CountryList.Count > 0) productsQuery = productsQuery.Where(p => query.CountryList.Contains(p.Country));
 

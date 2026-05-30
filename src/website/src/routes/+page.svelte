@@ -15,7 +15,7 @@
   // Facet lists are loaded once per session; the products page
   // changes in lockstep with filter/sort/page state, which is also
   // mirrored to the URL so back-from-detail and bookmarks work.
-  let categories = $state([]);
+  let beerStyles = $state([]);
   let breweries = $state([]);
   let countries = $state([]);
 
@@ -25,7 +25,7 @@
   // distinguish "the gateway is down" from "zero matches".
   let error = $state(null);
 
-  let selectedCategories = $state([]);
+  let selectedBeerStyles = $state([]);
   let selectedBrewery = $state('All');
   let selectedCountry = $state('All');
   let selectedSort = $state('default');
@@ -57,7 +57,7 @@
 
   function readStateFromUrl(url) {
     const params = url.searchParams;
-    selectedCategories = parseList(params.get('categories'));
+    selectedBeerStyles = parseList(params.get('beerStyles'));
     selectedBrewery = params.get('brewery') ?? 'All';
     selectedCountry = params.get('country') ?? 'All';
     const sortParam = params.get('sort');
@@ -74,8 +74,8 @@
   // is still part of the entry that the product detail link pushes.
   function syncUrl() {
     const params = new URLSearchParams();
-    if (selectedCategories.length)
-      params.set('categories', selectedCategories.join(','));
+    if (selectedBeerStyles.length)
+      params.set('beerStyles', selectedBeerStyles.join(','));
     if (selectedBrewery && selectedBrewery !== 'All')
       params.set('brewery', selectedBrewery);
     if (selectedCountry && selectedCountry !== 'All')
@@ -95,12 +95,12 @@
   async function loadFacets() {
     try {
       const facets = await gateway.getFacets();
-      categories = facets?.categories ?? [];
+      beerStyles = facets?.beerStyles ?? [];
       breweries = facets?.breweries ?? [];
       countries = facets?.countries ?? [];
     } catch (e) {
       error = e?.message ?? 'Could not load filter options.';
-      categories = [];
+      beerStyles = [];
       breweries = [];
       countries = [];
     }
@@ -111,7 +111,7 @@
     error = null;
     try {
       const data = await gateway.getProducts({
-        categories: selectedCategories,
+        beerStyles: selectedBeerStyles,
         // Backend expects arrays for every filter axis. Brewery and
         // Country are single-select on the UI, so we send a 1-element
         // array (or skip entirely when 'All').
@@ -169,11 +169,11 @@
   <p class="page-subtitle">Hand-picked selections for the discerning palate</p>
 
   <FilterBar
-    {categories}
+    {beerStyles}
     {breweries}
     {countries}
     {sortOptions}
-    bind:selectedCategories
+    bind:selectedBeerStyles
     bind:selectedBrewery
     bind:selectedCountry
     bind:selectedSort
@@ -205,7 +205,7 @@
           <BeerImage
             name={product.name}
             imageUrl={product.imageUrl}
-            category={product.category}
+            beerStyle={product.beerStyle}
           >
             <SaveBadge price={product.price} discount={product.discount} />
           </BeerImage>

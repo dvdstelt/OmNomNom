@@ -16,11 +16,11 @@
   import MultiSelect from './MultiSelect.svelte';
 
   let {
-    categories = [],
+    beerStyles = [],
     breweries = [],
     countries = [],
     sortOptions = [],
-    selectedCategories = $bindable([]),
+    selectedBeerStyles = $bindable([]),
     selectedBrewery = $bindable('All'),
     selectedCountry = $bindable('All'),
     selectedSort = $bindable('default'),
@@ -28,7 +28,7 @@
   } = $props();
 
   let hasFilterDropdowns = $derived(
-    categories.length > 0 || breweries.length > 0 || countries.length > 0
+    beerStyles.length > 0 || breweries.length > 0 || countries.length > 0
   );
   let hasSortDropdown = $derived(sortOptions.length > 0);
 
@@ -37,7 +37,7 @@
   // One badge across all three dropdowns; "All" is the unselected
   // sentinel for the single-selects.
   let activeFilterCount = $derived(
-    selectedCategories.length +
+    selectedBeerStyles.length +
       (selectedBrewery !== 'All' ? 1 : 0) +
       (selectedCountry !== 'All' ? 1 : 0)
   );
@@ -95,11 +95,11 @@
         >×</button>
       </div>
 
-      {#if categories.length > 0}
+      {#if beerStyles.length > 0}
         <MultiSelect
           label="Type"
-          options={categories}
-          bind:selected={selectedCategories}
+          options={beerStyles}
+          bind:selected={selectedBeerStyles}
           onChange={emit}
         />
       {/if}

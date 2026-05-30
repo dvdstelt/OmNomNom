@@ -67,7 +67,7 @@
     </div>
   {:else}
     <div class="product-layout">
-      <BeerImage hero name={product.name} imageUrl={product.imageUrl} category={product.category} />
+      <BeerImage hero name={product.name} imageUrl={product.imageUrl} beerStyle={product.beerStyle} />
       <div class="product-details">
         <h1>{product.name}</h1>
         <BreweryLine

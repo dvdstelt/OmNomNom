@@ -38,7 +38,7 @@ async function postJson(path, body) {
 const DEFAULT_PAGE_SIZE = 12;
 
 function buildProductsQuery({
-  categories = [],
+  beerStyles = [],
   breweries = [],
   countries = [],
   sort = 'default',
@@ -46,7 +46,7 @@ function buildProductsQuery({
   size = DEFAULT_PAGE_SIZE
 } = {}) {
   const params = new URLSearchParams();
-  if (categories.length) params.set('categories', categories.join(','));
+  if (beerStyles.length) params.set('beerStyles', beerStyles.join(','));
   if (breweries.length) params.set('breweries', breweries.join(','));
   if (countries.length) params.set('countries', countries.join(','));
   if (sort && sort !== 'default') params.set('sort', sort);
