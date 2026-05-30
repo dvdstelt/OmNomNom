@@ -12,7 +12,7 @@ public static class Mapper
         vm.Name = product.Name;
         vm.Description = product.Description;
         vm.ImageUrl = product.ImageUrl;
-        vm.Category = product.Category;
+        vm.BeerStyle = product.BeerStyle;
         vm.Brewery = product.Brewery;
         vm.Country = product.Country;
         vm.InStock = inStock;

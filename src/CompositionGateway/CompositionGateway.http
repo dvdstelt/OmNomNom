@@ -9,8 +9,8 @@
 GET {{CompositionGateway_HostAddress}}/products
 Accept: application/json
 
-### Browse: filtered list. Categories/Breweries/Countries/Sort/Page/Size are query-string parameters, not path segments
-GET {{CompositionGateway_HostAddress}}/products?categories=Beer&page=1&size=12
+### Browse: filtered list. BeerStyles/Breweries/Countries/Sort/Page/Size are query-string parameters, not path segments
+GET {{CompositionGateway_HostAddress}}/products?beerStyles=Stout&page=1&size=12
 Accept: application/json
 
 ### Browse: facet sidebar data

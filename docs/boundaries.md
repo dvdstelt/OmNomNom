@@ -8,7 +8,7 @@ Responsible for the product catalogue and inventory.
 
 | Entity | Fields owned |
 |---|---|
-| Product | `ProductId`, `Name`, `Description`, `ImageUrl`, `Category` |
+| Product | `ProductId`, `Name`, `Description`, `ImageUrl`, `BeerStyle` |
 | InventoryDelta | `ProductId`, `Delta`, `Timestamp` |
 | Order | `OrderId` |
 | OrderItem | `ProductId`, `Quantity` |

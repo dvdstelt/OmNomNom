@@ -7,12 +7,12 @@
   // 440px hero frame on the product detail page. The default .beer-image
   // wrapper is the 220px card frame on the grid. The structure inside
   // is identical; only the outer class changes.
-  let { name, imageUrl, category = '', children, hero = false } = $props();
+  let { name, imageUrl, beerStyle = '', children, hero = false } = $props();
 </script>
 
 <div class={hero ? 'product-image-main' : 'beer-image'}>
-  {#if category}
-    <span class="beer-type-badge">{category}</span>
+  {#if beerStyle}
+    <span class="beer-type-badge">{beerStyle}</span>
   {/if}
   {@render children?.()}
   {#if imageUrl}

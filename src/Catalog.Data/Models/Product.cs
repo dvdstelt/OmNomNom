@@ -6,7 +6,7 @@ public class Product
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string ImageUrl { get; set; } = null!;
-    public string Category { get; set; } = null!;
+    public string BeerStyle { get; set; } = null!;
     public string Brewery { get; set; } = null!;
     public string Country { get; set; } = null!;
 }
