@@ -1,7 +1,8 @@
 namespace ITOps.Shared.Sqlite;
 
 // Shared connection-string builder for the per-service SQLite files.
-// Walks up from the running assembly until it hits the .sln (so all
+// When OMNOMNOM_DB_DIR is set (containers) it is used verbatim. Otherwise
+// walks up from the running assembly until it hits the .sln (so all
 // services land in the same `<repo>/src/.db/` folder), or stops at any
 // directory that already contains a `.db/` folder. Each service passes
 // its own short name (catalog, finance, etc.) so the files stay
@@ -20,6 +21,12 @@ public static class SqliteStorage
 
     static string FindStoragePath()
     {
+        var configuredPath = Environment.GetEnvironmentVariable("OMNOMNOM_DB_DIR");
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            return configuredPath;
+        }
+
         var directory = AppDomain.CurrentDomain.BaseDirectory;
 
         while (true)
