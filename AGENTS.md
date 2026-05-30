@@ -31,6 +31,8 @@ A JetBrains compound run configuration exists at `src/.run/Website + Endpoints.r
 
 There are no automated tests in this repository.
 
+For the containerized public demo (docker-compose), see [docs/deploy.md](docs/deploy.md).
+
 ### Frontend
 
 ```bash
