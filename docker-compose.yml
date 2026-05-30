@@ -1,0 +1,44 @@
+# Public demo stack for omnomnom.compilesoftware.nl.
+#
+# The NAS reverse proxy terminates TLS and forwards the hostname to the
+# `web` container's published port (8088 below). Everything inside is plain
+# HTTP and same-origin, so no CORS is involved.
+#
+# allinone + gateway share the `db` and `transport` volumes: the send-only
+# gateway drops command files into the LearningTransport folder that the
+# AllInOne endpoints pick up, and both touch checkout.db.
+
+services:
+  allinone:
+    build:
+      context: ./src
+      dockerfile: OmNomNom.AllInOne/Dockerfile
+    volumes:
+      - db:/data/db
+      - transport:/data/transport
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ./src
+      dockerfile: CompositionGateway/Dockerfile
+    volumes:
+      - db:/data/db
+      - transport:/data/transport
+    depends_on:
+      - allinone
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./src/website
+    ports:
+      # host:container - point the NAS reverse proxy at host port 8088.
+      - "8088:80"
+    depends_on:
+      - gateway
+    restart: unless-stopped
+
+volumes:
+  db:
+  transport:
