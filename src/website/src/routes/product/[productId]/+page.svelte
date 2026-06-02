@@ -39,7 +39,8 @@
     if (adding) return;
     adding = true;
     try {
-      const result = await gateway.addProductToCart(get(orderId), {
+      const cartId = orderId.ensure();
+      const result = await gateway.addProductToCart(cartId, {
         id: productId,
         quantity
       });
