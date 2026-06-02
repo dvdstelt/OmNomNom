@@ -14,6 +14,7 @@ public static class DatabaseInitializer
             return;
 
         await dbContext.Products.AddRangeAsync(SeedData.Products(), cancellationToken);
+        await dbContext.ProductPrices.AddRangeAsync(SeedData.ProductPrices(), cancellationToken);
         await dbContext.DeliveryOptions.AddRangeAsync(SeedData.DeliveryOptions(), cancellationToken);
         await dbContext.Orders.AddAsync(SeedData.Orders(), cancellationToken);
 

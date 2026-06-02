@@ -43,40 +43,57 @@ public static class SeedData
     static readonly Guid ExpeditedId = Guid.Parse("6e114fc9-aecf-4815-970f-fedbd6709847");
     static readonly Guid PriorityId = Guid.Parse("8008abc4-a60f-4217-9e2c-745aa9af7f2c");
 
-    public static IEnumerable<Product> Products()
-    {
-        return new List<Product>
-        {
-            // PriceId can be random, as it's only used in orders and we don't seed orders
-            new() { ProductId = FremontId, Price = 35, Discount = 0 },
-            new() { ProductId = MoersleutelId, Price = 12, Discount = 0 },
-            new() { ProductId = BarcodeBlackYellowId, Price = 32m, Discount = 0 },
-            new() { ProductId = WhiteDogId, Price = 6, Discount = 0 },
-            new() { ProductId = AbraxasId, Price = 40m, Discount = 0 },
-            new() { ProductId = BourbonCountyId, Price = 25m, Discount = 0 },
-            new() { ProductId = TwentyTwoId, Price = 11m, Discount = 0 },
-            new() { ProductId = SusanId, Price = 9m, Discount = 10 },
-            new() { ProductId = TiarnaId, Price = 12m, Discount = 0 },
-            new() { ProductId = BlueBerryMuffinId, Price = 8m, Discount = 20 },
-            new() { ProductId = OudeGeuzeId, Price = 16m, Discount = 0 },
+    static readonly DateTimeOffset SeededAt = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-            new() { ProductId = ExtravagantChocolateId, Price = 9.50m, Discount = 0 },
-            new() { ProductId = Indulgence16Id, Price = 26.95m, Discount = 0 },
-            new() { ProductId = Indulgence28Id, Price = 29.95m, Discount = 0 },
-            new() { ProductId = KbbsId, Price = 474.95m, Discount = 0 },
-            new() { ProductId = SunflowersId, Price = 67.50m, Discount = 0 },
-            new() { ProductId = BlueSuedeShewsId, Price = 579.95m, Discount = 0 },
-            new() { ProductId = GalaxyFortPointId, Price = 25.90m, Discount = 0 },
-            new() { ProductId = MosaicFortPointId, Price = 13.90m, Discount = 0 },
-            new() { ProductId = PseudoSueId, Price = 8.75m, Discount = 0 },
-            new() { ProductId = LaTrappeQuad50Id, Price = 34.95m, Discount = 0 },
-            new() { ProductId = ChickenBroccoliId, Price = 4.92m, Discount = 0 },
-            new() { ProductId = TripleFruitBombId, Price = 4.99m, Discount = 0 },
-            new() { ProductId = CoastalSunshineId, Price = 9.99m, Discount = 0 },
-            new() { ProductId = JuiceLandV4Id, Price = 13.98m, Discount = 0 },
-            new() { ProductId = DoubleMosaicDreamId, Price = 9.99m, Discount = 0 },
+    // One current price per product. PriceId is generated per seed run;
+    // seeding only runs against an empty database and orders reference
+    // these rows by PriceId within the same run, so stable ids across
+    // runs aren't needed.
+    static readonly IReadOnlyList<ProductPrice> ProductPriceSeed =
+    [
+        Price(FremontId, 35, 0),
+        Price(MoersleutelId, 12, 0),
+        Price(BarcodeBlackYellowId, 32m, 0),
+        Price(WhiteDogId, 6, 0),
+        Price(AbraxasId, 40m, 0),
+        Price(BourbonCountyId, 25m, 0),
+        Price(TwentyTwoId, 11m, 0),
+        Price(SusanId, 9m, 10),
+        Price(TiarnaId, 12m, 0),
+        Price(BlueBerryMuffinId, 8m, 20),
+        Price(OudeGeuzeId, 16m, 0),
+
+        Price(ExtravagantChocolateId, 9.50m, 0),
+        Price(Indulgence16Id, 26.95m, 0),
+        Price(Indulgence28Id, 29.95m, 0),
+        Price(KbbsId, 474.95m, 0),
+        Price(SunflowersId, 67.50m, 0),
+        Price(BlueSuedeShewsId, 579.95m, 0),
+        Price(GalaxyFortPointId, 25.90m, 0),
+        Price(MosaicFortPointId, 13.90m, 0),
+        Price(PseudoSueId, 8.75m, 0),
+        Price(LaTrappeQuad50Id, 34.95m, 0),
+        Price(ChickenBroccoliId, 4.92m, 0),
+        Price(TripleFruitBombId, 4.99m, 0),
+        Price(CoastalSunshineId, 9.99m, 0),
+        Price(JuiceLandV4Id, 13.98m, 0),
+        Price(DoubleMosaicDreamId, 9.99m, 0),
+    ];
+
+    static ProductPrice Price(Guid productId, decimal price, decimal discount) =>
+        new()
+        {
+            PriceId = Guid.NewGuid(),
+            ProductId = productId,
+            Price = price,
+            Discount = discount,
+            ValidFrom = SeededAt
         };
-    }
+
+    public static IEnumerable<Product> Products() =>
+        ProductPriceSeed.Select(p => new Product { ProductId = p.ProductId });
+
+    public static IEnumerable<ProductPrice> ProductPrices() => ProductPriceSeed;
 
     public static IEnumerable<DeliveryOption> DeliveryOptions()
     {
@@ -104,9 +121,24 @@ public static class SeedData
             },
             Items =
             [
-                new() { ProductId = MoersleutelId, Price = 12m, BillableQuantity = 2 },
-                new() { ProductId = SusanId, Price = 9m, BillableQuantity = 1 }
+                LineFor(MoersleutelId, 2),
+                LineFor(SusanId, 1)
             ]
+        };
+    }
+
+    // A seeded order line snapshots Price/Discount from the locked price
+    // and records the PriceId, exactly as SubmitOrderItemsHandler does.
+    static OrderItem LineFor(Guid productId, int quantity)
+    {
+        var price = ProductPriceSeed.First(p => p.ProductId == productId);
+        return new OrderItem
+        {
+            ProductId = productId,
+            PriceId = price.PriceId,
+            Price = price.Price,
+            Discount = price.Discount,
+            BillableQuantity = quantity
         };
     }
 }

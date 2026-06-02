@@ -1,8 +1,8 @@
 namespace Finance.Data.Models;
 
 // Anything with a list price and a percentage discount can flow through
-// the centralized pricing rule below. Implemented by Product (the
-// catalog's master record) and OrderItem (the per-line snapshot
+// the centralized pricing rule below. Implemented by ProductPrice (an
+// immutable point-in-time price) and OrderItem (the per-line snapshot
 // captured when a cart is submitted).
 public interface IPriced
 {
