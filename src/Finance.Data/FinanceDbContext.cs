@@ -24,8 +24,11 @@ public class FinanceDbContext(DbContextOptions<FinanceDbContext> options) : DbCo
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Append-only price history. PriceId is the PK (picked up by the
-        // <Type>Id convention); each row hangs off its Product.
+        // Append-only price history. PriceId is the PK (set explicitly: the
+        // <Type>Id convention looks for ProductPriceId, not PriceId). Each
+        // row hangs off its Product.
+        modelBuilder.Entity<ProductPrice>().HasKey(pp => pp.PriceId);
+
         modelBuilder.Entity<Product>()
             .HasMany(p => p.Prices)
             .WithOne()
