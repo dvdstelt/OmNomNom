@@ -15,9 +15,6 @@ public class ShoppingCartAddItemComposer(IWorkflowStore workflow, IHttpContextAc
         var request = http.HttpContext!.Request;
         var ct = request.HttpContext.RequestAborted;
 
-        if (orderId == Guid.Empty)
-            orderId = Guid.NewGuid();
-
         var cart = await workflow.Read<CartSlice>(orderId, CartWorkflowSlice.Key, ct)
                    ?? CartSlice.Empty;
         var updated = Upsert(cart, form.Id, form.Quantity);

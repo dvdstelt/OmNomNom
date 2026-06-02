@@ -21,6 +21,17 @@ function createOrderIdStore() {
       }
       set(value || null);
     },
+    // Mint the cart's id client-side on first use so every back-end
+    // composer on the add-to-cart request sees the same id, rather than
+    // letting one service mint it server-side and hand it back.
+    ensure() {
+      const existing = readInitial();
+      if (existing) return existing;
+      const minted = crypto.randomUUID();
+      if (browser) localStorage.setItem(STORAGE_KEY, minted);
+      set(minted);
+      return minted;
+    },
     clear() {
       if (browser) localStorage.removeItem(STORAGE_KEY);
       set(null);
