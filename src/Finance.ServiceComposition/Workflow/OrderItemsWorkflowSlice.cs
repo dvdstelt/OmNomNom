@@ -13,7 +13,7 @@ public sealed record OrderItemsSlice(IReadOnlyList<OrderItemLine> Items)
     public static OrderItemsSlice Empty { get; } = new([]);
 }
 
-public sealed record OrderItemLine(Guid ProductId, int Quantity);
+public sealed record OrderItemLine(Guid ProductId, int Quantity, Guid PriceId);
 
 public class OrderItemsWorkflowSlice : WorkflowSlice<OrderItemsSlice>
 {
@@ -45,7 +45,8 @@ public class OrderItemsWorkflowSlice : WorkflowSlice<OrderItemsSlice>
                 .Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    OrderedQuantity = i.Quantity
+                    OrderedQuantity = i.Quantity,
+                    PriceId = i.PriceId
                 })
                 .ToList()
         };

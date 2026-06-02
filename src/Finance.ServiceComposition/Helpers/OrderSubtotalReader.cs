@@ -12,10 +12,10 @@ namespace Finance.ServiceComposition.Helpers;
 // Composers run in two phases of the checkout. Pre-submit there is no
 // persisted Order yet (SubmitOrderItems is dispatched together with
 // CompleteOrder), so items live in the workflow slice and are priced
-// against the current Finance.Products row. Post-submit the persisted
-// Order.Items is the snapshot at submit time. Both paths return
-// OrderItems whose Price/Discount/Quantity feed the same downstream
-// subtotal math.
+// against the PriceId locked into that slice at add-to-cart. Post-submit
+// the persisted Order.Items is the snapshot at submit time. Both paths
+// return OrderItems whose Price/Discount/Quantity feed the same
+// downstream subtotal math.
 public class OrderSubtotalReader(FinanceDbContext dbContext, IWorkflowStore workflow)
 {
     public async Task<Order> GetOrderWithItemsAsync(Guid orderId, CancellationToken ct)
@@ -33,10 +33,10 @@ public class OrderSubtotalReader(FinanceDbContext dbContext, IWorkflowStore work
         if (slice is null || slice.Items.Count == 0)
             return order;
 
-        var productIds = slice.Items.Select(i => i.ProductId).ToList();
-        var prices = await dbContext.Products
-            .Where(p => productIds.Contains(p.ProductId))
-            .ToDictionaryAsync(p => p.ProductId, ct);
+        var priceIds = slice.Items.Select(i => i.PriceId).ToList();
+        var prices = await dbContext.ProductPrices
+            .Where(p => priceIds.Contains(p.PriceId))
+            .ToDictionaryAsync(p => p.PriceId, ct);
 
         foreach (var line in slice.Items)
         {
@@ -44,12 +44,13 @@ public class OrderSubtotalReader(FinanceDbContext dbContext, IWorkflowStore work
             {
                 OrderId = orderId,
                 ProductId = line.ProductId,
+                PriceId = line.PriceId,
                 BillableQuantity = line.Quantity
             };
-            if (prices.TryGetValue(line.ProductId, out var product))
+            if (prices.TryGetValue(line.PriceId, out var price))
             {
-                item.Price = product.Price;
-                item.Discount = product.Discount;
+                item.Price = price.Price;
+                item.Discount = price.Discount;
             }
             order.Items.Add(item);
         }

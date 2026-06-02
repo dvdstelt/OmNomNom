@@ -42,7 +42,8 @@
       const cartId = orderId.ensure();
       const result = await gateway.addProductToCart(cartId, {
         id: productId,
-        quantity
+        quantity,
+        priceId: product.priceId
       });
       if (result?.orderId) orderId.set(result.orderId);
       await refreshCartCount(get(orderId));

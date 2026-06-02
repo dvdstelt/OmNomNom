@@ -2,7 +2,6 @@ using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Finance.Data.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Cart;
@@ -12,18 +11,17 @@ public class OnCartLoaded(FinanceDbContext dbContext) : ICompositionEventsHandle
     public async Task Handle(CartLoaded @event, HttpRequest request)
     {
         var productIds = @event.OrderedProducts.Keys.ToList();
-        var resultSet = await dbContext.Products
-            .Where(s => productIds.Contains(s.ProductId))
-            .ToListAsync(request.HttpContext.RequestAborted);
+        var prices = await dbContext.CurrentPricesAsync(productIds, request.HttpContext.RequestAborted);
 
         decimal totalPrice = 0;
         foreach (var product in @event.OrderedProducts)
         {
-            var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
-            product.Value.Price = matchingProduct.Price;
-            product.Value.Discount = matchingProduct.Discount;
+            var price = prices[product.Key];
+            product.Value.PriceId = price.PriceId;
+            product.Value.Price = price.Price;
+            product.Value.Discount = price.Discount;
 
-            totalPrice += matchingProduct.EffectivePrice() * (int)product.Value.Quantity;
+            totalPrice += price.EffectivePrice() * (int)product.Value.Quantity;
         }
 
         var vm = request.GetComposedResponseModel();
