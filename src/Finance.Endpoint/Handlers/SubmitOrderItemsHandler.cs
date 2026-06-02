@@ -25,22 +25,25 @@ public class SubmitOrderItemsHandler(FinanceDbContext dbContext)
             order.Items.Clear();
         }
 
-        // NOTE: Never ever do this! Don't retrieve _current_ price after submitting the order.
-        // Instead, use attached PriceId. But that isn't implemented yet.
-        var productIds = message.Items.Select(i => i.ProductId).ToList();
-        var products = await dbContext.Products
-            .Where(p => productIds.Contains(p.ProductId))
-            .ToDictionaryAsync(p => p.ProductId, context.CancellationToken);
+        // Bill against the exact price the customer saw: resolve the
+        // immutable ProductPrice by the PriceId locked in at add-to-cart,
+        // never the current price. A newer price added since then is a
+        // separate row this lookup ignores.
+        var priceIds = message.Items.Select(i => i.PriceId).ToList();
+        var prices = await dbContext.ProductPrices
+            .Where(p => priceIds.Contains(p.PriceId))
+            .ToDictionaryAsync(p => p.PriceId, context.CancellationToken);
 
         foreach (var item in message.Items)
         {
-            var product = products[item.ProductId];
+            var price = prices[item.PriceId];
             order.Items.Add(new OrderItem
             {
                 ProductId = item.ProductId,
                 BillableQuantity = item.OrderedQuantity,
-                Price = product.Price,
-                Discount = product.Discount
+                PriceId = item.PriceId,
+                Price = price.Price,
+                Discount = price.Discount
             });
         }
 

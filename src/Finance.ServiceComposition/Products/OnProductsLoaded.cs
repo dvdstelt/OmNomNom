@@ -1,7 +1,6 @@
 using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
@@ -11,15 +10,14 @@ class OnProductsLoaded(FinanceDbContext dbContext) : ICompositionEventsHandler<P
     public async Task Handle(ProductsLoaded @event, HttpRequest request)
     {
         var productIds = @event.Products.Keys.ToList();
-        var resultSet = await dbContext.Products
-            .Where(s => productIds.Contains(s.ProductId))
-            .ToListAsync(request.HttpContext.RequestAborted);
+        var prices = await dbContext.CurrentPricesAsync(productIds, request.HttpContext.RequestAborted);
 
         foreach (var product in @event.Products)
         {
-            var matchingProduct = resultSet.Single(s => s.ProductId == product.Key);
-            product.Value.Price = matchingProduct.Price;
-            product.Value.Discount = matchingProduct.Discount;
+            var price = prices[product.Key];
+            product.Value.PriceId = price.PriceId;
+            product.Value.Price = price.Price;
+            product.Value.Discount = price.Discount;
         }
     }
 }

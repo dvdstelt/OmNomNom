@@ -27,6 +27,11 @@ public class OrderItem : IPriced
     public Guid OrderId { get; set; }
     public Guid ProductId { get; set; }
     public int BillableQuantity { get; set; }
+
+    // The immutable ProductPrice this line was billed against, locked in
+    // at add-to-cart time. Price/Discount below are denormalized from
+    // that row at submit so billing never re-reads the current price.
+    public Guid PriceId { get; set; }
     public decimal Price { get; set; }
     public decimal Discount { get; set; }
 

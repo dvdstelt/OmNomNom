@@ -1,7 +1,6 @@
 using Catalog.ServiceComposition.Events;
 using Finance.Data;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using ServiceComposer.AspNetCore;
 
 namespace Finance.ServiceComposition.Products;
@@ -10,10 +9,11 @@ public class OnProductLoaded(FinanceDbContext dbContext) : ICompositionEventsHan
 {
     public async Task Handle(ProductLoaded @event, HttpRequest request)
     {
-        var product = await dbContext.Products
-            .SingleAsync(s => s.ProductId == @event.ProductId, request.HttpContext.RequestAborted);
+        var price = await dbContext.CurrentPriceAsync(@event.ProductId, request.HttpContext.RequestAborted);
 
-        @event.Product.Price = product.Price;
-        @event.Product.Discount = product.Discount;
+        // PriceId is the on-screen price the cart locks in at add time.
+        @event.Product.PriceId = price.PriceId;
+        @event.Product.Price = price.Price;
+        @event.Product.Discount = price.Discount;
     }
 }
