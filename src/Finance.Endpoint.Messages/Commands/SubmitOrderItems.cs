@@ -10,4 +10,5 @@ public sealed record OrderItem
 {
     public required Guid ProductId { get; init; }
     public required int OrderedQuantity { get; init; }
+    public required Guid PriceId { get; init; }
 }
