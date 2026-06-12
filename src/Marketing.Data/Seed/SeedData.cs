@@ -13,6 +13,7 @@ public static class SeedData
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4"); // 4.8
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
+    static readonly Guid CoconutSpaceBrownieId = Guid.Parse("5b3a1c7e-9f42-4d8b-bc6a-1e0f5d2a9c34"); // 3.95
 
     // IPA / Pale Ale
     static readonly Guid WhiteDogId = Guid.Parse("c646a449-05d7-45b3-9d6e-ec6438bc6f67");
@@ -67,6 +68,7 @@ public static class SeedData
             new Product { ProductId = Indulgence16Id,         Rating = 4.52, RatingCount = 2925,  OrderCount = 8,  Trending = 6  },
             new Product { ProductId = Indulgence28Id,         Rating = 4.57, RatingCount = 1934,  OrderCount = 9,  Trending = 7  },
             new Product { ProductId = KbbsId,                 Rating = 4.8,  RatingCount = 460,   OrderCount = 3,  Trending = 2  },
+            new Product { ProductId = CoconutSpaceBrownieId,  Rating = 3.95, RatingCount = 4946,  OrderCount = 7,  Trending = 7  },
             new Product { ProductId = SunflowersId,           Rating = 4.64, RatingCount = 589,   OrderCount = 5,  Trending = 4  },
             new Product { ProductId = BlueSuedeShewsId,       Rating = 4.84, RatingCount = 3690,  OrderCount = 4,  Trending = 4  },
             new Product { ProductId = GalaxyFortPointId,      Rating = 4.37, RatingCount = 32715, OrderCount = 32, Trending = 14 },
@@ -130,6 +132,7 @@ public static class SeedData
             (Indulgence16Id,          6,  8),
             (Indulgence28Id,          7,  9),
             (KbbsId,                  2,  3),
+            (CoconutSpaceBrownieId,   7,  7),
             (SunflowersId,            4,  5),
             (BlueSuedeShewsId,        4,  4),
             (GalaxyFortPointId,      14, 32),

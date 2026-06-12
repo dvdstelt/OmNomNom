@@ -13,6 +13,7 @@ public static class SeedData
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4");
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
+    static readonly Guid CoconutSpaceBrownieId = Guid.Parse("5b3a1c7e-9f42-4d8b-bc6a-1e0f5d2a9c34");
 
     // IPA / Pale Ale
     static readonly Guid WhiteDogId = Guid.Parse("c646a449-05d7-45b3-9d6e-ec6438bc6f67");
@@ -64,6 +65,7 @@ public static class SeedData
             new() { ProductId = Indulgence16Id, Price = 26.95m, Discount = 0 },
             new() { ProductId = Indulgence28Id, Price = 29.95m, Discount = 0 },
             new() { ProductId = KbbsId, Price = 474.95m, Discount = 0 },
+            new() { ProductId = CoconutSpaceBrownieId, Price = 5m, Discount = 0 },
             new() { ProductId = SunflowersId, Price = 67.50m, Discount = 0 },
             new() { ProductId = BlueSuedeShewsId, Price = 579.95m, Discount = 0 },
             new() { ProductId = GalaxyFortPointId, Price = 25.90m, Discount = 0 },

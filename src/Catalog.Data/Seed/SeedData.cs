@@ -14,6 +14,7 @@ public class SeedData
     static readonly Guid KbbsId = Guid.Parse("eebc3bcd-d045-4c99-962b-36130df0d9d4"); // 4.8
     static readonly Guid AbraxasId = Guid.Parse("b3461e6c-a731-4ceb-aa88-ccf12d4c417c"); //4.7
     static readonly Guid BourbonCountyId = Guid.Parse("c2ca906f-45a2-4cb7-8cc0-bfeb648197d6"); //4.4
+    static readonly Guid CoconutSpaceBrownieId = Guid.Parse("5b3a1c7e-9f42-4d8b-bc6a-1e0f5d2a9c34"); // 3.95
 
 
     // IPA / Pale Ale
@@ -65,6 +66,7 @@ public class SeedData
             new Product { Name = "Indulgence 16", Description = "We've chosen the crème de la crème of bourbon barrels and combined four different and very rare barrels: Weller, Willet, Pappy Van Winkle and Woodford Reserve, to infuse our beer with unparalleled character. 14% ABV.", ImageUrl = "indulgance16.png", BeerStyle = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence16Id },
             new Product { Name = "Indulgence 28", Description = "Dense, velvety stout with aromas of chocolate ganache, fudge, and roasted nuts. Aged for 21 months and 24 days in three bourbon casks (Sazerac Rye, Weller Wheated, Eagle Rare), creating layered notes of caramel, coconut, and bourbon cream with subtle oak. 14% ABV.", ImageUrl = "indulgance28.png", BeerStyle = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = Indulgence28Id },
             new Product { Name = "Kentucky Brunch Brand Stout (2025)", Description = "A meticulously curated blend of the best of what our barrel room holds, featuring espresso and maple syrup aromatics with bourbon-soaked maple candy and chocolate brownie notes. 12.6% ABV.", ImageUrl = "kentuckybrunch.png", BeerStyle = "Stout", Brewery = "Toppling Goliath Brewing Co.", Country = "United States", ProductId = KbbsId },
+            new Product { Name = "Coconut Space Brownie", Description = "An imperial pastry stout combining real coconut with dark chocolate malts and vanilla for deep brownie flavors, lush coconut sweetness, and a silky finish. Notes of fudgy brownie, toasted coconut, espresso, and warm vanilla. 10% ABV.", ImageUrl = "coconutspacebrownie.png", BeerStyle = "Stout", Brewery = "Moersleutel Craft Brewery", Country = "The Netherlands", ProductId = CoconutSpaceBrownieId },
 
             // Pale Ales / IPAs (Untappd-sourced)
             new Product { Name = "Galaxy Dry Hopped Fort Point", Description = "This version of our signature American pale ale is dry hopped with the pungent Galaxy variety. Enticingly hazy and blonde in appearance with frothy carb, the nose erupts with strong citrus, passion fruit, and pineapple aromatics. 6.6% ABV.", ImageUrl = "galaxyfortpoint.png", BeerStyle = "Pale Ale", Brewery = "Trillium Brewing Company", Country = "United States", ProductId = GalaxyFortPointId },
@@ -108,6 +110,7 @@ public class SeedData
             new() { ProductId = Indulgence16Id, Delta = 5, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = Indulgence28Id, Delta = 6, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = KbbsId, Delta = 2, TimeStamp = DateTime.UtcNow, },
+            new() { ProductId = CoconutSpaceBrownieId, Delta = 7, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = SunflowersId, Delta = 8, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = BlueSuedeShewsId, Delta = 2, TimeStamp = DateTime.UtcNow, },
             new() { ProductId = GalaxyFortPointId, Delta = 16, TimeStamp = DateTime.UtcNow, },
