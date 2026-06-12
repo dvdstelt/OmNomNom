@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NServiceBus" Version="10.2.4" />
+      <PackageReference Include="NServiceBus" Version="10.2.5" />
       <PackageReference Include="NServiceBusContrib.Persistence.Sqlite" Version="0.1.0-beta.1" />
     </ItemGroup>
 
