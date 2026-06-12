@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
         <!-- Required so dotnet-ef can target Marketing.Data via this project as
              startup-project (Marketing has no separate endpoint to use). -->
-        <PackageReference Include="NServiceBus" Version="10.2.4" />
+        <PackageReference Include="NServiceBus" Version="10.2.5" />
         <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.1" />
     </ItemGroup>
 

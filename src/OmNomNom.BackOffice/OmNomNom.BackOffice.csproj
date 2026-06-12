@@ -12,7 +12,7 @@
            It used to ride in transitively via ServiceComposer.AspNetCore 2.x; 4.x+ switched to
            System.Text.Json, so we now reference it explicitly. -->
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="NServiceBus" Version="10.2.4" />
+      <PackageReference Include="NServiceBus" Version="10.2.5" />
       <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.1" />
     </ItemGroup>
 
