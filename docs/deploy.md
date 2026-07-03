@@ -72,12 +72,16 @@ to the container):
 The image declares a Docker `HEALTHCHECK` that hits `/health/live` (interval 30s,
 3 retries), so a hung endpoint flips the container to `unhealthy` after ~3
 measured failures. Docker only *marks* it unhealthy, though - its restart policy
-reacts to a container *exiting*, never to health status. So both deploy paths run
-a `willfarrell/autoheal` sidecar that restarts any container reporting unhealthy:
-`deploy.sh` starts `<container>-autoheal` next to the container (and labels the
-container `autoheal=true`), and the docker-compose stack includes it as a service.
-Autoheal needs the Docker socket to issue the restart. If your host UI already
-restarts unhealthy containers, you can drop it.
+reacts to a container *exiting*, never to health status - so something has to act
+on the unhealthy state.
+
+`deploy.sh` always applies `--restart unless-stopped` and labels the container
+`autoheal=true`, so a host-wide `willfarrell/autoheal` (or your host's own
+restart-on-unhealthy, e.g. DockHand) can recreate it. If the host runs no such
+watcher, pass `--autoheal` and `deploy.sh` starts a dedicated `<container>-autoheal`
+sidecar (it needs the Docker socket to issue the restart). The docker-compose
+stack includes autoheal as a service; drop it if your host already restarts
+unhealthy containers.
 
 (`deploy.sh` also builds with `--format docker` rather than OCI so the
 `HEALTHCHECK` survives into Docker; OCI silently drops it.)
