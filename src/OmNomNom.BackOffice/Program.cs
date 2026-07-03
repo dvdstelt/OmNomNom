@@ -1,7 +1,6 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
 using OmNomNom.Website;
-using OmNomNom.Website.Handlers;
 using OmNomNom.Website.Helpers;
 using ServiceComposer.AspNetCore;
 
