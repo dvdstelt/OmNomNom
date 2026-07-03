@@ -1,5 +1,6 @@
 using System.Reflection;
 using Messaging.Persistence.Sqlite;
+using NServiceBusContrib.WarmUp;
 
 namespace ITOps.Shared.EndpointConfiguration;
 
@@ -50,6 +51,10 @@ public static class EndpointConfigurationExtensions
         conventions.DefiningEventsAs(t => t.Namespace != null && t.Namespace.EndsWith("Messages.Events"));
 
         endpointConfiguration.EnableInstallers();
+
+        // Track readiness so the AllInOne host's /health can report each endpoint. No warm-up
+        // actions are configured, so this does not delay the pump; it just records Starting -> Ready.
+        endpointConfiguration.WarmUp();
 
         configureRouting?.Invoke(routing);
         ApplyDiscoveredRoutingConfigurators(routing);

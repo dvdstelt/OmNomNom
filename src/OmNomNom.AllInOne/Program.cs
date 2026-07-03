@@ -38,18 +38,26 @@
 //  initializer calls needed below.
 // ============================================================================
 
+//  This host also exposes container health probes over HTTP (hence WebApplication):
+//    /health/ready - every endpoint has completed warm-up (readiness)
+//    /health/live  - every endpoint is alive (liveness); a warming-up endpoint is
+//                    alive-but-not-ready. Backed by NServiceBusContrib.HealthCheck,
+//                    which aggregates all endpoints via the shared status registry.
+
 using Catalog.Endpoint;
 using Checkout.Endpoint;
 using Finance.Endpoint;
 using Marketing.Endpoint;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using NServiceBusContrib.HealthCheck;
 using PaymentInfo.Endpoint;
 using Shipping.Endpoint;
 
-var hostBuilder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-var services = hostBuilder.Services;
+var services = builder.Services;
 
 services.AddCatalogEndpoint();
 services.AddFinanceEndpoint();
@@ -58,6 +66,20 @@ services.AddShippingEndpoint();
 services.AddPaymentInfoEndpoint();
 services.AddCheckoutEndpoint();
 
-var host = hostBuilder.Build();
-Console.Title = "OmNomNom AllInOne";
-await host.RunAsync();
+// Readiness + liveness health checks aggregating every endpoint in this process.
+services.AddHealthChecks()
+    .AddNServiceBusReadiness()
+    .AddNServiceBusLiveness();
+
+var app = builder.Build();
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = registration => registration.Tags.Contains("ready")
+});
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = registration => registration.Tags.Contains("live")
+});
+
+await app.RunAsync();

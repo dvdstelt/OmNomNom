@@ -7,8 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NServiceBus" Version="10.2.4" />
+      <PackageReference Include="NServiceBus" Version="10.2.6" />
       <PackageReference Include="NServiceBusContrib.Persistence.Sqlite" Version="0.1.0-beta.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <!-- Local project reference to the add-on (packaging TBD). -->
+      <ProjectReference Include="..\..\..\NserviceBusContrib\src\NServiceBusContrib.WarmUp\NServiceBusContrib.WarmUp.csproj" />
     </ItemGroup>
 
 </Project>
