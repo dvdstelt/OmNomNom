@@ -7,6 +7,10 @@
 # loading on the host we retag it to the short name the run command
 # expects.
 #
+# It also starts a `willfarrell/autoheal` sidecar (`<container>-autoheal`) that
+# restarts the container when its HEALTHCHECK reports unhealthy - Docker's own
+# restart policy never acts on health status.
+#
 # Usage:
 #   ./deploy/deploy.sh <ssh-target> [--reseed] [--chaos]
 #   SSH_TARGET=<ssh-target> ./deploy/deploy.sh [--reseed] [--chaos]
@@ -119,9 +123,28 @@ if [[ "$CHAOS" == "1" ]]; then
   CHAOS_ENV=(-e OMNOMNOM_CHAOS=1)
 fi
 
-docker run -d --name "$CONTAINER" -p "${PORT}:80" -v "${VOLUME}:/data" "${CHAOS_ENV[@]}" "$IMAGE"
+docker run -d --name "$CONTAINER" \
+  --restart unless-stopped \
+  --label autoheal=true \
+  -p "${PORT}:80" -v "${VOLUME}:/data" "${CHAOS_ENV[@]}" "$IMAGE"
+
+# Docker's restart policy reacts to a container *exiting*, never to health
+# status, so an unhealthy-but-running container is never restarted on its own.
+# The autoheal sidecar restarts any container reporting unhealthy - i.e. after
+# the image HEALTHCHECK's 3 measured failures (interval 30s, retries 3). It only
+# touches containers carrying the autoheal=true label set above.
+AUTOHEAL="${CONTAINER}-autoheal"
+docker rm -f "$AUTOHEAL" >/dev/null 2>&1 || true
+docker run -d --name "$AUTOHEAL" --restart unless-stopped \
+  -e AUTOHEAL_CONTAINER_LABEL=autoheal \
+  -e AUTOHEAL_INTERVAL=10 \
+  -e AUTOHEAL_START_PERIOD=90 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  willfarrell/autoheal:latest >/dev/null
+
 echo ">> Container status:"
 docker exec "$CONTAINER" supervisorctl status || true
+echo ">> autoheal sidecar running ($AUTOHEAL); $CONTAINER restarts on unhealthy"
 REMOTE
 
 echo ">> Done. Point the reverse proxy at http://<host>:${PORT}"

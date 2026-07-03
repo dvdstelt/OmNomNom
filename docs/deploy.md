@@ -69,11 +69,18 @@ to the container):
   endpoint hangs, its heartbeat goes stale and this flips to `503`.
 - `/health/ready` - readiness: every endpoint has finished warm-up.
 
-The image declares a Docker `HEALTHCHECK` that hits `/health/live`. Docker only
-*marks* a container unhealthy; it does not restart it. The docker-compose stack
-therefore includes a `willfarrell/autoheal` sidecar that restarts any container
-reporting unhealthy. (`deploy.sh` builds with `--format docker` rather than OCI
-so the `HEALTHCHECK` survives into Docker; OCI silently drops it.)
+The image declares a Docker `HEALTHCHECK` that hits `/health/live` (interval 30s,
+3 retries), so a hung endpoint flips the container to `unhealthy` after ~3
+measured failures. Docker only *marks* it unhealthy, though - its restart policy
+reacts to a container *exiting*, never to health status. So both deploy paths run
+a `willfarrell/autoheal` sidecar that restarts any container reporting unhealthy:
+`deploy.sh` starts `<container>-autoheal` next to the container (and labels the
+container `autoheal=true`), and the docker-compose stack includes it as a service.
+Autoheal needs the Docker socket to issue the restart. If your host UI already
+restarts unhealthy containers, you can drop it.
+
+(`deploy.sh` also builds with `--format docker` rather than OCI so the
+`HEALTHCHECK` survives into Docker; OCI silently drops it.)
 
 ## Reaching the internal ports
 
