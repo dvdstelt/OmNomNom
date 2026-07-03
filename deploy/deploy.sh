@@ -126,8 +126,15 @@ fi
 docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
 
 if [[ "$RESEED" == "1" ]]; then
-  echo ">> Reseed: removing volume $VOLUME"
-  docker volume rm "$VOLUME" >/dev/null 2>&1 || true
+  # Empty the mounted data rather than removing the volume: this clears the
+  # transport folder (queues + audit + error) and the SQLite DBs together, and
+  # works whether $VOLUME is a named volume or a bind-mounted host path. A
+  # `docker volume rm` is a silent no-op for a bind mount, which is why messages
+  # were surviving a reseed. A throwaway container mounts the same data and
+  # deletes its contents; the app recreates /data/db and /data/transport on
+  # startup and every endpoint reseeds.
+  echo ">> Reseed: emptying $VOLUME (SQLite DBs + transport folder)"
+  docker run --rm -v "${VOLUME}:/data" "$IMAGE" find /data -mindepth 1 -delete 2>/dev/null || true
 fi
 
 CHAOS_ENV=()
