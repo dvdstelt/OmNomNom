@@ -12,8 +12,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <!-- Local project reference to the add-on (packaging TBD). -->
-      <ProjectReference Include="..\..\..\NserviceBusContrib\src\NServiceBusContrib.WarmUp\NServiceBusContrib.WarmUp.csproj" />
+      <!-- Local project reference to the add-ons (packaging TBD). HealthCheck brings WarmUp
+           transitively, and is needed for EnableLivenessHeartbeat in the shared Configure. -->
+      <ProjectReference Include="..\..\..\NserviceBusContrib\src\NServiceBusContrib.HealthCheck\NServiceBusContrib.HealthCheck.csproj" />
     </ItemGroup>
 
 </Project>

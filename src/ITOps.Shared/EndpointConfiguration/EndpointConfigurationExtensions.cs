@@ -1,5 +1,6 @@
 using System.Reflection;
 using Messaging.Persistence.Sqlite;
+using NServiceBusContrib.HealthCheck;
 using NServiceBusContrib.WarmUp;
 
 namespace ITOps.Shared.EndpointConfiguration;
@@ -55,6 +56,15 @@ public static class EndpointConfigurationExtensions
         // Track readiness so the AllInOne host's /health can report each endpoint. No warm-up
         // actions are configured, so this does not delay the pump; it just records Starting -> Ready.
         endpointConfiguration.WarmUp();
+
+        // Liveness: each endpoint heartbeats its own queue so a hung endpoint in a multi-endpoint
+        // host is detected and reported via /health/live. Only actually sends when a host consumes
+        // liveness (the AllInOne registers the checks); a no-op for standalone endpoint hosts.
+        endpointConfiguration.EnableLivenessHeartbeat(heartbeat =>
+        {
+            heartbeat.Interval(TimeSpan.FromSeconds(10));
+            heartbeat.StaleAfter(TimeSpan.FromSeconds(30));
+        });
 
         configureRouting?.Invoke(routing);
         ApplyDiscoveredRoutingConfigurators(routing);
