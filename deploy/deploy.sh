@@ -8,8 +8,8 @@
 # expects.
 #
 # Usage:
-#   ./deploy/deploy.sh <ssh-target> [--reseed]
-#   SSH_TARGET=<ssh-target> ./deploy/deploy.sh [--reseed]
+#   ./deploy/deploy.sh <ssh-target> [--reseed] [--chaos]
+#   SSH_TARGET=<ssh-target> ./deploy/deploy.sh [--reseed] [--chaos]
 #
 #   <ssh-target>  ssh destination of the deployment host (user@host, a
 #                 bare host, or a Host alias from ~/.ssh/config). Required,
@@ -17,6 +17,9 @@
 #   --reseed      wipe the data volume before starting (drops the SQLite
 #                 files and the LearningTransport queues together; every
 #                 endpoint reseeds on startup)
+#   --chaos       set OMNOMNOM_CHAOS=1 in the container, which exposes the
+#                 chaos /debug/hang endpoint on the AllInOne host. Off by
+#                 default; leave it off for the public demo.
 #
 # Override any of these from the environment if the setup changes:
 #   IMAGE       image tag built and run            (default omnomnom:single)
@@ -33,10 +36,14 @@ PORT="${PORT:-8088}"
 VOLUME="${VOLUME:-omnomnom-data}"
 
 RESEED=0
+CHAOS=0
 for arg in "$@"; do
   case "$arg" in
     --reseed)
       RESEED=1
+      ;;
+    --chaos)
+      CHAOS=1
       ;;
     -*)
       echo "Unknown option: $arg" >&2
@@ -61,12 +68,13 @@ The deployment host's ssh destination is required, either as the first
 argument or via the SSH_TARGET environment variable.
 
 Usage:
-  ./deploy/deploy.sh <ssh-target> [--reseed]
-  SSH_TARGET=<ssh-target> ./deploy/deploy.sh [--reseed]
+  ./deploy/deploy.sh <ssh-target> [--reseed] [--chaos]
+  SSH_TARGET=<ssh-target> ./deploy/deploy.sh [--reseed] [--chaos]
 
 Examples:
   ./deploy/deploy.sh user@host
   ./deploy/deploy.sh user@host --reseed
+  ./deploy/deploy.sh user@host --chaos
 
 <ssh-target> is anything ssh accepts as a destination: user@host, a bare
 host, or a Host alias from ~/.ssh/config.
@@ -90,9 +98,9 @@ echo ">> Deploying on $SSH_TARGET"
 # podman prefixes the saved image with localhost/; retag to the short
 # name so `docker run $IMAGE` resolves locally instead of trying to pull
 # from a registry.
-ssh "$SSH_TARGET" bash -s -- "$IMAGE" "$CONTAINER" "$PORT" "$VOLUME" "$RESEED" <<'REMOTE'
+ssh "$SSH_TARGET" bash -s -- "$IMAGE" "$CONTAINER" "$PORT" "$VOLUME" "$RESEED" "$CHAOS" <<'REMOTE'
 set -euo pipefail
-IMAGE="$1"; CONTAINER="$2"; PORT="$3"; VOLUME="$4"; RESEED="$5"
+IMAGE="$1"; CONTAINER="$2"; PORT="$3"; VOLUME="$4"; RESEED="$5"; CHAOS="$6"
 
 if docker image inspect "localhost/$IMAGE" >/dev/null 2>&1; then
   docker tag "localhost/$IMAGE" "$IMAGE"
@@ -105,7 +113,13 @@ if [[ "$RESEED" == "1" ]]; then
   docker volume rm "$VOLUME" >/dev/null 2>&1 || true
 fi
 
-docker run -d --name "$CONTAINER" -p "${PORT}:80" -v "${VOLUME}:/data" "$IMAGE"
+CHAOS_ENV=()
+if [[ "$CHAOS" == "1" ]]; then
+  echo ">> Chaos enabled: OMNOMNOM_CHAOS=1 (the /debug/hang endpoint is exposed)"
+  CHAOS_ENV=(-e OMNOMNOM_CHAOS=1)
+fi
+
+docker run -d --name "$CONTAINER" -p "${PORT}:80" -v "${VOLUME}:/data" "${CHAOS_ENV[@]}" "$IMAGE"
 echo ">> Container status:"
 docker exec "$CONTAINER" supervisorctl status || true
 REMOTE
