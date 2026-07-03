@@ -7,13 +7,6 @@ using WorkflowComposer.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-    options.AddDefaultPolicy(
-            policy =>
-            {
-                policy.WithOrigins("https://127.0.0.1:5173", "https://localhost:5173")
-                       .AllowAnyHeader();
-            }));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddViewModelComposition(options =>
 {
@@ -47,9 +40,15 @@ var app = builder.Build();
 
 app.UseWorkflowComposer();
 
-app.UseCors();
+// The frontend reaches the gateway same-origin via a reverse proxy
+// (Vite in dev, nginx in the container), so no CORS is needed. In the
+// container the gateway listens on plain HTTP behind a TLS-terminating
+// proxy, so HTTPS redirection only applies to local dev.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
 app.MapCompositionHandlers();
 
 Console.Title = "Composition Gateway";

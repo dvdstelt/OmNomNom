@@ -1,0 +1,12 @@
+.git
+**/bin
+**/obj
+**/node_modules
+src/website/build
+src/website/.svelte-kit
+src/.db
+src/.learningtransport
+.idea
+screenshots
+assets
+html

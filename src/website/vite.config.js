@@ -14,7 +14,13 @@ const certificateName = 'localhost';
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-// Always export. The SDK regenerates the dev cert when the existing
+// HTTPS dev cert and the `/api` proxy only matter for the dev server.
+// `vite build` runs in a plain Node image (no .NET, no cert), so the
+// production build (adapter-static) must not touch dev-certs or the
+// proxy; nginx serves the static output and proxies `/api` in the
+// container instead.
+function devServerOptions() {
+  // Always export. The SDK regenerates the dev cert when the existing
 // one is missing required SAN entries (e.g., .NET 10 added
 // *.dev.localhost and host.docker.internal). A pre-existing .pem on
 // disk would otherwise leave Vite serving a cert that no longer
@@ -52,17 +58,15 @@ if (trustResult.status !== 0) {
   );
 }
 
-// Gateway URL the Vite proxy forwards `/api/*` to. The gateway itself
-// stays bound to localhost; only Vite is reachable on the LAN, so the
-// phone only ever sees one origin and one (click-through) cert. The
-// frontend calls same-origin `/api/...` paths via lib/api/gateway.js;
-// the rewrite below strips `/api` before forwarding so the gateway's
-// own routes (`/products`, `/cart/<id>`, `/buy/...`) stay unchanged.
-const GATEWAY_TARGET = 'https://localhost:7126';
+  // Gateway URL the Vite proxy forwards `/api/*` to. The gateway itself
+  // stays bound to localhost; only Vite is reachable on the LAN, so the
+  // phone only ever sees one origin and one (click-through) cert. The
+  // frontend calls same-origin `/api/...` paths via lib/api/gateway.js;
+  // the rewrite below strips `/api` before forwarding so the gateway's
+  // own routes (`/products`, `/cart/<id>`, `/buy/...`) stay unchanged.
+  const GATEWAY_TARGET = 'https://localhost:7126';
 
-export default defineConfig({
-  plugins: [sveltekit()],
-  server: {
+  return {
     // host: true binds to 0.0.0.0 so the dev server is reachable from
     // other devices on the LAN (e.g. a phone) for mobile testing.
     // Browse to https://<dev-machine-ip>:5173 and click through the
@@ -85,5 +89,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  }
-});
+  };
+}
+
+export default defineConfig(({ command }) => ({
+  plugins: [sveltekit()],
+  // `vite build` (command === 'build') skips dev-cert export and the
+  // proxy entirely so the production build runs in a plain Node image.
+  server: command === 'serve' ? devServerOptions() : undefined
+}));

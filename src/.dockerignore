@@ -1,0 +1,7 @@
+**/bin
+**/obj
+website/node_modules
+website/build
+website/.svelte-kit
+.db
+.learningtransport

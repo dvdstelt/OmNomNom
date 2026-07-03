@@ -21,6 +21,17 @@ public static class EndpointConfigurationExtensions
         {
             TransportTransactionMode = TransportTransactionMode.ReceiveOnly
         };
+
+        // In containers the gateway (send-only) and the AllInOne endpoint
+        // host run as separate processes and must share one transport
+        // folder. OMNOMNOM_TRANSPORT_DIR pins it; unset, NServiceBus keeps
+        // its solution-relative default for local dev.
+        var transportDir = Environment.GetEnvironmentVariable("OMNOMNOM_TRANSPORT_DIR");
+        if (!string.IsNullOrWhiteSpace(transportDir))
+        {
+            learningTransport.StorageDirectory = transportDir;
+        }
+
         var routing = endpointConfiguration.UseTransport(learningTransport);
 
         if (sqliteConnectionString != null)
