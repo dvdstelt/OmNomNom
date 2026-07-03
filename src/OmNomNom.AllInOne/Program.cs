@@ -48,7 +48,9 @@ using Catalog.Endpoint;
 using Checkout.Endpoint;
 using Finance.Endpoint;
 using Marketing.Endpoint;
+using Marketing.Endpoint.Messages.Commands;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using NServiceBus;
 using NServiceBusContrib.HealthCheck;
 using PaymentInfo.Endpoint;
 using Shipping.Endpoint;
@@ -79,5 +81,34 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = registration => registration.Tags.Contains("live")
 });
+
+// CHAOS / TEST ONLY. Enabled by OMNOMNOM_CHAOS=1. Sprays blocking messages onto a
+// target endpoint's own queue to saturate its message pump, so its liveness
+// heartbeat goes stale and /health/live flips to unhealthy - letting us verify
+// the heartbeat detection (and, in a container, the autoheal restart). Only
+// Marketing carries the blocking handler today; add an equivalent to another
+// endpoint's assembly to make it hangable too.
+if (Environment.GetEnvironmentVariable("OMNOMNOM_CHAOS") is "1" or "true")
+{
+    app.MapPost("/debug/hang/{endpoint}", async (string endpoint, int? count, IServiceProvider sp) =>
+    {
+        if (!string.Equals(endpoint, "Marketing", StringComparison.OrdinalIgnoreCase))
+        {
+            return Results.BadRequest("Only 'Marketing' can be hung (it holds the chaos handler).");
+        }
+
+        // Each endpoint's IMessageSession is registered keyed by its endpoint name.
+        var session = sp.GetRequiredKeyedService<IMessageSession>("Marketing");
+        var spray = count ?? 200;
+        for (var i = 0; i < spray; i++)
+        {
+            await session.SendLocal(new HangMarketing());
+        }
+
+        return Results.Ok(
+            $"Sprayed {spray} HangMarketing messages onto Marketing. Its pump should saturate " +
+            "and /health/live report unhealthy within the heartbeat StaleAfter window.");
+    });
+}
 
 await app.RunAsync();
