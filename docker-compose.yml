@@ -1,44 +1,59 @@
-# Public demo stack for omnomnom.compilesoftware.nl.
+# DockHand / docker compose stack for the single-image demo.
 #
-# The NAS reverse proxy terminates TLS and forwards the hostname to the
-# `web` container's published port (8088 below). Everything inside is plain
-# HTTP and same-origin, so no CORS is involved.
+# `omnomnom` runs the whole demo (the AllInOne endpoints, the CompositionGateway
+# and nginx) in one container under supervisord. The image is built and shipped
+# by deploy/deploy.sh (podman build --format docker, then saved and loaded onto
+# the host), so this file references the prebuilt image rather than building it.
+# The NAS reverse proxy terminates TLS and forwards the hostname to port 8088.
 #
-# allinone + gateway share the `db` and `transport` volumes: the send-only
-# gateway drops command files into the LearningTransport folder that the
-# AllInOne endpoints pick up, and both touch checkout.db.
+# Health + restart:
+#   - The health check hits the AllInOne host's liveness probe (/health/live on
+#     :8081, backed by NServiceBusContrib.HealthCheck). It aggregates every
+#     endpoint in the process; "unhealthy" means an endpoint has died.
+#   - Docker does NOT restart unhealthy containers on its own, and `restart:`
+#     only reacts to a process exiting. The `autoheal` sidecar is what turns an
+#     unhealthy status into an actual container restart. (If DockHand has its
+#     own auto-restart-on-unhealthy feature, you can drop the autoheal service
+#     and rely on that instead.)
 
 services:
-  allinone:
-    build:
-      context: ./src
-      dockerfile: OmNomNom.AllInOne/Dockerfile
-    volumes:
-      - db:/data/db
-      - transport:/data/transport
-    restart: unless-stopped
-
-  gateway:
-    build:
-      context: ./src
-      dockerfile: CompositionGateway/Dockerfile
-    volumes:
-      - db:/data/db
-      - transport:/data/transport
-    depends_on:
-      - allinone
-    restart: unless-stopped
-
-  web:
-    build:
-      context: ./src/website
+  omnomnom:
+    image: omnomnom:single
+    container_name: omnomnom
     ports:
       # host:container - point the NAS reverse proxy at host port 8088.
       - "8088:80"
-    depends_on:
-      - gateway
+    volumes:
+      # One volume holds everything: /data/db (SQLite, incl. checkout.db) and
+      # /data/transport (the file-based LearningTransport folder).
+      - data:/data
     restart: unless-stopped
+    healthcheck:
+      # curl is installed in the image; the AllInOne host listens on 8081.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:8081/health/live || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # Cold start + on-boot database seeding + endpoint warm-up. Failures in
+      # this window don't count, so the container isn't killed while coming up.
+      start_period: 90s
+    labels:
+      # autoheal only restarts containers that opt in with this label.
+      - autoheal=true
+
+  # Watches for containers labelled autoheal=true that Docker reports unhealthy
+  # and restarts them. This is the piece that makes "unhealthy -> restart" real;
+  # plain compose won't do it. Needs the Docker socket to issue the restart.
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: omnomnom-autoheal
+    restart: unless-stopped
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+      - AUTOHEAL_INTERVAL=10
+      - AUTOHEAL_START_PERIOD=90
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  db:
-  transport:
+  data:

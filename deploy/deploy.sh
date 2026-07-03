@@ -79,7 +79,9 @@ fi
 cd "$(dirname "$0")/.."
 
 echo ">> Building $IMAGE locally with podman"
-podman build -t "$IMAGE" .
+# --format docker (not the default OCI) so the image carries the Dockerfile
+# HEALTHCHECK; OCI silently drops it, and it would be lost on load into Docker.
+podman build --format docker -t "$IMAGE" .
 
 echo ">> Shipping $IMAGE to $SSH_TARGET"
 podman save "$IMAGE" | ssh "$SSH_TARGET" 'docker load'
