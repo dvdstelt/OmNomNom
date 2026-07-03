@@ -36,6 +36,20 @@ docker run -d --name omnomnom -p 8088:80 -v omnomnom-data:/data omnomnom:single
 Point the NAS reverse proxy for `omnomnom.compilesoftware.nl` at
 `http://<nas-host>:8088`.
 
+The local machine runs podman and the host runs Docker, so a redeploy means
+building here, shipping the image over SSH, and restarting the container
+there. `deploy/deploy.sh` does all of that in one shot. It takes the host's
+ssh destination as its first argument (or via the `SSH_TARGET` environment
+variable) and fails early if none is given:
+
+```bash
+./deploy/deploy.sh user@host            # build, ship, (re)start the container
+./deploy/deploy.sh user@host --reseed   # same, but wipe the data volume first
+```
+
+Image tag, container name, port and volume are overridable via environment
+variables (see the header of the script).
+
 To reset to a clean catalogue, recreate the container against a fresh volume
 (each endpoint reseeds its database on startup):
 
