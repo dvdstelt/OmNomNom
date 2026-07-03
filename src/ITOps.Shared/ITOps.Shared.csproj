@@ -9,12 +9,10 @@
     <ItemGroup>
       <PackageReference Include="NServiceBus" Version="10.2.6" />
       <PackageReference Include="NServiceBusContrib.Persistence.Sqlite" Version="0.1.0-beta.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <!-- Local project reference to the add-ons (packaging TBD). HealthCheck brings WarmUp
-           transitively, and is needed for EnableLivenessHeartbeat in the shared Configure. -->
-      <ProjectReference Include="..\..\..\NserviceBusContrib\src\NServiceBusContrib.HealthCheck\NServiceBusContrib.HealthCheck.csproj" />
+      <!-- WarmUp powers readiness tracking; HealthCheck powers EnableLivenessHeartbeat
+           and the readiness/liveness checks the AllInOne host registers. -->
+      <PackageReference Include="NServiceBusContrib.HealthCheck" Version="1.0.0-alpha.1" />
+      <PackageReference Include="NServiceBusContrib.WarmUp" Version="1.0.0-alpha.1" />
     </ItemGroup>
 
 </Project>

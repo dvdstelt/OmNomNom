@@ -9,11 +9,8 @@
 
     <ItemGroup>
       <PackageReference Include="NServiceBus" Version="10.2.6" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <!-- Local project reference to the add-on (packaging TBD). -->
-      <ProjectReference Include="..\..\..\NserviceBusContrib\src\NServiceBusContrib.HealthCheck\NServiceBusContrib.HealthCheck.csproj" />
+      <!-- Readiness + liveness checks registered in this host's Program.cs. -->
+      <PackageReference Include="NServiceBusContrib.HealthCheck" Version="1.0.0-alpha.1" />
     </ItemGroup>
 
     <ItemGroup>
