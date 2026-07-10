@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NServiceBus" Version="10.2.6" />
+      <PackageReference Include="NServiceBus" Version="10.2.7" />
       <PackageReference Include="NServiceBusContrib.Persistence.Sqlite" Version="0.1.0-beta.1" />
       <!-- WarmUp powers readiness tracking; HealthCheck powers EnableLivenessHeartbeat
            and the readiness/liveness checks the AllInOne host registers. -->
-      <PackageReference Include="NServiceBusContrib.HealthCheck" Version="1.0.0-alpha.1" />
-      <PackageReference Include="NServiceBusContrib.WarmUp" Version="1.0.0-alpha.1" />
+      <PackageReference Include="NServiceBusContrib.HealthCheck" Version="1.0.0-alpha.4" />
+      <PackageReference Include="NServiceBusContrib.WarmUp" Version="1.0.0-alpha.4" />
     </ItemGroup>
 
 </Project>
