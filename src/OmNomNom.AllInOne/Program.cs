@@ -90,13 +90,8 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions
 // endpoint's assembly to make it hangable too.
 if (Environment.GetEnvironmentVariable("OMNOMNOM_CHAOS") is "1" or "true")
 {
-    app.MapPost("/debug/hang/{endpoint}", async (string endpoint, int? count, IServiceProvider sp) =>
+    app.MapPost("/debug/hang/", async (int? count, IServiceProvider sp) =>
     {
-        if (!string.Equals(endpoint, "Marketing", StringComparison.OrdinalIgnoreCase))
-        {
-            return Results.BadRequest("Only 'Marketing' can be hung (it holds the chaos handler).");
-        }
-
         // Each endpoint's IMessageSession is registered keyed by its endpoint name.
         var session = sp.GetRequiredKeyedService<IMessageSession>("Marketing");
         var spray = count ?? 200;
