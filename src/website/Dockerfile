@@ -1,7 +1,7 @@
 # Build the SvelteKit static site (adapter-static) in a plain Node image.
 # vite.config.js skips the dev-cert/proxy setup for `vite build`, so no
 # .NET toolchain is needed here.
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci

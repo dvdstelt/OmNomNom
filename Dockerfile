@@ -4,7 +4,7 @@
 # Everything is same-origin, so no CORS; persistence is one /data volume.
 
 # 1. Build the SvelteKit static site.
-FROM node:22-alpine AS web
+FROM node:24-alpine AS web
 WORKDIR /web
 COPY src/website/package.json src/website/package-lock.json ./
 RUN npm ci
