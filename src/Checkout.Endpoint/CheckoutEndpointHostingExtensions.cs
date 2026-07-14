@@ -15,7 +15,7 @@ namespace Checkout.Endpoint;
 // tables, and the NServiceBus installers create those at startup.
 public static class CheckoutEndpointHostingExtensions
 {
-    public static IServiceCollection AddCheckoutEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddCheckoutEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("checkout");
 
@@ -24,6 +24,7 @@ public static class CheckoutEndpointHostingExtensions
         endpointConfiguration.Configure(sqliteConnectionString,
             configurePersistence: persistence => persistence.EnableTransactionalSession());
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }

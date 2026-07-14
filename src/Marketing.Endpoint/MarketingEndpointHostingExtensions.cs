@@ -12,7 +12,7 @@ namespace Marketing.Endpoint;
 // hosted database seeder.
 public static class MarketingEndpointHostingExtensions
 {
-    public static IServiceCollection AddMarketingEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddMarketingEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("marketing");
 
@@ -30,6 +30,7 @@ public static class MarketingEndpointHostingExtensions
 
         endpointConfiguration.Handlers.Marketing.AddAll();
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
 
         // Background recompute that keeps Marketing.Product.Trending honest as

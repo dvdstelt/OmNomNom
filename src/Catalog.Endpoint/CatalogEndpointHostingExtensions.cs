@@ -16,7 +16,7 @@ namespace Catalog.Endpoint;
 // own handler types.
 public static class CatalogEndpointHostingExtensions
 {
-    public static IServiceCollection AddCatalogEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddCatalogEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("catalog");
 
@@ -31,6 +31,7 @@ public static class CatalogEndpointHostingExtensions
 
         endpointConfiguration.Handlers.Catalog.AddAll();
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }

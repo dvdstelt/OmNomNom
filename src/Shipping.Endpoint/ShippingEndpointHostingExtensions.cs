@@ -13,7 +13,7 @@ namespace Shipping.Endpoint;
 // hosted database seeder.
 public static class ShippingEndpointHostingExtensions
 {
-    public static IServiceCollection AddShippingEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddShippingEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("shipping");
 
@@ -31,6 +31,7 @@ public static class ShippingEndpointHostingExtensions
 
         endpointConfiguration.Handlers.Shipping.AddAll();
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }

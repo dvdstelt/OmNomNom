@@ -12,7 +12,7 @@ namespace PaymentInfo.Endpoint;
 // hosted database seeder.
 public static class PaymentInfoEndpointHostingExtensions
 {
-    public static IServiceCollection AddPaymentInfoEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddPaymentInfoEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("paymentinfo");
 
@@ -27,6 +27,7 @@ public static class PaymentInfoEndpointHostingExtensions
 
         endpointConfiguration.Handlers.PaymentInfo.AddAll();
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }

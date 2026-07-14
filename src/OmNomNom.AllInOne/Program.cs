@@ -44,6 +44,7 @@ using Finance.Endpoint;
 using Marketing.Endpoint;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NServiceBus;
 using PaymentInfo.Endpoint;
 using Shipping.Endpoint;
 
@@ -51,12 +52,18 @@ var hostBuilder = Host.CreateApplicationBuilder(args);
 
 var services = hostBuilder.Services;
 
-services.AddCatalogEndpoint();
-services.AddFinanceEndpoint();
-services.AddMarketingEndpoint();
-services.AddShippingEndpoint();
-services.AddPaymentInfoEndpoint();
-services.AddCheckoutEndpoint();
+// Every endpoint in this host reports itself (identity, instance, handlers) to the
+// ServiceControlSpike control center and heartbeats. Each endpoint has its own handler
+// registry, so reports stay correctly attributed even though all six share this process.
+var spikeControlUrl = Environment.GetEnvironmentVariable("SPIKE_CONTROL_URL") ?? "http://localhost:5100";
+Action<EndpointConfiguration> reportToSpike = configuration => configuration.ReportToSpikeControl(spikeControlUrl);
+
+services.AddCatalogEndpoint(reportToSpike);
+services.AddFinanceEndpoint(reportToSpike);
+services.AddMarketingEndpoint(reportToSpike);
+services.AddShippingEndpoint(reportToSpike);
+services.AddPaymentInfoEndpoint(reportToSpike);
+services.AddCheckoutEndpoint(reportToSpike);
 
 var host = hostBuilder.Build();
 Console.Title = "OmNomNom AllInOne";

@@ -13,7 +13,7 @@ namespace Finance.Endpoint;
 // hosted database seeder.
 public static class FinanceEndpointHostingExtensions
 {
-    public static IServiceCollection AddFinanceEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddFinanceEndpoint(this IServiceCollection services, Action<EndpointConfiguration>? customize = null)
     {
         var sqliteConnectionString = SqliteStorage.GetConnectionString("finance");
 
@@ -33,6 +33,7 @@ public static class FinanceEndpointHostingExtensions
         endpointConfiguration.AddHandler<SubmitDeliveryOptionHandler>();
         endpointConfiguration.AddHandler<SubmitOrderItemsHandler>();
 
+        customize?.Invoke(endpointConfiguration);
         services.AddNServiceBusEndpoint(endpointConfiguration, endpointConfiguration.EndpointName);
         return services;
     }
