@@ -56,7 +56,8 @@ var services = hostBuilder.Services;
 // ServiceControlSpike control center and heartbeats. Each endpoint has its own handler
 // registry, so reports stay correctly attributed even though all six share this process.
 var spikeControlUrl = Environment.GetEnvironmentVariable("SPIKE_CONTROL_URL") ?? "http://localhost:5100";
-Action<EndpointConfiguration> reportToSpike = configuration => configuration.ReportToSpikeControl(spikeControlUrl);
+Action<EndpointConfiguration> reportToSpike = configuration =>
+    configuration.ReportToSpikeControl(spikeControlUrl, system: "OmNomNom");
 
 services.AddCatalogEndpoint(reportToSpike);
 services.AddFinanceEndpoint(reportToSpike);
