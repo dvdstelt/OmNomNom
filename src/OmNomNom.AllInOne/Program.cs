@@ -53,18 +53,18 @@ var hostBuilder = Host.CreateApplicationBuilder(args);
 var services = hostBuilder.Services;
 
 // Every endpoint in this host reports itself (identity, instance, handlers) to the
-// ServiceControlSpike control center and heartbeats. Each endpoint has its own handler
+// Argus control center and heartbeats. Each endpoint has its own handler
 // registry, so reports stay correctly attributed even though all six share this process.
-var spikeControlUrl = Environment.GetEnvironmentVariable("SPIKE_CONTROL_URL") ?? "http://localhost:5100";
-Action<EndpointConfiguration> reportToSpike = configuration =>
-    configuration.ReportToSpikeControl(spikeControlUrl, system: "OmNomNom");
+var argusControlUrl = Environment.GetEnvironmentVariable("ARGUS_CONTROL_URL") ?? "http://localhost:5100";
+Action<EndpointConfiguration> reportToArgus = configuration =>
+    configuration.ReportToArgus(argusControlUrl, system: "OmNomNom");
 
-services.AddCatalogEndpoint(reportToSpike);
-services.AddFinanceEndpoint(reportToSpike);
-services.AddMarketingEndpoint(reportToSpike);
-services.AddShippingEndpoint(reportToSpike);
-services.AddPaymentInfoEndpoint(reportToSpike);
-services.AddCheckoutEndpoint(reportToSpike);
+services.AddCatalogEndpoint(reportToArgus);
+services.AddFinanceEndpoint(reportToArgus);
+services.AddMarketingEndpoint(reportToArgus);
+services.AddShippingEndpoint(reportToArgus);
+services.AddPaymentInfoEndpoint(reportToArgus);
+services.AddCheckoutEndpoint(reportToArgus);
 
 var host = hostBuilder.Build();
 Console.Title = "OmNomNom AllInOne";

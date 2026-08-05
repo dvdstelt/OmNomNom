@@ -10,15 +10,15 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
-      <!-- 10.2.7 to match Spike.Endpoint.Reporting; NuGet refuses the transitive upgrade otherwise. -->
+      <!-- 10.2.7 to match Argus.Endpoint.Reporting; NuGet refuses the transitive upgrade otherwise. -->
       <PackageReference Include="NServiceBus" Version="10.2.7" />
     </ItemGroup>
 
     <ItemGroup>
-      <!-- ServiceControlSpike reporting add-in: sibling checkout of dvdstelt/ServiceControlSpike.
-           Reports each endpoint's identity, instance and handlers to the Spike control center
-           over HTTP and heartbeats. Local-spike wiring, not for CI. -->
-      <ProjectReference Include="..\..\..\ServiceControlSpike\src\Spike.Endpoint.Reporting\Spike.Endpoint.Reporting.csproj" />
+      <!-- Argus reporting add-in: sibling checkout of dvdstelt/ServiceControlSpike.
+           Reports each endpoint's identity, instance and handlers to the Argus control center
+           over HTTP and heartbeats. Local dev wiring, not for CI. -->
+      <ProjectReference Include="..\..\..\ServiceControlSpike\src\Argus.Endpoint.Reporting\Argus.Endpoint.Reporting.csproj" />
       <ProjectReference Include="..\Catalog.Endpoint\Catalog.Endpoint.csproj" />
       <ProjectReference Include="..\Checkout.Endpoint\Checkout.Endpoint.csproj" />
       <ProjectReference Include="..\Finance.Endpoint\Finance.Endpoint.csproj" />
