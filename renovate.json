@@ -22,6 +22,12 @@
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "GitHub Actions (non-breaking)",
       "automerge": true
+    },
+    {
+      "description": "Renovate cannot enumerate tags for this image and reports 'no-result' on every run, which parks a warning at the top of the dependency dashboard. The sibling mcr.microsoft.com/dotnet/sdk and /aspnet images resolve fine, so this is an upstream lookup quirk rather than a bad reference. Pinned by hand alongside those two when the .NET major changes.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mcr.microsoft.com/dotnet/runtime"],
+      "enabled": false
     }
   ]
 }
