@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    name: .NET
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      # Restore is a separate step so a broken PackageReference reads as a
+      # restore failure rather than a wall of CS0246 "type not found" errors.
+      - name: Restore
+        run: dotnet restore src/OmNomNom.slnx
+
+      - name: Build
+        run: dotnet build src/OmNomNom.slnx --configuration Release --no-restore
+
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/website
+    steps:
+      - uses: actions/checkout@v7
+
+      # 24 to match the node image the website Dockerfile builds on.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: src/website/package-lock.json
+
+      # ci, not install: fails when package.json and the lockfile disagree,
+      # which is exactly the state a half-applied dependency bump leaves behind.
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
