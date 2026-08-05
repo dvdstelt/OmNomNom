@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
-      <PackageReference Include="NServiceBusContrib.Persistence.Sqlite.TransactionalSession" Version="0.1.0-beta.1" />
+      <PackageReference Include="NServiceBusContrib.Persistence.Sqlite.TransactionalSession" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
