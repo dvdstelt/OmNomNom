@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Messaging.Persistence.Sqlite;
-using Messaging.Persistence.Sqlite.TransactionalSession;
+using NServiceBusContrib.Persistence.Sqlite;
+using NServiceBusContrib.Persistence.Sqlite.TransactionalSession;
 using Microsoft.Data.Sqlite;
 using NServiceBus.TransactionalSession;
 

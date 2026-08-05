@@ -1,5 +1,5 @@
 using System.Reflection;
-using Messaging.Persistence.Sqlite;
+using NServiceBusContrib.Persistence.Sqlite;
 
 namespace ITOps.Shared.EndpointConfiguration;
 

@@ -1,6 +1,6 @@
 using ITOps.Shared.EndpointConfiguration;
 using ITOps.Shared.Sqlite;
-using Messaging.Persistence.Sqlite.TransactionalSession;
+using NServiceBusContrib.Persistence.Sqlite.TransactionalSession;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Checkout.Endpoint;
