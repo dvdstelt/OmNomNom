@@ -9,9 +9,11 @@ public static class EndpointConfigurationExtensions
         this NServiceBus.EndpointConfiguration endpointConfiguration,
         string? sqliteConnectionString = null,
         Action<PersistenceExtensions<SqlitePersistence>>? configurePersistence = null,
-        Action<RoutingSettings<LearningTransport>>? configureRouting = null)
+        Action<RoutingSettings<LearningTransport>>? configureRouting = null,
+        bool sendOnly = false)
     {
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
+        endpointConfiguration.Recoverability().Immediate(c => c.NumberOfRetries(2));
         endpointConfiguration.Recoverability().Delayed(c => c.NumberOfRetries(0));
 
         // Outbox in NServiceBus 10 requires ReceiveOnly so the transport
@@ -44,6 +46,22 @@ public static class EndpointConfigurationExtensions
 
         endpointConfiguration.SendFailedMessagesTo("error");
         endpointConfiguration.AuditProcessedMessagesTo("audit");
+
+        // Report throughput, processing/critical time, retries and queue length to Argus's
+        // control center. The metrics plugin sends periodic reports to the monitoring
+        // queue; over LearningTransport that is a folder Argus's ingestion reads. Defaults to
+        // Particular.Monitoring, matching Argus's per-connection default; OMNOMNOM_MONITORING_QUEUE
+        // overrides it if the connection is configured with a different queue name.
+        // Skipped for send-only endpoints: they process no messages, and the metrics plugin is
+        // unsupported there.
+        if (!sendOnly)
+        {
+            var monitoringQueue = Environment.GetEnvironmentVariable("OMNOMNOM_MONITORING_QUEUE");
+            var metrics = endpointConfiguration.EnableMetrics();
+            metrics.SendMetricDataToServiceControl(
+                string.IsNullOrWhiteSpace(monitoringQueue) ? "Particular.Monitoring" : monitoringQueue,
+                TimeSpan.FromSeconds(1));
+        }
 
         var conventions = endpointConfiguration.Conventions();
         conventions.DefiningCommandsAs(t => t.Namespace != null && t.Namespace.EndsWith("Messages.Commands"));

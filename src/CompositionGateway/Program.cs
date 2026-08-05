@@ -20,7 +20,7 @@ builder.Services.AddControllers()
     });
 
 var endpointConfiguration = new EndpointConfiguration("CompositionGateway");
-endpointConfiguration.Configure();
+endpointConfiguration.Configure(sendOnly: true);   // send-only: no metrics plugin
 endpointConfiguration.SendOnly();
 
 builder.Services.AddWorkflowComposer(workflow =>
