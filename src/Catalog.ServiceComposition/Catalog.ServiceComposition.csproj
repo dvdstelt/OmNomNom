@@ -8,8 +8,8 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
-      <PackageReference Include="NServiceBus" Version="10.2.8" />
-      <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.1" />
+      <PackageReference Include="NServiceBus" Version="10.2.9" />
+      <PackageReference Include="ServiceComposer.AspNetCore" Version="5.2.2" />
     </ItemGroup>
 
     <ItemGroup>
