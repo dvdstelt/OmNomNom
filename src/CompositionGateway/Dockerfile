@@ -1,11 +1,11 @@
 # Build context is the src/ directory (project references span sibling
 # projects).
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet publish CompositionGateway/CompositionGateway.csproj -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:11.0
 WORKDIR /app
 COPY --from=build /app .
 # Production disables the dev-only HTTPS redirect; the gateway serves plain
