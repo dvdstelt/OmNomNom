@@ -13,7 +13,7 @@ RUN npm run build
 
 # 2. Publish both .NET apps. Context is the repo root; src/ holds all the
 #    cross-referenced projects.
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS dotnet
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS dotnet
 WORKDIR /src
 COPY src/ ./
 RUN dotnet publish OmNomNom.AllInOne/OmNomNom.AllInOne.csproj -c Release -o /app/allinone \
@@ -21,7 +21,7 @@ RUN dotnet publish OmNomNom.AllInOne/OmNomNom.AllInOne.csproj -c Release -o /app
 
 # 3. Runtime: ASP.NET base (its shared framework also runs the AllInOne
 #    console host) plus nginx and supervisord.
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:11.0
 RUN apt-get update \
  && apt-get install -y --no-install-recommends nginx supervisor \
  && rm -rf /var/lib/apt/lists/*
