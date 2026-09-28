@@ -1,7 +1,7 @@
 # Build context is the src/ directory (project references span sibling
 # projects). The AllInOne host references only *.Endpoint projects, so the
 # plain runtime image (no ASP.NET) is enough.
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet publish OmNomNom.AllInOne/OmNomNom.AllInOne.csproj -c Release -o /app
