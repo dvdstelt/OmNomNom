@@ -15,6 +15,8 @@
   import PriceDetail from '../../../Finance/PriceDetail.svelte';
 
   let product = $state(null);
+  let pricing = $state(null);
+  let popularity = $state(null);
   let loading = $state(true);
   let quantity = $state(1);
   let adding = $state(false);
@@ -25,6 +27,8 @@
     try {
       const data = await gateway.getProduct(productId);
       product = data.product ?? data;
+      pricing = data.pricing;
+      popularity = data.popularity;
     } finally {
       loading = false;
     }
@@ -76,8 +80,8 @@
           country={product.country}
           variant="detail"
         />
-        <ProductRating rating={product.rating} ratingCount={product.ratingCount} />
-        <PriceDetail price={product.price} discount={product.discount} />
+        <ProductRating rating={popularity?.rating} ratingCount={popularity?.ratingCount} />
+        <PriceDetail price={pricing?.price} discount={pricing?.discount} />
         <ProductDescription description={product.description} />
         <StockBadge inStock={product.inStock} />
         <div class="add-to-cart-row">

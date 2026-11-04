@@ -1,5 +1,4 @@
 using Catalog.Data;
-using Catalog.ServiceComposition.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,15 +27,6 @@ public class ProductComposer(CatalogDbContext dbContext, IHttpContextAccessor ht
             })
             .SingleAsync(ct);
 
-        var productModel = Mapper.MapToViewModel(row.Product, row.InStock);
-
-        var context = request.GetCompositionContext();
-        await context.RaiseEvent(new ProductLoaded
-        {
-            ProductId = productId,
-            Product = productModel
-        });
-
-        vm.Product = productModel;
+        vm.Product = Mapper.MapToViewModel(row.Product, row.InStock);
     }
 }
