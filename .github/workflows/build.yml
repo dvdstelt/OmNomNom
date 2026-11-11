@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '11.0.x'
 
       # Restore is a separate step so a broken PackageReference reads as a
       # restore failure rather than a wall of CS0246 "type not found" errors.
