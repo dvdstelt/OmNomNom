@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Catalog.ServiceComposition.Workflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +12,14 @@ namespace Catalog.ServiceComposition.Checkout;
 // SubmitOrderItems will be dispatched later by SummarySubmitComposer
 // as part of the atomic checkout submit.
 //
-// The body is a raw JSON array of ShoppingCartItem. Read it directly
-// from request.Body instead of [FromBody] - ServiceComposer 5.2's
-// source generator can't currently encode generic parameter types
-// (List<T>, T[]) into hintNames, and we don't want to wrap the
-// frontend contract just to work around that.
+// The body is a raw JSON array of ShoppingCartItem.
 [CompositionHandler]
 public class OrderSubmitComposer(IWorkflowStore workflow, IHttpContextAccessor http)
 {
-    static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
-
     [HttpPost("/cart/{orderId}")]
-    public async Task Handle(Guid orderId)
+    public async Task Handle(Guid orderId, [FromBody] List<CartItemForm> items)
     {
-        var request = http.HttpContext!.Request;
-        var ct = request.HttpContext.RequestAborted;
-
-        request.Body.Position = 0;
-        var items = await JsonSerializer.DeserializeAsync<List<CartItemForm>>(request.Body, JsonOptions, ct) ?? [];
+        var ct = http.HttpContext!.RequestAborted;
 
         var slice = new CartSlice(items
             .Select(i => new CartLine(i.ProductId, i.Quantity))
