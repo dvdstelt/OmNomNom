@@ -9,10 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
-builder.Services.AddViewModelComposition(options =>
-{
-    options.EnableCompositionOverControllers();
-});
+builder.Services.AddViewModelComposition();
 builder.Services.AddHealthChecks();
 builder.Services.AddScoped<OrderEmailSender>();
 
@@ -57,7 +54,8 @@ else
 
 app.UseRouting();
 app.MapHealthChecks("/health");
-app.MapControllers();
+app.MapControllers()
+    .WithCompositionOverControllers();
 app.MapCompositionHandlers();
 
 Console.Title = "BackOffice Server";
